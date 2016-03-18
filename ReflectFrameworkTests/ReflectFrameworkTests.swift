@@ -23,6 +23,15 @@ class ReflectFrameworkTests: XCTestCase {
         super.tearDown()
     }
     
+    func testDefaultSettings(){
+        XCTAssert(Reflect.settings.getDBName() == "ReflectDB.db", "Data base and path not created")
+    }
+    
+    func testSettings(){
+        Reflect.configuration("", baseNamed: "Teste")
+        XCTAssert(Reflect.settings.getDBName() == "Teste.db", "Data base and path not created")
+    }
+    
     func testRegister(){
         Car.register()
     }

@@ -10,10 +10,11 @@ import Foundation
 
 class  Service<T: Initable> : Driver {
     
-    var table:String!
-    
-    init(){
-    }
+    private var table:String!
+    private lazy var db: Connection = {
+        let path = Reflect.settings.createPath()
+        return try! Connection(path)
+    }()
     
     func create(obj:AnyObject){
         let p:[MirrorModel] = Mirror.refectObject(obj)
@@ -57,10 +58,24 @@ class  Service<T: Initable> : Driver {
         return false
     }
     
+    /*
+    // MARK: - Private Methods
+    */
+    
     private func checkRegister() -> Bool {
         if table == nil {
             assertionFailure("This object wasn't registed")
         }
         return table != nil
+    }
+    
+}
+
+extension Reflect {
+    
+    static var settings:ReflectSettings = ReflectSettings.defaultSettings()
+    
+    class func configuration(appGroup:String, baseNamed:String){
+        settings = ReflectSettings(defaultName: baseNamed, appGroup: appGroup)
     }
 }
