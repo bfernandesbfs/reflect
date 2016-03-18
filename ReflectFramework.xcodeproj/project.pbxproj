@@ -18,6 +18,10 @@
 		4AEBBD121C9C76BF009BEA05 /* ExtensionMirror.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD111C9C76BF009BEA05 /* ExtensionMirror.swift */; };
 		4AEBBD151C9C7704009BEA05 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD141C9C7704009BEA05 /* Schema.swift */; };
 		4AEBBD171C9C77D5009BEA05 /* TestPeople.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD161C9C77D5009BEA05 /* TestPeople.swift */; };
+		4AEBBD1F1C9C8788009BEA05 /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBD1D1C9C8788009BEA05 /* fts3_tokenizer.h */; };
+		4AEBBD201C9C8788009BEA05 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBD1E1C9C8788009BEA05 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4AEBBD281C9C898D009BEA05 /* Reflect-Bridging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBD261C9C898D009BEA05 /* Reflect-Bridging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4AEBBD291C9C898D009BEA05 /* Reflect-Bridging.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD271C9C898D009BEA05 /* Reflect-Bridging.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +49,13 @@
 		4AEBBD111C9C76BF009BEA05 /* ExtensionMirror.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionMirror.swift; sourceTree = "<group>"; };
 		4AEBBD141C9C7704009BEA05 /* Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schema.swift; sourceTree = "<group>"; };
 		4AEBBD161C9C77D5009BEA05 /* TestPeople.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestPeople.swift; sourceTree = "<group>"; };
+		4AEBBD191C9C86F6009BEA05 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		4AEBBD1A1C9C870B009BEA05 /* Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Test.xcconfig; sourceTree = "<group>"; };
+		4AEBBD1B1C9C871B009BEA05 /* Sqlite.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sqlite.xcconfig; sourceTree = "<group>"; };
+		4AEBBD1D1C9C8788009BEA05 /* fts3_tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fts3_tokenizer.h; sourceTree = "<group>"; };
+		4AEBBD1E1C9C8788009BEA05 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		4AEBBD261C9C898D009BEA05 /* Reflect-Bridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Reflect-Bridging.h"; sourceTree = "<group>"; };
+		4AEBBD271C9C898D009BEA05 /* Reflect-Bridging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Reflect-Bridging.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +102,7 @@
 				4AEBBD091C9C757C009BEA05 /* Protocol */,
 				4AEBBD041C9C74FB009BEA05 /* Core */,
 				4AEBBD0E1C9C7609009BEA05 /* Helper */,
+				4AEBBD181C9C86B5009BEA05 /* Settings */,
 				4AEBBCED1C9C74D0009BEA05 /* ReflectFramework.h */,
 				4AEBBCEF1C9C74D0009BEA05 /* Info.plist */,
 			);
@@ -142,6 +154,28 @@
 			path = Repository;
 			sourceTree = "<group>";
 		};
+		4AEBBD181C9C86B5009BEA05 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4AEBBD1C1C9C8788009BEA05 /* Header */,
+				4AEBBD191C9C86F6009BEA05 /* Base.xcconfig */,
+				4AEBBD1A1C9C870B009BEA05 /* Test.xcconfig */,
+				4AEBBD1B1C9C871B009BEA05 /* Sqlite.xcconfig */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		4AEBBD1C1C9C8788009BEA05 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				4AEBBD1D1C9C8788009BEA05 /* fts3_tokenizer.h */,
+				4AEBBD1E1C9C8788009BEA05 /* sqlite3.h */,
+				4AEBBD261C9C898D009BEA05 /* Reflect-Bridging.h */,
+				4AEBBD271C9C898D009BEA05 /* Reflect-Bridging.m */,
+			);
+			path = Header;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -149,6 +183,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AEBBD281C9C898D009BEA05 /* Reflect-Bridging.h in Headers */,
+				4AEBBD1F1C9C8788009BEA05 /* fts3_tokenizer.h in Headers */,
+				4AEBBD201C9C8788009BEA05 /* sqlite3.h in Headers */,
 				4AEBBCEE1C9C74D0009BEA05 /* ReflectFramework.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -255,6 +292,7 @@
 				4AEBBD0D1C9C75DA009BEA05 /* Initable.swift in Sources */,
 				4AEBBD061C9C751E009BEA05 /* Reflect.swift in Sources */,
 				4AEBBD121C9C76BF009BEA05 /* ExtensionMirror.swift in Sources */,
+				4AEBBD291C9C898D009BEA05 /* Reflect-Bridging.m in Sources */,
 				4AEBBD151C9C7704009BEA05 /* Schema.swift in Sources */,
 				4AEBBD081C9C754D009BEA05 /* Service.swift in Sources */,
 			);
@@ -371,6 +409,7 @@
 		};
 		4AEBBCFF1C9C74D0009BEA05 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AEBBD1B1C9C871B009BEA05 /* Sqlite.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -389,6 +428,7 @@
 		};
 		4AEBBD001C9C74D0009BEA05 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AEBBD1B1C9C871B009BEA05 /* Sqlite.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -406,6 +446,7 @@
 		};
 		4AEBBD021C9C74D0009BEA05 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AEBBD1A1C9C870B009BEA05 /* Test.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = ReflectFrameworkTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -416,6 +457,7 @@
 		};
 		4AEBBD031C9C74D0009BEA05 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AEBBD1A1C9C870B009BEA05 /* Test.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = ReflectFrameworkTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -443,6 +485,7 @@
 				4AEBBD001C9C74D0009BEA05 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4AEBBD011C9C74D0009BEA05 /* Build configuration list for PBXNativeTarget "ReflectFrameworkTests" */ = {
 			isa = XCConfigurationList;
@@ -451,6 +494,7 @@
 				4AEBBD031C9C74D0009BEA05 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -6,7 +6,7 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import Foundation;
 
 //! Project version number for ReflectFramework.
 FOUNDATION_EXPORT double ReflectFrameworkVersionNumber;
@@ -16,4 +16,5 @@ FOUNDATION_EXPORT const unsigned char ReflectFrameworkVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <ReflectFramework/PublicHeader.h>
 
+#import <ReflectFramework/Reflect-Bridging.h>
 

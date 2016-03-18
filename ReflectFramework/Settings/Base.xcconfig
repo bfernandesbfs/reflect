@@ -1,0 +1,13 @@
+//
+//  Base.xcconfig
+//  ReflectFramework
+//
+//  Created by Bruno Fernandes on 18/03/16.
+//  Copyright © 2016 BFS. All rights reserved.
+//
+
+INFOPLIST_FILE = $(PRODUCT_NAME)/Info.plist
+
+PRODUCT_BUNDLE_IDENTIFIER = xyz.brunofernandes.$(PRODUCT_NAME:c99extidentifier)
+
+APPLICATION_EXTENSION_API_ONLY = YES

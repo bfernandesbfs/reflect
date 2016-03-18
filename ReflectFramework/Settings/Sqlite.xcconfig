@@ -1,0 +1,13 @@
+//
+//  Sqlite.xcconfig
+//  ReflectFramework
+//
+//  Created by Bruno Fernandes on 18/03/16.
+//  Copyright © 2016 BFS. All rights reserved.
+//
+
+#include "Base.xcconfig"
+
+PRODUCT_NAME = ReflectFramework
+
+OTHER_LDFLAGS = -lsqlite3
