@@ -14,4 +14,5 @@ protocol Initable {
     static func register() -> Bool
     static func unRegister() -> Bool
     static func unPinAll() -> Bool
+    static func findById(id:Int) -> Self?
 }

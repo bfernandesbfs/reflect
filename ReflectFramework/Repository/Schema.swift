@@ -11,7 +11,7 @@ enum Schema {
     
     case Create(String, [MirrorModel])
     case Drop(String)
-    case Select(String, Int)
+    case Select(String)
     case Replace(String, [MirrorModel])
     case Insert(String, [MirrorModel])
     case Delete(String, Int)
@@ -22,9 +22,8 @@ enum Schema {
             return "CREATE TABLE IF NOT EXISTS \(className) (\(Schema.indentifier) INTEGER PRIMARY KEY AUTOINCREMENT \(createSql(properties)))"
         case .Drop(let className):
             return "DROP TABLE \(className)"
-        case .Select(let className, let objectId):
-            let comp = objectId == 0 ? "" : " WHERE \(Schema.indentifier) = ?"
-            return "SELECT * FROM \(className)" + comp
+        case .Select(let className):
+            return "SELECT * FROM \(className) WHERE \(Schema.indentifier) = ?"
         case .Replace(let className,let properties):
             return "INSERT OR REPLACE INTO \(className) (\(saveSql(properties)))"
         case .Insert(let className,let properties):

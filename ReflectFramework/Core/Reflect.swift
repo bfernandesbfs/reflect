@@ -8,12 +8,12 @@
 
 import Foundation
 
-class Reflect: Initable {
+class Reflect:NSObject, Initable {
     var id:Int?
     
     private static var drive:Driver = Service<Reflect>()
     
-    required init(){
+    required override init(){
         id = 0
     }
     
@@ -39,8 +39,19 @@ class Reflect: Initable {
         }
     }
     
-    func fetch() {
-        Reflect.drive.fetchOne(id!)
+    static func findById(id: Int) -> Self? {
+        do {
+            return try Reflect.drive.find(self.init(), id: id)
+        }
+        catch{
+            return nil
+        }
+    }
+    
+    func fetch() -> Bool {
+        return Reflect.execute {
+            try Reflect.drive.fetch(self)
+        }
     }
     
     func pin() -> Bool {
@@ -55,9 +66,9 @@ class Reflect: Initable {
     func unPin() -> Bool {
         return Reflect.execute {
             try Reflect.drive.delete(self.id!)
-        }
+        }    
     }
-    
+
 }
 
 extension Reflect {

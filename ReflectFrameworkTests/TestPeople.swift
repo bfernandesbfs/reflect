@@ -10,11 +10,12 @@
 @testable import ReflectFramework
 
 class Car: Reflect  {
+    var name:String?
     var model:String?
     var year:Int
     
     required init(){
-        year = 2016
+        year = 0
     }
 }
 

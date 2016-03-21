@@ -15,7 +15,7 @@ class ReflectFrameworkTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        //testRegister()
+        testRegister()
     }
     
     override func tearDown() {
@@ -33,7 +33,7 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testRegister(){
-         XCTAssert(Car.register(), "found error when if register the object")
+        XCTAssert(Car.register(), "found error when if register the object")
     }
     
     func testDestroy(){
@@ -41,21 +41,31 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testTableName(){
-         XCTAssert(Car.tableName() == "Car", "Object not was created with name informed")
+        XCTAssert(Car.tableName() == "Car", "Object not was created with name informed")
+    }
+    
+    func testFind(){
+        let n = Car.findById(1)
+        
+        XCTAssert(n?.name == "VW", "Fetch Object is different")
     }
     
     func testFetch(){
-        c.id = 2
-        c.model = "Ferrari"
-        c.fetch()
-        
-        XCTAssert(c.model == "Ferrari", "Fetch Object is different")
+        let n = Car()
+        n.id = 2
+        print(n.fetch())
+    
+        XCTAssert(n.year == 2015, "Fetch Object is different")
     }
     
     func testPin() {
-        c.model = "Ferrari"
-        c.year = 2016
-        XCTAssert(c.pin(), "Not was created a new object for Car")
+        c.name = "Renault"
+        c.model = "Logan"
+        c.year = 2010
+        
+        print(c.pin())
+        
+       // XCTAssert(c.pin(), "Not was created a new object for Car")
     }
     
     func testUnPin(){

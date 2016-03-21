@@ -16,9 +16,9 @@ class  Service<T: Initable> : Driver {
         return try! Connection(path)
     }()
     
-    func create(obj:AnyObject) throws {
+    func create(obj:Reflect) throws {
         let p:[MirrorModel] = Mirror.refectObject(obj)
-        table = (obj as! T).dynamicType.tableName()
+        table = obj.dynamicType.tableName()
         try db.execute(Schema.Create(table,p).sql)
     }
     
@@ -26,30 +26,33 @@ class  Service<T: Initable> : Driver {
         try db.execute(Schema.Drop(table).sql)
     }
     
-    func fetchOne(obj:AnyObject, id: Int) {
-        if checkRegister() {
-            let schema = Schema.Select(table, id)
-//            let row = db.prepareFetch(schema.sql, id)!
-//            let p:[MirrorModel] = Mirror.refectObject(obj)
-//    
-//            for property in p {
-//                let key = property["key"] as! String
-//                let type = property["type"] as! String
-//                if let value = castDataValue(key ,type: type, row: obj) {
-//                    base.setValue(value, forKey: key)
-//                }
-//            }
-            
+    func find<T>(obj:Reflect, id: Int) throws -> T? {
+        try checkRegister()
+        obj.id = id
+        try fetch(obj)
+        return obj as? T
+    }
+    
+    func fetch(obj:Reflect) throws {
+        try checkRegister()
+        let schema = Schema.Select(table)
+        if let row = try db.prepareFetch(schema.sql, obj.id) {
+            for property in Mirror.refectObject(obj) {
+                if let value = bindValue(property, row: row) {
+                    obj.setValue(value, forKey: property.key)
+                }
+            }
+        }
+        else{
+            throw Result.Error(message: "Not found", code: 1001, statement: nil)
         }
     }
     
-    func insert(obj:AnyObject) throws -> Int {
-        if checkRegister() {
-            let p:[MirrorModel] = Mirror.refectObject(obj)
-            let schema = Schema.Insert(table, p)
-            return Int(try db.runRowId(schema.sql, schema.args))
-        }
-        return -1
+    func insert(obj:Reflect) throws -> Int {
+        try checkRegister()
+        let p:[MirrorModel] = Mirror.refectObject(obj)
+        let schema = Schema.Insert(table, p)
+        return Int(try db.runRowId(schema.sql, schema.args))
     }
     
     func upsert() -> Bool {
@@ -57,51 +60,47 @@ class  Service<T: Initable> : Driver {
     }
     
     func delete(id: Int) throws -> Int {
-        if checkRegister() {
-            let schema = Schema.Delete(table, id)
-            return try db.runChange(schema.sql, id)
-        }
-        return -1
+        try checkRegister()
+        let schema = Schema.Delete(table, id)
+        return try db.runChange(schema.sql, id)
     }
     
     func delete() throws -> Int {
-        if checkRegister() {
-            let schema = Schema.Delete(table , 0)
-            return try db.runChange(schema.sql)
-        }
-        return -1
+        try checkRegister()
+        let schema = Schema.Delete(table , 0)
+        return try db.runChange(schema.sql)
     }
     
     /*
     // MARK: - Private Methods
     */
     
-    private func checkRegister() -> Bool {
+    private func checkRegister() throws -> Bool {
         if table == nil {
-            assertionFailure("This object wasn't registed")
+            throw Result.Error(message: "This object wasn't registed", code: 1000, statement: nil)
         }
         return table != nil
     }
     
-    private func castDataValue(key:String, type:String, row:Row) -> AnyObject! {
+    private func bindValue(property:MirrorModel, row:Row) -> AnyObject! {
         
-        switch type {
+        switch property.type {
         case String.declaredDatatype:
-            return row[key , String.self]
+            return row[property.key , String.self]
         case Int.declaredDatatype:
-            return row[key , Int.self]
+            return row[property.key , Int.self]
         case Double.declaredDatatype:
-            return row[key , Double.self]
+            return row[property.key , Double.self]
         case Float.declaredDatatype:
-            return row[key , Float.self]
+            return row[property.key , Float.self]
         case NSNumber.declaredDatatype:
-            return row[key , NSNumber.self]
+            return row[property.key , NSNumber.self]
         case Bool.declaredDatatype:
-            return row[key , Bool.self]
+            return row[property.key , Bool.self]
         case NSDate.declaredDatatype:
-            return row[key , NSDate.self]
+            return row[property.key , NSDate.self]
         case NSData.declaredDatatype:
-            return row[key , NSData.self]
+            return row[property.key , NSData.self]
         default:
             return nil
         }
