@@ -12,7 +12,7 @@ enum Schema {
     case Create(String, [MirrorModel])
     case Drop(String)
     case Select(String)
-    case Replace(String, [MirrorModel])
+    case Replace(String, Int, [MirrorModel])
     case Insert(String, [MirrorModel])
     case Delete(String, Int)
     
@@ -24,10 +24,10 @@ enum Schema {
             return "DROP TABLE \(className)"
         case .Select(let className):
             return "SELECT * FROM \(className) WHERE \(Schema.indentifier) = ?"
-        case .Replace(let className,let properties):
-            return "INSERT OR REPLACE INTO \(className) (\(saveSql(properties)))"
+        case .Replace(let className, _, let properties):
+            return "INSERT OR REPLACE INTO \(className) (\(saveSql(true, properties: properties)))"
         case .Insert(let className,let properties):
-            return "INSERT INTO \(className) (\(saveSql(properties)))"
+            return "INSERT INTO \(className) (\(saveSql(false,properties: properties)))"
         case .Delete(let className , let objectId):
             let comp = objectId == 0 ? "" : " WHERE \(Schema.indentifier) = ?"
             return "DELETE FROM \(className)" + comp
@@ -36,7 +36,8 @@ enum Schema {
     
     var args:[AnyObject?] {
         switch self {
-        case .Replace(_,let properties):
+        case .Replace(_,let objectId, var properties):
+            properties.append(MirrorModel(key:Schema.indentifier, value: objectId, type: Int.declaredDatatype))
             return MirrorModel.getValues(properties)
         case .Insert(_,let properties):
             return MirrorModel.getValues(properties)
@@ -53,10 +54,10 @@ enum Schema {
         return fields
     }
     
-    private func saveSql(properties:[MirrorModel]) -> String {
+    private func saveSql(isReplace:Bool, properties:[MirrorModel]) -> String {
         
-        var fields:String = ""
-        var values:String = "VALUES ( "
+        var fields:String = isReplace ? "\(Schema.indentifier), " : ""
+        var values:String = isReplace ? "VALUES ( ?, " : "VALUES ( "
         var isFirst = true
         
         for property in properties {

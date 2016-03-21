@@ -68,6 +68,18 @@ class ReflectFrameworkTests: XCTestCase {
        // XCTAssert(c.pin(), "Not was created a new object for Car")
     }
     
+    func testUpdate(){
+        c.id = 4
+        c.name = "GM"
+        c.model = "Corsa"
+        c.year = 2011
+        
+        print(c.pin())
+        
+        // XCTAssert(c.pin(), "Not was created a new object for Car")
+        
+    }
+    
     func testUnPin(){
         c.id = 2
         XCTAssert(c.unPin(), "Object car was deleted")

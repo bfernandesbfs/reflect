@@ -51,14 +51,10 @@ class  Service<T: Initable> : Driver {
     func insert(obj:Reflect) throws -> Int {
         try checkRegister()
         let p:[MirrorModel] = Mirror.refectObject(obj)
-        let schema = Schema.Insert(table, p)
+        let schema = obj.id > 0 ? Schema.Replace(table, obj.id!, p) : Schema.Insert(table, p)
         return Int(try db.runRowId(schema.sql, schema.args))
     }
-    
-    func upsert() -> Bool {
-        return false
-    }
-    
+        
     func delete(id: Int) throws -> Int {
         try checkRegister()
         let schema = Schema.Delete(table, id)

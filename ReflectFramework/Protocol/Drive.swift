@@ -12,7 +12,6 @@ protocol Driver {
     func find<T>(obj:Reflect, id:Int) throws -> T?
     func fetch(obj:Reflect) throws
     func insert(obj:Reflect) throws -> Int 
-    func upsert() -> Bool
     func delete() throws -> Int
     func delete(id: Int) throws -> Int
 }

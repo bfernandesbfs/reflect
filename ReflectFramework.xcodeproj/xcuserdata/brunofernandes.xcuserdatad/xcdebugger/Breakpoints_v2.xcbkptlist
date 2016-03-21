@@ -2,4 +2,54 @@
 <Bucket
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ReflectFramework/Repository/Connection.swift"
+            timestampString = "480286987.701112"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "runRowId(_:_:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ReflectFramework.Connection.runRowId (ReflectFramework.Connection)(Swift.String, Swift.Array&lt;Swift.Optional&lt;Swift.AnyObject&gt;&gt;) throws -&gt; Swift.Int64"
+                  moduleName = "ReflectFramework"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFramework/Repository/Connection.swift"
+                  timestampString = "480286987.703837"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "130"
+                  endingLineNumber = "130"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ReflectFramework.Connection.(runRowId (ReflectFramework.Connection) -&gt; (Swift.String, Swift.Array&lt;Swift.Optional&lt;Swift.AnyObject&gt;&gt;) throws -&gt; Swift.Int64).(closure #1)"
+                  moduleName = "ReflectFramework"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFramework/Repository/Connection.swift"
+                  timestampString = "480286987.704146"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "131"
+                  endingLineNumber = "131"
+                  offsetFromSymbolStart = "39">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
