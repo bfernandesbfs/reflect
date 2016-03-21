@@ -15,7 +15,7 @@ class ReflectFrameworkTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        testRegister()
+        //testRegister()
     }
     
     override func tearDown() {
@@ -33,11 +33,11 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testRegister(){
-        Car.register()
+         XCTAssert(Car.register(), "found error when if register the object")
     }
     
     func testDestroy(){
-        Car.unRegister()
+        XCTAssert(Car.unRegister(), "found error when remove o object")
     }
     
     func testTableName(){
@@ -65,6 +65,24 @@ class ReflectFrameworkTests: XCTestCase {
     
     func testUnPinAll(){
         XCTAssert(Car.unPinAll(), "All Objects deleted")
+    }
+    
+    func testFlow(){
+        Reflect.configuration("", baseNamed: "Teste")
+        XCTAssert(Reflect.settings.getDBName() == "Teste.db", "Data base and path not created")
+        
+        XCTAssert(Car.register(), "found error when if register the object")
+        let n = Car()
+        n.model = "Polo"
+        n.year  = 2008
+        
+        XCTAssert(n.pin(), "Not was created a new object for Car")
+        print("Id object : \(n.id)")
+        
+        XCTAssert(n.unPin(), "Object car was deleted")
+        
+        Car.unPinAll()
+        XCTAssert(Car.unRegister(), "found error when remove o object")
     }
     
     func testPerformanceExample() {

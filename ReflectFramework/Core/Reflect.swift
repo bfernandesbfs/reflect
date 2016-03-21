@@ -21,16 +21,22 @@ class Reflect: Initable {
         return NSStringFromClass(self).componentsSeparatedByString(".").last!
     }
     
-    class func register() {
-        Reflect.drive.create(self.init())
+    class func register() -> Bool {
+        return execute {
+            try Reflect.drive.create(self.init())
+        }
     }
     
-    class func unRegister() {
-        Reflect.drive.destroy()
+    class func unRegister() -> Bool {
+        return execute {
+            try Reflect.drive.destroy()
+        }
     }
     
     class func unPinAll() -> Bool {
-        return Reflect.drive.delete(0)
+        return Reflect.execute {
+            try Reflect.drive.delete()
+        }
     }
     
     func fetch() {
@@ -38,11 +44,50 @@ class Reflect: Initable {
     }
     
     func pin() -> Bool {
-        return Reflect.drive.insert(self)
+        return Reflect.execute {
+            let rowid = try Reflect.drive.insert(self)
+            if rowid > 0 {
+                self.id = rowid
+            }
+        }
     }
     
     func unPin() -> Bool {
-        return Reflect.drive.delete(id!)
+        return Reflect.execute {
+            try Reflect.drive.delete(self.id!)
+        }
     }
     
+}
+
+extension Reflect {
+    
+    static var settings:ReflectSettings = ReflectSettings.defaultSettings()
+    
+    class func configuration(appGroup:String, baseNamed:String){
+        settings = ReflectSettings(defaultName: baseNamed, appGroup: appGroup)
+    }
+
+    class func execute<T>(block: () throws -> T) -> Bool {
+        var success: Bool?
+        var failure: ErrorType?
+        
+        let box: () -> Void = {
+            do {
+                try block()
+                success = true
+            } catch {
+                failure = error
+            }
+        }
+        
+        box()
+        
+        if let failure = failure {
+            print(failure)
+            success = false
+        }
+        
+        return success!
+    }
 }

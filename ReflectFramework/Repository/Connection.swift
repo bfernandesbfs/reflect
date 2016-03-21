@@ -332,4 +332,13 @@ extension Result : CustomStringConvertible {
         }
     }
     
+    public var errorCode: Int {
+        switch self {
+        case let .Error(_, code, statement):
+            guard let _ = statement else { return Int(code) }
+            
+            return Int(code)
+        }
+    }
+    
 }

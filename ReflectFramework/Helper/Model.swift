@@ -72,6 +72,7 @@ struct ReflectSettings {
             
         }
         
+        print(path)
         return path
     }
 }

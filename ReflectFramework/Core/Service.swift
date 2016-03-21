@@ -16,46 +16,60 @@ class  Service<T: Initable> : Driver {
         return try! Connection(path)
     }()
     
-    func create(obj:AnyObject){
+    func create(obj:AnyObject) throws {
         let p:[MirrorModel] = Mirror.refectObject(obj)
         table = (obj as! T).dynamicType.tableName()
-        let scheme = Schema.Create(table,p)
-        print("REGISTER", scheme.sql , scheme.args)
+        try db.execute(Schema.Create(table,p).sql)
     }
     
-    func destroy(){
-        let scheme = Schema.Drop(table)
-        print("DESTROY", scheme.sql)
+    func destroy() throws {
+        try db.execute(Schema.Drop(table).sql)
     }
     
-    func fetchOne(id: Int) {
+    func fetchOne(obj:AnyObject, id: Int) {
         if checkRegister() {
-            let scheme = Schema.Select(table, id)
-            print("FECH" , scheme.sql , scheme.args, id)
+            let schema = Schema.Select(table, id)
+//            let row = db.prepareFetch(schema.sql, id)!
+//            let p:[MirrorModel] = Mirror.refectObject(obj)
+//    
+//            for property in p {
+//                let key = property["key"] as! String
+//                let type = property["type"] as! String
+//                if let value = castDataValue(key ,type: type, row: obj) {
+//                    base.setValue(value, forKey: key)
+//                }
+//            }
+            
         }
     }
     
-    func insert(obj:AnyObject) -> Bool {
+    func insert(obj:AnyObject) throws -> Int {
         if checkRegister() {
             let p:[MirrorModel] = Mirror.refectObject(obj)
-            let scheme = Schema.Insert(table, p)
-            print("ADD", scheme.sql, scheme.args)
-            return true
+            let schema = Schema.Insert(table, p)
+            return Int(try db.runRowId(schema.sql, schema.args))
         }
-        return false
+        return -1
     }
     
     func upsert() -> Bool {
         return false
     }
     
-    func delete(id: Int) -> Bool {
+    func delete(id: Int) throws -> Int {
         if checkRegister() {
-            let scheme = Schema.Delete(table, id)
-            print("DELETE" , scheme.sql , scheme.args, id)
-            return true
+            let schema = Schema.Delete(table, id)
+            return try db.runChange(schema.sql, id)
         }
-        return false
+        return -1
+    }
+    
+    func delete() throws -> Int {
+        if checkRegister() {
+            let schema = Schema.Delete(table , 0)
+            return try db.runChange(schema.sql)
+        }
+        return -1
     }
     
     /*
@@ -69,13 +83,29 @@ class  Service<T: Initable> : Driver {
         return table != nil
     }
     
-}
-
-extension Reflect {
-    
-    static var settings:ReflectSettings = ReflectSettings.defaultSettings()
-    
-    class func configuration(appGroup:String, baseNamed:String){
-        settings = ReflectSettings(defaultName: baseNamed, appGroup: appGroup)
+    private func castDataValue(key:String, type:String, row:Row) -> AnyObject! {
+        
+        switch type {
+        case String.declaredDatatype:
+            return row[key , String.self]
+        case Int.declaredDatatype:
+            return row[key , Int.self]
+        case Double.declaredDatatype:
+            return row[key , Double.self]
+        case Float.declaredDatatype:
+            return row[key , Float.self]
+        case NSNumber.declaredDatatype:
+            return row[key , NSNumber.self]
+        case Bool.declaredDatatype:
+            return row[key , Bool.self]
+        case NSDate.declaredDatatype:
+            return row[key , NSDate.self]
+        case NSData.declaredDatatype:
+            return row[key , NSData.self]
+        default:
+            return nil
+        }
+        
     }
+    
 }

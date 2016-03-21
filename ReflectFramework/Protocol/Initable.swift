@@ -11,7 +11,7 @@ protocol Initable {
     
     init()
     static func tableName() -> String
-    static func register()
-    static func unRegister()
+    static func register() -> Bool
+    static func unRegister() -> Bool
     static func unPinAll() -> Bool
 }

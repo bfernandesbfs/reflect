@@ -7,10 +7,11 @@
 //
 
 protocol Driver {
-    func create(obj:AnyObject)
-    func destroy()
+    func create(obj:AnyObject) throws
+    func destroy() throws
     func fetchOne(id: Int)
-    func insert(obj:AnyObject) -> Bool
+    func insert(obj:AnyObject) throws -> Int 
     func upsert() -> Bool
-    func delete(id: Int) -> Bool
+    func delete() throws -> Int
+    func delete(id: Int) throws -> Int
 }
