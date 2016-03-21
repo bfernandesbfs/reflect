@@ -45,7 +45,7 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testFind(){
-        let n = Car.findById(1)
+        let n = Car.findById(5)
         
         XCTAssert(n?.name == "VW", "Fetch Object is different")
     }
@@ -56,6 +56,17 @@ class ReflectFrameworkTests: XCTestCase {
         print(n.fetch())
     
         XCTAssert(n.year == 2015, "Fetch Object is different")
+    }
+    
+    func testChange() {
+        c.id = 5
+        c.name = "VW"
+        c.model = "Polo"
+        c.year = 2008
+        
+        print(c.pin())
+        
+        // XCTAssert(c.pin(), "Not was created a new object for Car")
     }
     
     func testPin() {

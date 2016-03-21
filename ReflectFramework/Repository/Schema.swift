@@ -7,36 +7,37 @@
 //
 
 enum Schema {
-    private static let indentifier:String = "id"
+    private static let identifier:String = "id"
     
     case Create(String, [MirrorModel])
     case Drop(String)
     case Select(String)
-    case Replace(String, [MirrorModel])
     case Insert(String, [MirrorModel])
+    case Update(String, Int, [MirrorModel])
     case Delete(String, Int)
     
     var sql: String {
         switch self {
         case .Create(let className,let properties):
-            return "CREATE TABLE IF NOT EXISTS \(className) (\(Schema.indentifier) INTEGER PRIMARY KEY AUTOINCREMENT \(createSql(properties)))"
+            return "CREATE TABLE IF NOT EXISTS \(className) (\(Schema.identifier) INTEGER PRIMARY KEY AUTOINCREMENT \(createSql(properties)))"
         case .Drop(let className):
             return "DROP TABLE \(className)"
         case .Select(let className):
-            return "SELECT * FROM \(className) WHERE \(Schema.indentifier) = ?"
-        case .Replace(let className,let properties):
-            return "INSERT OR REPLACE INTO \(className) (\(saveSql(properties)))"
+            return "SELECT * FROM \(className) WHERE \(Schema.identifier) = ?"
         case .Insert(let className,let properties):
-            return "INSERT INTO \(className) (\(saveSql(properties)))"
+            return "INSERT INTO \(className) (\(generateInsert(properties)))"
+        case .Update(let className,_ ,let properties):
+            return "UPDATE \(className) SET \(generateUpdate(properties)) WHERE \(Schema.identifier) = ?"
         case .Delete(let className , let objectId):
-            let comp = objectId == 0 ? "" : " WHERE \(Schema.indentifier) = ?"
+            let comp = objectId == 0 ? "" : " WHERE \(Schema.identifier) = ?"
             return "DELETE FROM \(className)" + comp
         }
     }
     
     var args:[AnyObject?] {
         switch self {
-        case .Replace(_,let properties):
+        case .Update(_, let id, var properties):
+            properties.append(MirrorModel(key:Schema.identifier, value: id, type: Int.declaredDatatype))
             return MirrorModel.getValues(properties)
         case .Insert(_,let properties):
             return MirrorModel.getValues(properties)
@@ -53,7 +54,7 @@ enum Schema {
         return fields
     }
     
-    private func saveSql(properties:[MirrorModel]) -> String {
+    private func generateInsert(properties:[MirrorModel]) -> String {
         
         var fields:String = ""
         var values:String = "VALUES ( "
@@ -74,4 +75,24 @@ enum Schema {
         }
         return fields + ") \(values)"
     }
+    
+    private func generateUpdate(properties:[MirrorModel]) -> String {
+        
+        var values:String = ""
+        var isFirst = true
+        
+        for property in properties {
+            
+            if isFirst {
+                isFirst = false
+                values += "\(property.key) = ?"
+
+            } else {
+                values += ", \(property.key) = ?"
+            }
+            
+        }
+        return values
+    }
+
 }
