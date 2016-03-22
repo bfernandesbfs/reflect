@@ -8,19 +8,21 @@
 
 import Foundation
 
-class Query<T: Initable>{
+class Query<T :Initable>{
     typealias Handler = (query: Query) -> Query
     
     private var dataClause:[Filter]
+    private var dataArgs:[AnyObject]
     private var nextPlaceholder: String {
         return "?"
     }
     
     init(){
         dataClause = []
+        dataArgs   = []
     }
     
-    func filter(key:String, _ comparison: Comparison, value:String...) -> Self {
+    func filter(key:String, _ comparison: Comparison, value:AnyObject...) -> Self {
         if value.count > 1 {
             dataClause.append(Filter.Subset(key, comparison, value))
         }
@@ -44,7 +46,7 @@ class Query<T: Initable>{
         return self
     }
     
-    func query() -> [T]? {
+    func list() -> [T]? {
         
         if dataClause.count == 0 {
             return nil
@@ -55,21 +57,22 @@ class Query<T: Initable>{
             filterClause.append(filterOutput(filter))
         }
         
-        let q = "WHERE " + filterClause.joinWithSeparator(" AND ")
-        print(q)
-        return []
+        let q = "SELECT * FROM \(T.tableName()) WHERE " + filterClause.joinWithSeparator(" AND ")
+
+        return Service<T>().query(q, args: dataArgs)
     }
-    
     
     /*
     // MARK: - Private Methods
     */
     private func filterOutput(filter: Filter) -> String {
         switch filter {
-        case .Compare(let field, let comparison,_):
+        case .Compare(let field, let comparison, let value):
+            dataArgs.append(value)
             return "\(field) \(comparison.description) \(nextPlaceholder)"
         case .Subset(let field, let scope, let values):
             let valueDescriptions = values.map { value in
+                dataArgs.append(value)
                 return nextPlaceholder
                 }.joinWithSeparator(" , ")
             return "\(field) \(scope) (\(valueDescriptions))"

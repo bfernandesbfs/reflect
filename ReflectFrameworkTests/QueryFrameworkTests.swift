@@ -21,13 +21,24 @@ class QueryFrameworkTests: XCTestCase {
         super.tearDown()
     }
     
-    func testQuery() {
+    
+    func testIncludeQuery() {
+    
+        let t = Car.query()
         
+        t.filter("id", .Equals, value: 2).filter("firstName", .In, value: "Bruno", "Bruno2","Bruno3")
+        
+        t.list()
+        
+    }
+    
+    func testQuery() {
+    
         let q = Query<Car>()
         
-        q.filter("id", .Equals, value: "2")
+        q.filter("id", .NotEquals, value: "2")
 
-        q.query()
+        q.list()
         
     }
     

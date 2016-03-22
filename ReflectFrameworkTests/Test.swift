@@ -9,10 +9,14 @@
 
 @testable import ReflectFramework
 
-class Car: Reflect  {
+class Car: Reflect {
     var name:String?
     var model:String?
     var year:Int
+    
+    override class func tableName() -> String {
+        return "Car_"
+    }
     
     required init(){
         year = 0

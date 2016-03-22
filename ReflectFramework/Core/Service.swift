@@ -8,7 +8,7 @@
 
 import Foundation
 
-class  Service<T: Initable> : Driver {
+class Service<T: Initable> : Driver {
     
     private var table:String!
     private lazy var db: Connection = {
@@ -73,6 +73,13 @@ class  Service<T: Initable> : Driver {
         try checkRegister()
         let schema = Schema.Delete(table , 0)
         return try db.runChange(schema.sql)
+    }
+    
+    func query(query:String , args:AnyObject...) -> [T]? {
+        
+        print(query, args)
+        
+        return nil
     }
     
     /*

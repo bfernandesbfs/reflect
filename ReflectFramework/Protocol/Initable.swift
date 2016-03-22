@@ -9,10 +9,16 @@
 protocol Initable {
     var id: Int? { get }
     
-    init()
+    //init()
     static func tableName() -> String
     static func register() -> Bool
     static func unRegister() -> Bool
     static func unPinAll() -> Bool
     static func findById(id:Int) -> Self?
+}
+
+extension Initable {    
+    static func query() -> Query<Self> {
+        return Query()
+    }
 }

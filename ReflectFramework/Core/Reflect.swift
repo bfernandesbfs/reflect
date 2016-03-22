@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Reflect:NSObject, Initable {
+class Reflect: NSObject, Initable {
     var id:Int?
     
     private static var drive:Driver = Service<Reflect>()
