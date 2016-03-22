@@ -1,5 +1,5 @@
 //
-//  TestPeople.swift
+//  Test.swift
 //  ReflectFramework
 //
 //  Created by Bruno Fernandes on 18/03/16.

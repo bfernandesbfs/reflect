@@ -57,7 +57,7 @@ class Reflect:NSObject, Initable {
     func pin() -> Bool {
         return Reflect.execute {
             let rowid = try Reflect.drive.insert(self)
-            if rowid > 0 {
+            if self.id == 0 && rowid > 0 {
                 self.id = rowid
             }
         }
