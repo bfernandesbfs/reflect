@@ -59,10 +59,10 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testChange() {
-        c.id = 5
+        c.id = 2
         c.name = "VW"
-        c.model = "Polo"
-        c.year = 2008
+        c.model = "Fusca"
+        c.year = 1984
         
         print(c.pin())
         
