@@ -55,7 +55,7 @@ class ReflectFrameworkTests: XCTestCase {
         n.id = 2
         print(n.fetch())
     
-        XCTAssert(n.year == 2015, "Fetch Object is different")
+        XCTAssert(n.year == 1984, "Fetch Object is different")
     }
     
     func testChange() {

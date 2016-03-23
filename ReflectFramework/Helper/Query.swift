@@ -13,13 +13,34 @@ class Query<T :Initable>{
     
     private var dataClause:[Filter]
     private var dataArgs:[AnyObject]
+    private var entity:String
     private var nextPlaceholder: String {
         return "?"
+    }
+    
+    
+    var description:String {
+        if dataClause.count == 0 {
+            return "SELECT * FROM \(T.tableName())"
+        }
+        
+        var filterClause: [String] = []
+        for filter in dataClause {
+            filterClause.append(filterOutput(filter))
+        }
+        
+        return "SELECT * FROM \(entity) WHERE " + filterClause.joinWithSeparator(" AND ")
     }
     
     init(){
         dataClause = []
         dataArgs   = []
+        entity     = T.tableName()
+    }
+    
+    convenience init(entity:String){
+        self.init()
+        self.entity = entity
     }
     
     func filter(key:String, _ comparison: Comparison, value:AnyObject...) -> Self {
@@ -47,19 +68,7 @@ class Query<T :Initable>{
     }
     
     func list() -> [T]? {
-        
-        if dataClause.count == 0 {
-            return nil
-        }
-        
-        var filterClause: [String] = []
-        for filter in dataClause {
-            filterClause.append(filterOutput(filter))
-        }
-        
-        let q = "SELECT * FROM \(T.tableName()) WHERE " + filterClause.joinWithSeparator(" AND ")
-
-        return Service<T>().query(q, args: dataArgs)
+        return Service<T>().query(self.description, args: dataArgs)
     }
     
     /*

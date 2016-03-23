@@ -7,7 +7,7 @@
 //
 
 enum Schema {
-    private static let identifier:String = "id"
+    static let identifier:String = "id"
     
     case Create(String, [MirrorModel])
     case Drop(String)

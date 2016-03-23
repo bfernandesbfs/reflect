@@ -14,9 +14,9 @@ class Car: Reflect {
     var model:String?
     var year:Int
     
-    override class func tableName() -> String {
-        return "Car_"
-    }
+//    override class func tableName() -> String {
+//        return "Car_"
+//    }
     
     required init(){
         year = 0

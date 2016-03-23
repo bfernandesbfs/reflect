@@ -35,8 +35,8 @@ class Service<T: Initable> : Driver {
     
     func fetch(obj:Reflect) throws {
         try checkRegister()
-        let schema = Schema.Select(table)
-        if let row = try db.prepareFetch(schema.sql, obj.id) {
+        let q = Query<T>(entity: table).filter(Schema.identifier, Comparison.Equals, value: obj.id!).description
+        if let row = try db.prepareFetch(q, obj.id) {
             for property in Mirror.refectObject(obj) {
                 if let value = bindValue(property, row: row) {
                     obj.setValue(value, forKey: property.key)
