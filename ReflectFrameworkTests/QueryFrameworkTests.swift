@@ -24,11 +24,11 @@ class QueryFrameworkTests: XCTestCase {
     
     func testIncludeQuery() {
     
-        let t = Car.query()
-        
-        t.filter("id", .Equals, value: 2).filter("firstName", .In, value: "Bruno", "Bruno2","Bruno3")
-        
-        t.list()
+//        let t = Car.query()
+//        
+//        t.filter("id", .Equals, value: 2).filter("firstName", .In, value: "Bruno", "Bruno2","Bruno3")
+//        
+//        t.list()
         
     }
     

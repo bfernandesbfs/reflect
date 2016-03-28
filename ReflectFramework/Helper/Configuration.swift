@@ -1,31 +1,12 @@
 //
-//  Model.swift
+//  Configuration.swift
 //  ReflectFramework
 //
 //  Created by Bruno Fernandes on 18/03/16.
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-struct MirrorModel {
-    var key:String
-    var value:AnyObject!
-    var type:String
-    
-    static func getValues(properties:[MirrorModel]) -> [AnyObject?] {
-        var list:[AnyObject?] = [AnyObject]()
-        for property in properties {
-            if let obj = property.value {
-                list.append(obj)
-            }
-            else{
-                list.append(nil)
-            }
-        }
-        return list
-    }
-}
-
-struct ReflectSettings {
+struct Configuration {
     private var defaultName:String = "ReflectDB"
     private var appGroup:String = ""
     
@@ -34,8 +15,8 @@ struct ReflectSettings {
         self.appGroup    = appGroup
     }
     
-    static func defaultSettings() -> ReflectSettings {
-        return ReflectSettings(defaultName: "ReflectDB", appGroup: "")
+    static func defaultSettings() -> Configuration {
+        return Configuration(defaultName: "ReflectDB", appGroup: "")
     }
     
     /*

@@ -8,20 +8,17 @@
 
 import Foundation
 
-class Query<T :Initable>{
+public class Query<T :ReflectProtocol>{
     typealias Handler = (query: Query) -> Query
     
+    var dataArgs:[AnyObject]
+    
     private var dataClause:[Filter]
-    private var dataArgs:[AnyObject]
-    private var entity:String
-    private var nextPlaceholder: String {
-        return "?"
-    }
     
-    
-    var description:String {
+    var statement:(sql:String, args:[AnyObject]) {
+        let entity = T.entityName()
         if dataClause.count == 0 {
-            return "SELECT * FROM \(T.tableName())"
+            return ("SELECT * FROM \(entity)", [])
         }
         
         var filterClause: [String] = []
@@ -29,18 +26,12 @@ class Query<T :Initable>{
             filterClause.append(filterOutput(filter))
         }
         
-        return "SELECT * FROM \(entity) WHERE " + filterClause.joinWithSeparator(" AND ")
+        return ("SELECT * FROM \(entity) WHERE " + filterClause.joinWithSeparator(" AND ") , dataArgs)
     }
     
     init(){
         dataClause = []
         dataArgs   = []
-        entity     = T.tableName()
-    }
-    
-    convenience init(entity:String){
-        self.init()
-        self.entity = entity
     }
     
     func filter(key:String, _ comparison: Comparison, value:AnyObject...) -> Self {
@@ -68,7 +59,7 @@ class Query<T :Initable>{
     }
     
     func list() -> [T]? {
-        return Service<T>().query(self.description, args: dataArgs)
+        return nil //Service<T>().query(self.description, args: dataArgs)
     }
     
     /*
@@ -78,11 +69,11 @@ class Query<T :Initable>{
         switch filter {
         case .Compare(let field, let comparison, let value):
             dataArgs.append(value)
-            return "\(field) \(comparison.description) \(nextPlaceholder)"
+            return "\(field) \(comparison.description) ?"
         case .Subset(let field, let scope, let values):
             let valueDescriptions = values.map { value in
                 dataArgs.append(value)
-                return nextPlaceholder
+                return "?"
                 }.joinWithSeparator(" , ")
             return "\(field) \(scope) (\(valueDescriptions))"
         case .Group(let op, let filters):

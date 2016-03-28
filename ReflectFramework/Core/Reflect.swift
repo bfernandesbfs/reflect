@@ -6,86 +6,42 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-import Foundation
-
-class Reflect: NSObject, Initable {
-    var id:Int?
+class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
+    var objectId:Int?
     
-    private static var drive:Driver = Service<Reflect>()
-    
-    required override init(){
-        id = 0
+    class func entityName() -> String {
+        return String(self)
     }
     
-    class func tableName() -> String {
-        return NSStringFromClass(self).componentsSeparatedByString(".").last!
+    class func primaryKey() -> String {
+        return "objectId"
     }
     
-    class func register() -> Bool {
-        return execute {
-            try Reflect.drive.create(self.init())
-        }
+    class func ignoredProperties() -> Set<String> {
+        return []
     }
     
-    class func unRegister() -> Bool {
-        return execute {
-            try Reflect.drive.destroy()
-        }
+    override required init(){
     }
     
-    class func unPinAll() -> Bool {
-        return Reflect.execute {
-            try Reflect.drive.delete()
-        }
-    }
-    
-    static func findById(id: Int) -> Self? {
-        do {
-            return try Reflect.drive.find(self.init(), id: id)
-        }
-        catch{
-            return nil
-        }
-    }
-    
-    func fetch() -> Bool {
-        return Reflect.execute {
-            try Reflect.drive.fetch(self)
-        }
-    }
-    
-    func pin() -> Bool {
-        return Reflect.execute {
-            let rowid = try Reflect.drive.insert(self)
-            if self.id == 0 && rowid > 0 {
-                self.id = rowid
-            }
-        }
-    }
-    
-    func unPin() -> Bool {
-        return Reflect.execute {
-            try Reflect.drive.delete(self.id!)
-        }    
-    }
-
 }
 
 extension Reflect {
     
-    static var settings:ReflectSettings = ReflectSettings.defaultSettings()
+    static var settings:Configuration = Configuration.defaultSettings()
     
     class func configuration(appGroup:String, baseNamed:String){
-        settings = ReflectSettings(defaultName: baseNamed, appGroup: appGroup)
+        settings = Configuration(defaultName: baseNamed, appGroup: appGroup)
     }
-
-    class func execute<T>(block: () throws -> T) -> Bool {
+    
+    class func execute<T>(block: () throws -> T) -> (success:Bool, data:T?) {
+        var data: T?
         var success: Bool?
         var failure: ErrorType?
         
         let box: () -> Void = {
             do {
-                try block()
+                data = try block()
                 success = true
             } catch {
                 failure = error
@@ -96,9 +52,9 @@ extension Reflect {
         
         if let failure = failure {
             print(failure)
+            data = nil
             success = false
         }
-        
-        return success!
+        return (success! , data)
     }
 }

@@ -11,7 +11,7 @@ import XCTest
 
 class ReflectFrameworkTests: XCTestCase {
     
-    let c = Car()
+    var c = Car()
     
     override func setUp() {
         super.setUp()
@@ -41,7 +41,7 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testTableName(){
-        XCTAssert(Car.tableName() == "Car", "Object not was created with name informed")
+        XCTAssert(Car.entityName() == "Car", "Object not was created with name informed")
     }
     
     func testFind(){
@@ -52,52 +52,47 @@ class ReflectFrameworkTests: XCTestCase {
     
     func testFetch(){
         let n = Car()
-        n.id = 2
+        n.objectId = 2
         print(n.fetch())
     
         XCTAssert(n.year == 1984, "Fetch Object is different")
     }
     
     func testChange() {
-        c.id = 2
+        c.objectId = 2
         c.name = "VW"
         c.model = "Fusca"
         c.year = 1984
-        
-        print(c.pin())
-        
-        // XCTAssert(c.pin(), "Not was created a new object for Car")
+
+        XCTAssert(c.pin(), "Not was created a new object for Car")
     }
     
     func testPin() {
+        c.objectId = 3
         c.name = "Renault"
         c.model = "Logan"
         c.year = 2010
         
-        print(c.pin())
-        
-       // XCTAssert(c.pin(), "Not was created a new object for Car")
+        XCTAssert(c.pin(), "Not was created a new object for Car")
     }
     
     func testUpdate(){
-        c.id = 4
+        c.objectId = 1
         c.name = "GM"
         c.model = "Corsa"
         c.year = 2011
         
-        print(c.pin())
-        
-        // XCTAssert(c.pin(), "Not was created a new object for Car")
+        XCTAssert(c.pin(), "Not was created a new object for Car")
         
     }
     
     func testUnPin(){
-        c.id = 2
+        c.objectId = 2
         XCTAssert(c.unPin(), "Object car was deleted")
     }
     
-    func testUnPinAll(){
-        XCTAssert(Car.unPinAll(), "All Objects deleted")
+    func testClear(){
+        XCTAssert(Car.clean(), "All Objects deleted")
     }
     
     func testFlow(){
@@ -105,16 +100,16 @@ class ReflectFrameworkTests: XCTestCase {
         XCTAssert(Reflect.settings.getDBName() == "Teste.db", "Data base and path not created")
         
         XCTAssert(Car.register(), "found error when if register the object")
-        let n = Car()
+        var n = Car()
         n.model = "Polo"
         n.year  = 2008
         
         XCTAssert(n.pin(), "Not was created a new object for Car")
-        print("Id object : \(n.id)")
+        print("Id object : \(n.objectId)")
         
         XCTAssert(n.unPin(), "Object car was deleted")
         
-        Car.unPinAll()
+        Car.clean()
         XCTAssert(Car.unRegister(), "found error when remove o object")
     }
     

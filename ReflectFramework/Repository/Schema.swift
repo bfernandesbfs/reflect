@@ -6,93 +6,104 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-enum Schema {
-    static let identifier:String = "id"
+internal enum SchemaType: String {
+    case Text       = "TEXT"
+    case Integer    = "INTEGER"
+    case Real       = "REAL"
+    case Blob       = "BLOB"
+    case Numeric    = "NUMERIC"
+    case Null       = "NULL"
     
-    case Create(String, [MirrorModel])
-    case Drop(String)
-    case Select(String)
-    case Insert(String, [MirrorModel])
-    case Update(String, Int, [MirrorModel])
-    case Delete(String, Int)
-    
-    var sql: String {
-        switch self {
-        case .Create(let className,let properties):
-            return "CREATE TABLE IF NOT EXISTS \(className) (\(Schema.identifier) INTEGER PRIMARY KEY AUTOINCREMENT \(createSql(properties)))"
-        case .Drop(let className):
-            return "DROP TABLE \(className)"
-        case .Select(let className):
-            return "SELECT * FROM \(className) WHERE \(Schema.identifier) = ?"
-        case .Insert(let className,let properties):
-            return "INSERT INTO \(className) (\(generateInsert(properties)))"
-        case .Update(let className,_ ,let properties):
-            return "UPDATE \(className) SET \(generateUpdate(properties)) WHERE \(Schema.identifier) = ?"
-        case .Delete(let className , let objectId):
-            let comp = objectId == 0 ? "" : " WHERE \(Schema.identifier) = ?"
-            return "DELETE FROM \(className)" + comp
-        }
-    }
-    
-    var args:[AnyObject?] {
-        switch self {
-        case .Update(_, let id, var properties):
-            properties.append(MirrorModel(key:Schema.identifier, value: id, type: Int.declaredDatatype))
-            return MirrorModel.getValues(properties)
-        case .Insert(_,let properties):
-            return MirrorModel.getValues(properties)
+    init?(type: Any.Type) {
+        switch type {
+        case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type, is Int64.Type, is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type, is UInt64.Type, is Bool.Type:
+            self.init(rawValue: "INTEGER")
+        case is Double.Type, is Float.Type, is NSDate.Type:
+            self.init(rawValue: "REAL")
+        case is NSData.Type:
+            self.init(rawValue: "BLOB")
+        case is NSNumber.Type:
+            self.init(rawValue: "NUMERIC")
+        case is String.Type, is NSString.Type, is Character.Type:
+            self.init(rawValue: "TEXT")
         default:
-            return []
+            fatalError("Error ")
         }
     }
+}
+
+public enum Schema<T: ReflectProtocol> {
     
-    private func createSql(properties:[MirrorModel]) -> String {
-        var fields:String = String()
-        for property in properties {
-            fields += ", \(property.key) \(property.type)"
-        }
-        return fields
-    }
+    case Create(T)
+    case Drop(String)
+    case Insert(T)
+    case Update(T)
+    case Delete(T)
     
-    private func generateInsert(properties:[MirrorModel]) -> String {
-        
-        var fields:String = ""
-        var values:String = "VALUES ( "
-        var isFirst = true
-        
-        for property in properties {
+    var statement: (sql:String, args:[AnyObject?]) {
+        switch self {
+        case .Create(let object):
             
-            if isFirst {
-                isFirst = false
-                fields += "\(property.key)"
-                values += "?"
-                
-            } else {
-                fields += ", \(property.key)"
-                values += ", ?"
+            let tableName =  T.entityName()
+            var statement = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
+            var fields:[String] = []
+            
+            let propertyData = ReflectData.validPropertyDataForObject(object)
+            let _ = propertyData.map { value in
+                var data = "\(value.name!) \(SchemaType(type: value.type!)!.rawValue)"
+                data += value.isOptional ? "" : " NOT NULL"
+                fields.append(data)
             }
             
-        }
-        return fields + ") \(values)"
-    }
-    
-    private func generateUpdate(properties:[MirrorModel]) -> String {
-        
-        var values:String = ""
-        var isFirst = true
-        
-        for property in properties {
+            statement += fields.joinWithSeparator(", ")
             
-            if isFirst {
-                isFirst = false
-                values += "\(property.key) = ?"
-
-            } else {
-                values += ", \(property.key) = ?"
+            if T.self is FieldsProtocol.Type {
+                let fieds = T.self as! FieldsProtocol.Type
+                statement += ", PRIMARY KEY (\(fieds.primaryKey()))"
             }
             
+            statement += ")"
+        
+            return (statement, [])
+           // return "CREATE TABLE IF NOT EXISTS \(className) (\(Schema.identifier) INTEGER PRIMARY KEY AUTOINCREMENT \(createSql(properties)))"
+        case .Drop(let tableName):
+            return ("DROP TABLE \(tableName)" , [])
+            
+        case .Insert(let object):
+            var statement = "INSERT OR REPLACE INTO " + T.entityName()
+            let propertyData = ReflectData.validPropertyDataForObject(object)
+            
+            var dataArgs:[AnyObject?] = []
+            var placeholder:[String] = []
+            let columns = propertyData.map { value in
+                dataArgs.append(value.value)
+                placeholder.append("?")
+                return value.name!
+                }.joinWithSeparator(", ")
+            
+            /* Columns to be inserted */
+            statement += " ( \(columns) ) VALUES (" + placeholder.joinWithSeparator(", ") + ")"
+            return (statement, dataArgs)
+            
+        case .Update(let object):
+            var statement = "UPDATE \(T.entityName()) SET"
+            let propertyData = ReflectData.validPropertyDataForObject(object)
+            
+            var dataArgs:[AnyObject!] = []
+            let columns = propertyData.map { value in
+                dataArgs.append(value.value)
+                return "\(value.name!) = ?"
+                }.joinWithSeparator(", ")
+            
+            dataArgs.append(object.objectId)
+            statement += " \(columns) WHERE objectId = ?"
+            
+            return (statement, dataArgs)
+            
+        case .Delete(let object):
+            let comp = object.objectId == nil ? "" : " WHERE objectId = ?"
+            return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!])
         }
-        return values
     }
-
+    
 }

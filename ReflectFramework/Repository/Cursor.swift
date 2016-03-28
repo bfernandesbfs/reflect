@@ -70,10 +70,15 @@ extension Cursor : SequenceType {
     }
     
     public func generate() -> AnyGenerator<Value?> {
-        var idx = 0
-        return anyGenerator {
-            idx >= self.columnCount ? Optional<Value?>.None : self[idx++]
+        var idx = -1
+        return AnyGenerator {
+            idx >= self.columnCount ? Optional<Value?>.None : self[self.incrementIdx(&idx)]
         }
+    }
+    
+    public func incrementIdx(inout idx:Int) -> Int{
+        idx = idx + 1
+        return idx
     }
     
 }

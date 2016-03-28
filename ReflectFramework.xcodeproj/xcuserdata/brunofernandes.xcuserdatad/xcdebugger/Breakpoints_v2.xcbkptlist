@@ -9,44 +9,59 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ReflectFramework/Repository/Connection.swift"
-            timestampString = "480286987.701112"
+            filePath = "ReflectFrameworkTests/ReflectFrameworkTests.swift"
+            timestampString = "480890191.46547"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "runRowId(_:_:)"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "testFetch()"
             landmarkType = "5">
             <Locations>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ReflectFramework.Connection.runRowId (ReflectFramework.Connection)(Swift.String, Swift.Array&lt;Swift.Optional&lt;Swift.AnyObject&gt;&gt;) throws -&gt; Swift.Int64"
-                  moduleName = "ReflectFramework"
+                  symbolName = "ReflectFrameworkTests.ReflectFrameworkTests.testFetch () -&gt; ()"
+                  moduleName = "ReflectFrameworkTests"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFramework/Repository/Connection.swift"
-                  timestampString = "480366556.943321"
+                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFrameworkTests/ReflectFrameworkTests.swift"
+                  timestampString = "480891610.64355"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "130"
-                  endingLineNumber = "130"
-                  offsetFromSymbolStart = "36">
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "255">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ReflectFramework.Connection.(runRowId (ReflectFramework.Connection) -&gt; (Swift.String, Swift.Array&lt;Swift.Optional&lt;Swift.AnyObject&gt;&gt;) throws -&gt; Swift.Int64).(closure #1)"
-                  moduleName = "ReflectFramework"
+                  symbolName = "ReflectFrameworkTests.ReflectFrameworkTests.(testFetch () -&gt; ()).(implicit closure #1)"
+                  moduleName = "ReflectFrameworkTests"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFramework/Repository/Connection.swift"
-                  timestampString = "480366556.943573"
+                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFrameworkTests/ReflectFrameworkTests.swift"
+                  timestampString = "480891610.643742"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "131"
-                  endingLineNumber = "131"
-                  offsetFromSymbolStart = "39">
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ReflectFrameworkTests.ReflectFrameworkTests.(testFetch () -&gt; ()).(implicit closure #2)"
+                  moduleName = "ReflectFrameworkTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brunofernandes/Documents/Projetos/Bfs/ReflectFramework/ReflectFrameworkTests/ReflectFrameworkTests.swift"
+                  timestampString = "480891610.643885"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "4">
                </Location>
             </Locations>
          </BreakpointContent>

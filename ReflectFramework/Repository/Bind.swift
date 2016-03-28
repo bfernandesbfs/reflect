@@ -9,8 +9,8 @@
 public protocol Value {}
 
 public protocol Binding {
-    typealias ValueType = Self
-    typealias Datatype : Value
+    associatedtype ValueType = Self
+    associatedtype Datatype : Value
     static var declaredDatatype: String { get }
     static func fromDatatypeValue(datatypeValue: Datatype) -> ValueType
 }

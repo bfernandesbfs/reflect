@@ -126,6 +126,11 @@ public final class Connection {
         return try prepare(statement).run(bindings)
     }
     
+    public func run<T: ReflectProtocol>(schema: Schema<T>) throws -> Statement {
+        return try prepare(schema.statement.sql).run(schema.statement.args)
+    }
+    
+    
     public func runRowId(statement: String, _ bindings: [AnyObject?]) throws -> Int64 {
         return try sync {
             try self.run(statement ,bindings)
@@ -133,21 +138,12 @@ public final class Connection {
         }
     }
     
-    public func runChange(statement: String, _ bindings: AnyObject?...) throws -> Int {
+    public func runChange<T: ReflectProtocol>(schema: Schema<T>) throws -> Int {
         return try sync {
-            try self.run(statement ,bindings)
+            try self.run(schema)
             return self.changes
         }
     }
-    
-    public func runChange(statement: String, _ bindings: [AnyObject?]) throws -> Int {
-        return try sync {
-            try self.run(statement ,bindings)
-            return self.changes
-        }
-    }
-    
-    
     
     // MARK: - Transactions
     
@@ -263,7 +259,7 @@ extension Connection {
             return columnNames
         }()
         
-        return AnySequence { anyGenerator { statement.next().map { Row(columnNames, $0) } } }
+        return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
     }
     
     public func prepareFetch(statement: String, _ bindings: AnyObject?...) throws -> Row? {
