@@ -24,21 +24,24 @@ class QueryFrameworkTests: XCTestCase {
     
     func testIncludeQuery() {
     
-//        let t = Car.query()
-//        
-//        t.filter("id", .Equals, value: 2).filter("firstName", .In, value: "Bruno", "Bruno2","Bruno3")
-//        
-//        t.list()
+        let t = Car.query()
         
+        t.filter("year", Comparison.LessThan, value: 2000)
+        
+        let list:[Car] = Car.findObject(t)
+        
+        print(list.count , list.first!.createAt)
     }
     
     func testQuery() {
     
         let q = Query<Car>()
         
-        q.filter("id", .NotEquals, value: "2")
-
-        q.list()
+        q.filter("year", .NotEquals, value: 2010)
+        
+        let list:[Car] = q.findObject()
+        
+        XCTAssertGreaterThan(list.count , 1, "Many Objects found")
         
     }
     

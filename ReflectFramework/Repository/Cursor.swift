@@ -158,14 +158,6 @@ public struct Row {
         return get(column)
     }
     
-    public subscript(column: String , type:NSNumber.Type) -> NSNumber {
-        return get(column)
-    }
-    
-    public subscript(column: String , type:NSNumber.Type) -> NSNumber? {
-        return get(column)
-    }
-    
     public subscript(column: String , type:NSDate.Type) -> NSDate {
         return get(column)
     }

@@ -135,7 +135,6 @@ extension Statement : GeneratorType {
     public func next() -> [Value?]? {
         return try! step() ? Array(row) : nil
     }
-    
 }
 
 extension Statement : CustomStringConvertible {

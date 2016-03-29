@@ -15,7 +15,7 @@ class ReflectFrameworkTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        testRegister()
+        //testRegister()
     }
     
     override func tearDown() {
@@ -45,15 +45,15 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testFind(){
-        let n = Car.findById(5)
+        let n = Car.findById(1)
         
-        XCTAssert(n?.name == "VW", "Fetch Object is different")
+        XCTAssert(n?.name == "GM", "Fetch Object is different")
     }
     
     func testFetch(){
         let n = Car()
         n.objectId = 2
-        print(n.fetch())
+        n.fetch()
     
         XCTAssert(n.year == 1984, "Fetch Object is different")
     }
@@ -68,11 +68,11 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testPin() {
-        c.objectId = 3
+        //c.objectId = 4
         c.name = "Renault"
         c.model = "Logan"
         c.year = 2010
-        
+    
         XCTAssert(c.pin(), "Not was created a new object for Car")
     }
     
@@ -83,11 +83,10 @@ class ReflectFrameworkTests: XCTestCase {
         c.year = 2011
         
         XCTAssert(c.pin(), "Not was created a new object for Car")
-        
     }
     
     func testUnPin(){
-        c.objectId = 2
+        c.objectId = 4
         XCTAssert(c.unPin(), "Object car was deleted")
     }
     

@@ -32,9 +32,6 @@ internal struct ReflectData {
             return mirror.subjectType
         }
         
-        // TODO: Find a better way to unwrap optional types
-        // Can easily be done using mirror if the encapsulated value is not nil
-        
         switch mirror.subjectType {
         case is Optional<String>.Type:      return String.self
         case is Optional<NSString>.Type:    return NSString.self
@@ -81,6 +78,10 @@ extension ReflectData {
         return validPropertyDataForMirror(Mirror(reflecting: object))
     }
     
+    internal static func validPropertyDataForObject (object: ReflectProtocol, ignoredProperties: Set<String>) -> [ReflectData] {
+        return validPropertyDataForMirror(Mirror(reflecting: object), ignoredProperties: ignoredProperties)
+    }
+    
     private static func validPropertyDataForMirror(mirror: Mirror, ignoredProperties: Set<String> = []) -> [ReflectData] {
         
         var ignore = ignoredProperties
@@ -99,7 +100,7 @@ extension ReflectData {
         propertyData += mirror.children.map {
             ReflectData(property: $0)
             }.filter({
-                $0.isValid && !ignoredProperties.contains($0.name!)
+                $0.isValid && !ignore.contains($0.name!)
             })
         return propertyData
     }

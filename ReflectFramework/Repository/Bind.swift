@@ -58,16 +58,6 @@ extension Float : Value , Binding   {
     }
 }
 
-extension NSNumber : Value , Binding  {
-    
-    public class var declaredDatatype:String {
-        return "NUMERIC"
-    }
-    public static func fromDatatypeValue(datatypeValue: NSNumber) -> NSNumber {
-        return datatypeValue
-    }
-}
-
 extension Bool : Value , Binding  {
     
     public static var declaredDatatype = "BOOLEAN"
@@ -84,7 +74,7 @@ extension Bool : Value , Binding  {
 extension NSDate : Value , Binding  {
     
     public class var declaredDatatype:String {
-        return "DATETIME"
+        return "DATE"
     }
     public class func fromDatatypeValue(datatypeValue: String) -> NSDate {
         return dateFormatter.dateFromString(datatypeValue)!

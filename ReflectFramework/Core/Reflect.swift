@@ -6,22 +6,25 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
-    var objectId:Int?
+public class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
+    public var objectId:NSNumber?
+    public var createAt: NSDate?
+    public var updateAt: NSDate?
     
-    class func entityName() -> String {
+    public class func entityName() -> String {
         return String(self)
     }
     
-    class func primaryKey() -> String {
-        return "objectId"
-    }
-    
-    class func ignoredProperties() -> Set<String> {
+    public class func primaryKeys() -> Set<String> {
         return []
     }
     
-    override required init(){
+    public class func ignoredProperties() -> Set<String> {
+        return []
+    }
+    
+    override required public init(){
+        super.init()
     }
     
 }

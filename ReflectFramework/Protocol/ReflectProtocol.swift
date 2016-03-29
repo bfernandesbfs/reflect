@@ -9,17 +9,23 @@
 import Foundation
 
 public protocol ReflectProtocol {
-    var objectId:Int? { get set }
+    var objectId:NSNumber? { get set }
+    var createAt:NSDate? {get set}
+    var updateAt:NSDate? {get set}
     init()
     static func entityName() -> String
 }
 
 public protocol FieldsProtocol {
-    static func primaryKey() -> String
+    static func primaryKeys() -> Set<String>
     static func ignoredProperties() -> Set<String>
 }
 
 extension ReflectProtocol {
+    
+    static func query() -> Query<Self> {
+        return Query()
+    }
     
     static func register() -> Bool {
         return Reflect.execute {
@@ -32,13 +38,19 @@ extension ReflectProtocol {
             return try Driver().drop(self)
         }.success
     }
+
+    static func findObject(query:Query<Self>) -> [Self] {
+        return Reflect.execute {
+            return try Driver().find(query)
+        }.data!
+    }
     
     static func findById(id: Int) -> Self? {
         return Reflect.execute {
             return try Driver().find(id)
         }.data!
     }
-    
+
     static func clean() -> Bool {
         return Reflect.execute {
             return try Driver().removeAll(self)

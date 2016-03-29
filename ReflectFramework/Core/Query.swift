@@ -11,11 +11,11 @@ import Foundation
 public class Query<T :ReflectProtocol>{
     typealias Handler = (query: Query) -> Query
     
-    var dataArgs:[AnyObject]
+    var dataArgs:[AnyObject?]
     
     private var dataClause:[Filter]
     
-    var statement:(sql:String, args:[AnyObject]) {
+    var statement:(sql:String, args:[AnyObject?]) {
         let entity = T.entityName()
         if dataClause.count == 0 {
             return ("SELECT * FROM \(entity)", [])
@@ -58,8 +58,8 @@ public class Query<T :ReflectProtocol>{
         return self
     }
     
-    func list() -> [T]? {
-        return nil //Service<T>().query(self.description, args: dataArgs)
+    func findObject() -> [T] {
+        return try! Driver().find(self)
     }
     
     /*

@@ -30,7 +30,14 @@ public class Driver<T :ReflectProtocol>: DriverProtocol {
     }
     
     public func save(obj: T) throws {
-        try db.run(Schema.Insert(obj))
+        var rft = obj
+        if rft.objectId == nil {
+            let rowId = try db.runRowId(Schema.Insert(rft))
+            rft.objectId = NSNumber(longLong: rowId)
+        }
+        else{
+            try change(obj)
+        }
     }
     
     public func change(obj: T) throws -> Int {
@@ -42,10 +49,8 @@ public class Driver<T :ReflectProtocol>: DriverProtocol {
     }
     
     public func fetch(obj: T) throws {
-        
         let q = Query<T>().filter("objectId", Comparison.Equals, value: obj.objectId!)
-        
-        if let row = try db.prepareFetch(q.statement.sql, obj.objectId) {
+        if let row = try db.prepareFetch(q) {
             objectsForType(obj as! Reflect, row: row)
         }
         else{
@@ -59,8 +64,19 @@ public class Driver<T :ReflectProtocol>: DriverProtocol {
         try fetch(rft)
         return rft
     }
-}
+    
+    public func find(query: Query<T>) throws -> [T] {
+        
+        var results:[T] = []
+        for row in try db.prepareQuery(query)! {
+            let obj:T = T()
+            objectsForType(obj as! Reflect, row: row)
+            results.append(obj)
+        }
+        return results
+    }
 
+}
 
 extension Driver {
     
@@ -85,7 +101,8 @@ extension Driver {
         case is Float.Type:
             return row[property.name! , Float.self]
         case is NSNumber.Type:
-            return row[property.name! , NSNumber.self]
+            let v = row[property.name! , Int.self]
+            return NSNumber(integer: v)
         case is Bool.Type:
             return row[property.name! , Bool.self]
         case is NSDate.Type:

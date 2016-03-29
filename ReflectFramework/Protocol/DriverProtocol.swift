@@ -7,7 +7,7 @@
 //
 
 public protocol DriverProtocol {
-    associatedtype T
+    associatedtype T: ReflectProtocol
     func create(obj: T.Type) throws
     func drop(obj: T.Type) throws
     func removeAll(obj: T.Type) throws
@@ -16,5 +16,5 @@ public protocol DriverProtocol {
     func delete(obj: T) throws -> Int
     func fetch(obj: T) throws
     func find(id: Int) throws -> T?
-    
+    func find(query:Query<T>) throws -> [T]
 }

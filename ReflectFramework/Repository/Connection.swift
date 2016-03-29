@@ -107,22 +107,22 @@ public final class Connection {
         try sync { try self.check(sqlite3_exec(self.handle, SQL, nil, nil, nil)) }
     }
     
-    func prepare(statement: String, _ bindings: AnyObject?...) -> Statement {
+    private func prepare(statement: String, _ bindings: AnyObject?...) -> Statement {
         if !bindings.isEmpty {
             return prepare(statement, bindings)
         }
         return Statement(self, statement)
     }
     
-    public func prepare(statement: String, _ bindings: [AnyObject?]) -> Statement {
+    private func prepare(statement: String, _ bindings: [AnyObject?]) -> Statement {
         return prepare(statement).bind(bindings)
     }
     
-    public func run(statement: String, _ bindings: AnyObject?...) throws -> Statement {
+    private func run(statement: String, _ bindings: AnyObject?...) throws -> Statement {
         return try run(statement, bindings)
     }
     
-    public func run(statement: String, _ bindings: [AnyObject?]) throws -> Statement {
+    private func run(statement: String, _ bindings: [AnyObject?]) throws -> Statement {
         return try prepare(statement).run(bindings)
     }
     
@@ -131,9 +131,9 @@ public final class Connection {
     }
     
     
-    public func runRowId(statement: String, _ bindings: [AnyObject?]) throws -> Int64 {
+    public func runRowId<T: ReflectProtocol>(schema: Schema<T>) throws -> Int64 {
         return try sync {
-            try self.run(statement ,bindings)
+            try self.run(schema)
             return self.lastInsertRowid!
         }
     }
@@ -143,6 +143,25 @@ public final class Connection {
             try self.run(schema)
             return self.changes
         }
+    }
+    
+    public func prepareQuery<T: ReflectProtocol>(query: Query<T>) throws -> AnySequence<Row>? {
+        let stm = query.statement
+        let statement = prepare(stm.sql, stm.args)
+        
+        let columnNames: [String: Int] = {
+            var (columnNames, _) = ([String: Int](), 0)
+            for i in 0..<statement.columnNames.count {
+                columnNames[statement.columnNames[i]] = i
+            }
+            return columnNames
+        }()
+        
+        return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
+    }
+
+    public func prepareFetch<T: ReflectProtocol>(query: Query<T>) throws -> Row? {
+        return try prepareQuery(query)!.generate().next()
     }
     
     // MARK: - Transactions
@@ -243,29 +262,6 @@ public final class Connection {
         
         throw error
     }
-    
-}
-
-extension Connection {
-    
-    public func prepareQuery(statement: String, _ bindings: [AnyObject?]) throws -> AnySequence<Row>? {
-        let statement = prepare(statement, bindings)
-        
-        let columnNames: [String: Int] = {
-            var (columnNames, _) = ([String: Int](), 0)
-            for i in 0..<statement.columnNames.count {
-                columnNames[statement.columnNames[i]] = i
-            }
-            return columnNames
-        }()
-        
-        return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
-    }
-    
-    public func prepareFetch(statement: String, _ bindings: AnyObject?...) throws -> Row? {
-        return try prepareQuery(statement, bindings)!.generate().next()
-    }
-    
     
 }
 
