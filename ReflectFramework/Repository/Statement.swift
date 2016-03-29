@@ -51,7 +51,7 @@ public final class Statement {
     /// - Throws: `Result.Error` if query execution fails.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func run(bindings: AnyObject?...) throws -> Statement {
+    public func run(bindings: Value?...) throws -> Statement {
         guard bindings.isEmpty else {
             return try run(bindings)
         }
@@ -66,7 +66,7 @@ public final class Statement {
     /// - Throws: `Result.Error` if query execution fails.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func run(bindings: [AnyObject?]) throws -> Statement {
+    public func run(bindings: [Value?]) throws -> Statement {
         return try bind(bindings).run()
     }
     
@@ -75,7 +75,7 @@ public final class Statement {
     /// - Parameter values: A list of parameters to bind to the statement.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func bind(values: AnyObject?...) -> Statement {
+    public func bind(values: Value?...) -> Statement {
         return bind(values)
     }
     
@@ -84,7 +84,7 @@ public final class Statement {
     /// - Parameter values: A list of parameters to bind to the statement.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func bind(values: [AnyObject?]) -> Statement {
+    public func bind(values: [Value?]) -> Statement {
         if values.isEmpty { return self }
         reset()
         guard values.count == Int(sqlite3_bind_parameter_count(handle)) else {
@@ -96,27 +96,30 @@ public final class Statement {
         return self
     }
     
-    private func bind(value: AnyObject?, atIndex idx: Int) {
+    private func bind(value: Value?, atIndex idx: Int) {
         
         if value == nil {
             sqlite3_bind_null(handle, Int32(idx))
         } else if let value = value as? NSData {
             sqlite3_bind_blob(handle, Int32(idx), value.bytes, Int32(value.length), SQLITE_TRANSIENT)
+        } else if let value = value as? NSDate {
+            sqlite3_bind_text(handle, Int32(idx), value.toString(), -1, SQLITE_TRANSIENT)
         } else if let value = value as? Double {
             sqlite3_bind_double(handle, Int32(idx), value)
+        } else if let value = value as? Float {
+            self.bind(Double(value), atIndex: idx)
         } else if let value = value as? Int64 {
             sqlite3_bind_int64(handle, Int32(idx), value)
         } else if let value = value as? String {
             sqlite3_bind_text(handle, Int32(idx), value, -1, SQLITE_TRANSIENT)
         } else if let value = value as? Int {
-            sqlite3_bind_int64(handle, Int32(idx), value.toInt64())
+            self.bind(Int64(value), atIndex: idx)
         } else if let value = value as? Bool {
-            sqlite3_bind_int(handle, Int32(idx), Int32(value.toInt()))
-        } else if let value = value as? NSDate {
-            sqlite3_bind_text(handle, Int32(idx), value.toString(), -1, SQLITE_TRANSIENT)
+            self.bind(value ? 1 : 0, atIndex: idx)
         } else if let value = value {
             fatalError("tried to bind unexpected value \(value)")
         }
+        
     }
     
 }

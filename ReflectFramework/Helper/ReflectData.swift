@@ -11,7 +11,7 @@ internal struct ReflectData {
     internal let isOptional: Bool
     internal var type:       Any.Type?  = nil
     internal var name:       String?
-    internal var value:      AnyObject? = nil
+    internal var value:      Value? = nil
     
     internal var isValid: Bool {
         return type != nil && name != nil
@@ -22,7 +22,7 @@ internal struct ReflectData {
         
         let mirror = Mirror(reflecting: property.value)
         isOptional = mirror.displayStyle == .Optional
-        value = unwrap(property.value) as? AnyObject
+        value = unwrap(property.value) as? Value
         
         type = typeForMirror(mirror)
     }
@@ -82,8 +82,11 @@ extension ReflectData {
         return validPropertyDataForMirror(Mirror(reflecting: object), ignoredProperties: ignoredProperties)
     }
     
+    internal static func validPropertyTypeForSchema (type: Any.Type) -> String {
+        return typeForSchema(type)
+    }
+    
     private static func validPropertyDataForMirror(mirror: Mirror, ignoredProperties: Set<String> = []) -> [ReflectData] {
-        
         var ignore = ignoredProperties
         if mirror.subjectType is FieldsProtocol.Type {
             ignore = ignore.union((mirror.subjectType as! FieldsProtocol.Type).ignoredProperties())
@@ -104,4 +107,28 @@ extension ReflectData {
             })
         return propertyData
     }
+    
+    private static func typeForSchema (type: Any.Type) -> String {
+        switch type {
+        case is String.Type, is NSString.Type, is Character.Type:
+            return String.declaredDatatype
+        case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type, is Int64.Type, is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type, is UInt64.Type:
+            return Int.declaredDatatype
+        case is Double.Type:
+            return Double.declaredDatatype
+        case is Float.Type:
+            return Float.declaredDatatype
+        case is Bool.Type:
+            return Bool.declaredDatatype
+        case is NSNumber.Type:
+            return NSNumber.declaredDatatype
+        case is NSDate.Type:
+            return NSDate.declaredDatatype
+        case is NSData.Type:
+            return NSData.declaredDatatype
+        default:
+            fatalError("Error object not supported")
+        }
+    }
+    
 }

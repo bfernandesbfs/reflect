@@ -14,7 +14,7 @@ public enum Schema<T: ReflectProtocol> {
     case Update(T)
     case Delete(T)
     
-    var statement: (sql:String, args:[AnyObject?]) {
+    var statement: (sql:String, args:[Value?]) {
         switch self {
         case .Create(let object):
             
@@ -25,7 +25,7 @@ public enum Schema<T: ReflectProtocol> {
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
             statement += "objectId INTEGER PRIMARY KEY AUTOINCREMENT, "
             let _ = propertyData.map { value in
-                var data = "\(value.name!) \(SchemaType(type: value.type!)!.rawValue)"
+                var data = "\(value.name!) \(ReflectData.validPropertyTypeForSchema(value.type!))"
                 data += value.isOptional ? "" : " NOT NULL"
                 fields.append(data)
             }
@@ -52,7 +52,7 @@ public enum Schema<T: ReflectProtocol> {
             object.updateAt = object.createAt
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
             
-            var dataArgs:[AnyObject?] = []
+            var dataArgs:[Value?] = []
             var placeholder:[String] = []
             let columns = propertyData.map { value in
                 dataArgs.append(value.value)
@@ -69,7 +69,7 @@ public enum Schema<T: ReflectProtocol> {
             object.updateAt = NSDate()
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId" , "createAt"])
             
-            var dataArgs:[AnyObject?] = []
+            var dataArgs:[Value?] = []
             let columns = propertyData.map { value in
                 dataArgs.append(value.value)
                 return "\(value.name!) = ?"
@@ -86,33 +86,4 @@ public enum Schema<T: ReflectProtocol> {
         }
     }
     
-}
-
-internal enum SchemaType: String {
-    case Text       = "TEXT"
-    case Integer    = "INTEGER"
-    case Real       = "REAL"
-    case Date       = "DATE"
-    case Blob       = "BLOB"
-    case Numeric    = "NUMERIC"
-    case Null       = "NULL"
-    
-    init?(type: Any.Type) {
-        switch type {
-        case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type, is Int64.Type, is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type, is UInt64.Type, is Bool.Type:
-            self.init(rawValue: "INTEGER")
-        case is Double.Type, is Float.Type:
-            self.init(rawValue: "REAL")
-        case is NSDate.Type:
-            self.init(rawValue: "DATE")
-        case is NSData.Type:
-            self.init(rawValue: "BLOB")
-        case is NSNumber.Type:
-            self.init(rawValue: "NUMERIC")
-        case is String.Type, is NSString.Type, is Character.Type:
-            self.init(rawValue: "TEXT")
-        default:
-            fatalError("Error object not supported")
-        }
-    }
 }

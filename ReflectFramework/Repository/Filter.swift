@@ -7,8 +7,8 @@
 //
 
 enum Filter {
-    case Compare(String, Comparison, AnyObject)
-    case Subset(String, Comparison, [AnyObject])
+    case Compare(String, Comparison, Value)
+    case Subset(String, Comparison, [Value])
     case Group(Operation, [Filter])
 }
 

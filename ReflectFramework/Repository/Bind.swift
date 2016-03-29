@@ -15,64 +15,59 @@ public protocol Binding {
     static func fromDatatypeValue(datatypeValue: Datatype) -> ValueType
 }
 
-extension String : Value , Binding {
-    
+extension String: Value, Binding {
     public static let declaredDatatype = "TEXT"
     public static func fromDatatypeValue(datatypeValue: String) -> String {
         return datatypeValue
     }
 }
 
-extension Int : Value , Binding  {
-    
+extension Int: Value , Binding {
     public static var declaredDatatype = Int64.declaredDatatype
     public static func fromDatatypeValue(datatypeValue: Int64) -> Int {
         return Int(datatypeValue)
     }
-    public func toInt64() -> Int64 {
-        return Int64(self)
-    }
 }
 
-extension Int64 : Value , Binding  {
-    
+extension Int64: Value, Binding  {
     public static let declaredDatatype = "INTEGER"
     public static func fromDatatypeValue(datatypeValue: Int64) -> Int64 {
         return datatypeValue
     }
 }
 
-extension Double : Value , Binding  {
-    
+extension Double: Value, Binding  {
     public static let declaredDatatype = "DOUBLE"
     public static func fromDatatypeValue(datatypeValue: Double) -> Double {
         return  datatypeValue
     }
 }
 
-extension Float : Value , Binding   {
-    
+extension Float: Value, Binding   {
     public static let declaredDatatype = "FLOAT"
     public static func fromDatatypeValue(datatypeValue: Double) -> Float {
         return Float(datatypeValue)
     }
 }
 
-extension Bool : Value , Binding  {
-    
+extension Bool: Value, Binding  {
     public static var declaredDatatype = "BOOLEAN"
     public static func fromDatatypeValue(datatypeValue: Int64) -> Bool {
         return datatypeValue != 0
     }
-    
-    public func toInt() -> Int {
-        return self ? 1 : 0
-    }
-    
 }
 
-extension NSDate : Value , Binding  {
-    
+// OBJC
+extension NSNumber: Value, Binding {
+    public class var declaredDatatype:String {
+        return "NUMERIC"
+    }
+    public class func fromDatatypeValue(datatypeValue: Int64) -> NSNumber {
+        return NSNumber(longLong: datatypeValue)
+    }
+}
+
+extension NSDate: Value, Binding {
     public class var declaredDatatype:String {
         return "DATE"
     }
@@ -85,14 +80,12 @@ extension NSDate : Value , Binding  {
     }
 }
 
-extension NSData : Value , Binding  {
-    
+extension NSData: Value, Binding {
     public class var declaredDatatype:String {
         return "BLOB"
     }
     public class func fromDatatypeValue(datatypeValue: NSData) -> NSData {
         return datatypeValue
     }
-    
 }
 

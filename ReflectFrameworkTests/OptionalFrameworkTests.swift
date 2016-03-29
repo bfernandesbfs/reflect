@@ -1,15 +1,15 @@
 //
-//  QueryFrameworkTests.swift
+//  OptionalFrameworkTests.swift
 //  ReflectFramework
 //
-//  Created by Bruno Fernandes on 22/03/16.
+//  Created by Bruno Fernandes on 29/03/16.
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
 import XCTest
 @testable import ReflectFramework
 
-class QueryFrameworkTests: XCTestCase {
+class OptionalFrameworkTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
@@ -21,28 +21,17 @@ class QueryFrameworkTests: XCTestCase {
         super.tearDown()
     }
     
-    
-    func testIncludeQuery() {
-    
-        let t = Car.query()
-        
-        t.filter("year", Comparison.GreaterThan, value: 2000)
-        
-        let list:[Car] = Car.findObject(t)
-        
-        print(list.count , list.first!.createAt)
+    func testRegisterOptional() {
+         XCTAssert(TesteObjectsOptional.register(), "found error when if register the object")
     }
     
-    func testQuery() {
+    func testRegister() {
+        XCTAssert(TesteObjects.register(), "found error when if register the object")
+    }
     
-        let q = Query<Car>()
-        
-        q.filter("model", .NotEquals, value: "Fusca")
-        
-        let list:[Car] = q.findObject()
-        
-        XCTAssertGreaterThan(list.count , 1, "Many Objects found")
-        
+    func testPin() {
+        var testeObjects = TesteObjects()
+        XCTAssert(testeObjects.pin(), "Not was created a new object for TesteObjects")
     }
     
     func testPerformanceExample() {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A1815561CAB1EE8007DF21A /* OptionalFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */; };
 		4A779FF51CA956F900EE2953 /* ReflectProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF41CA956F900EE2953 /* ReflectProtocol.swift */; };
 		4A779FF71CA9594500EE2953 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF61CA9594500EE2953 /* Driver.swift */; };
 		4A779FF91CA95BB900EE2953 /* ReflectData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF81CA95BB900EE2953 /* ReflectData.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalFrameworkTests.swift; sourceTree = "<group>"; };
 		4A779FF41CA956F900EE2953 /* ReflectProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectProtocol.swift; sourceTree = "<group>"; };
 		4A779FF61CA9594500EE2953 /* Driver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
 		4A779FF81CA95BB900EE2953 /* ReflectData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectData.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				4AEBBD161C9C77D5009BEA05 /* Test.swift */,
 				4AEBBCF91C9C74D0009BEA05 /* ReflectFrameworkTests.swift */,
 				4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */,
+				4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */,
 				4AEBBCFB1C9C74D0009BEA05 /* Info.plist */,
 			);
 			path = ReflectFrameworkTests;
@@ -335,6 +338,7 @@
 			files = (
 				4AEBBD171C9C77D5009BEA05 /* Test.swift in Sources */,
 				4AEBBCFA1C9C74D0009BEA05 /* ReflectFrameworkTests.swift in Sources */,
+				4A1815561CAB1EE8007DF21A /* OptionalFrameworkTests.swift in Sources */,
 				4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -107,22 +107,22 @@ public final class Connection {
         try sync { try self.check(sqlite3_exec(self.handle, SQL, nil, nil, nil)) }
     }
     
-    private func prepare(statement: String, _ bindings: AnyObject?...) -> Statement {
+    private func prepare(statement: String, _ bindings: Value?...) -> Statement {
         if !bindings.isEmpty {
             return prepare(statement, bindings)
         }
         return Statement(self, statement)
     }
     
-    private func prepare(statement: String, _ bindings: [AnyObject?]) -> Statement {
+    private func prepare(statement: String, _ bindings: [Value?]) -> Statement {
         return prepare(statement).bind(bindings)
     }
     
-    private func run(statement: String, _ bindings: AnyObject?...) throws -> Statement {
+    private func run(statement: String, _ bindings: Value?...) throws -> Statement {
         return try run(statement, bindings)
     }
     
-    private func run(statement: String, _ bindings: [AnyObject?]) throws -> Statement {
+    private func run(statement: String, _ bindings: [Value?]) throws -> Statement {
         return try prepare(statement).run(bindings)
     }
     

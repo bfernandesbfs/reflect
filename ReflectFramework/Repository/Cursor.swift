@@ -18,7 +18,6 @@ public struct Cursor {
         columnCount = statement.columnCount
     }
     
-    
     public subscript(idx: Int) -> Int64 {
         return sqlite3_column_int64(handle, Int32(idx))
     }
@@ -36,7 +35,7 @@ public struct Cursor {
     }
     
     public subscript(idx: Int) -> Bool {
-        return sqlite3_column_int(handle,  Int32(idx)) != 0
+        return Bool.fromDatatypeValue(self[idx])
     }
     
     public subscript(idx: Int) -> NSData {
@@ -50,10 +49,7 @@ public struct Cursor {
 extension Cursor : SequenceType {
     
     public subscript(idx: Int) -> Value? {
-        
-        let columnType = sqlite3_column_type(handle, Int32(idx))
-        
-        switch columnType {
+        switch sqlite3_column_type(handle, Int32(idx)) {
         case SQLITE_INTEGER:
             return self[idx] as Int64
         case SQLITE_TEXT:
