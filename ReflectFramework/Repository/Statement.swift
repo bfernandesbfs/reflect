@@ -97,25 +97,25 @@ public final class Statement {
     }
     
     private func bind(value: Value?, atIndex idx: Int) {
-        
+                
         if value == nil {
             sqlite3_bind_null(handle, Int32(idx))
         } else if let value = value as? NSData {
             sqlite3_bind_blob(handle, Int32(idx), value.bytes, Int32(value.length), SQLITE_TRANSIENT)
         } else if let value = value as? NSDate {
-            sqlite3_bind_text(handle, Int32(idx), value.toString(), -1, SQLITE_TRANSIENT)
+            sqlite3_bind_text(handle, Int32(idx), value.datatypeValue, -1, SQLITE_TRANSIENT)
         } else if let value = value as? Double {
             sqlite3_bind_double(handle, Int32(idx), value)
         } else if let value = value as? Float {
-            self.bind(Double(value), atIndex: idx)
+            sqlite3_bind_double(handle, Int32(idx), value.datatypeValue)
         } else if let value = value as? Int64 {
             sqlite3_bind_int64(handle, Int32(idx), value)
         } else if let value = value as? String {
             sqlite3_bind_text(handle, Int32(idx), value, -1, SQLITE_TRANSIENT)
         } else if let value = value as? Int {
-            self.bind(Int64(value), atIndex: idx)
+            self.bind(value.datatypeValue, atIndex: idx)
         } else if let value = value as? Bool {
-            self.bind(value ? 1 : 0, atIndex: idx)
+            self.bind(value.datatypeValue, atIndex: idx)
         } else if let value = value {
             fatalError("tried to bind unexpected value \(value)")
         }

@@ -79,22 +79,22 @@ class TesteObjects: Reflect {
         string    = "string"
         character = "c"
         int    = 1
-        int8   = 1
-        int16  = 1
-        int32  = 1
-        int64  = 1
-        uint   = 1
-        uint8  = 1
-        uint16 = 1
-        uint32 = 1
-        uint64 = 1
+        int8   = 2
+        int16  = 3
+        int32  = 4
+        int64  = 5
+        uint   = 6
+        uint8  = 7
+        uint16 = 8
+        uint32 = 9
+        uint64 = 10
         bool   = false
-        float  = 1
-        double = 1
+        float  = 1.1
+        double = 1.2
         //Objc
         nsstring  = "nsstring"
         date   = NSDate()
-        number = 1
+        number = 1.3
         data   = String("Test Data").dataUsingEncoding(NSUTF8StringEncoding)!
     }
 }
