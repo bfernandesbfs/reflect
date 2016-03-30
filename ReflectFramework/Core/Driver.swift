@@ -89,26 +89,29 @@ extension Driver {
         }
     }
     
-    private func bindValue(property:ReflectData , row:Row) -> AnyObject! {
+    private func bindValue(property:ReflectData , row:Row) -> AnyObject? {
         
         switch property.type {
-        case is String.Type:
-            return row[property.name! , String.self]
-        case is Int.Type:
-            return row[property.name! , Int.self]
+        case is String.Type, is NSString.Type:
+            return row[property.name!].asString()
+        case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type:
+            return row[property.name!].asInt()
+        case is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type:
+            return row[property.name!].asInt()
+        case is Int64.Type, is UInt64.Type:
+            return row[property.name!].asInt()
         case is Double.Type:
-            return row[property.name! , Double.self]
+            return row[property.name!].asDouble()
         case is Float.Type:
-            return row[property.name! , Float.self]
-        case is NSNumber.Type:
-            let v = row[property.name! , Int.self]
-            return NSNumber(integer: v)
+            return row[property.name!].asFloat()
         case is Bool.Type:
-            return row[property.name! , Bool.self]
+            return row[property.name!].asBool()
+        case is NSNumber.Type:
+            return row[property.name!].asNumber()
         case is NSDate.Type:
-            return row[property.name! , NSDate.self]
+            return row[property.name!].asDate()
         case is NSData.Type:
-            return row[property.name! , NSData.self]
+            return row[property.name!].asData()
         default:
             return nil
         }

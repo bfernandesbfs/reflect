@@ -127,7 +127,8 @@ public final class Connection {
     }
     
     public func run<T: ReflectProtocol>(schema: Schema<T>) throws -> Statement {
-        return try prepare(schema.statement.sql).run(schema.statement.args)
+        let stm = schema.statement
+        return try prepare(stm.sql).run(stm.args)
     }
     
     
@@ -156,7 +157,7 @@ public final class Connection {
             }
             return columnNames
         }()
-        
+   
         return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
     }
 

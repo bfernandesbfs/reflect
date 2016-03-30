@@ -45,6 +45,17 @@ class QueryFrameworkTests: XCTestCase {
         
     }
     
+    func testIncludeOptionalQuery() {
+        
+        let t = TesteObjectsOptional.query()
+        
+        t.filter("optionalString", Comparison.Is, value: nil)
+        
+        let list:[TesteObjectsOptional] = TesteObjectsOptional.findObject(t)
+        
+        print(list.count , list.first!.createAt)
+    }
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {

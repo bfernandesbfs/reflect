@@ -97,29 +97,91 @@ public final class Statement {
     }
     
     private func bind(value: Value?, atIndex idx: Int) {
-                
+        
         if value == nil {
             sqlite3_bind_null(handle, Int32(idx))
-        } else if let value = value as? NSData {
-            sqlite3_bind_blob(handle, Int32(idx), value.bytes, Int32(value.length), SQLITE_TRANSIENT)
-        } else if let value = value as? NSDate {
-            sqlite3_bind_text(handle, Int32(idx), value.datatypeValue, -1, SQLITE_TRANSIENT)
-        } else if let value = value as? Double {
-            sqlite3_bind_double(handle, Int32(idx), value)
-        } else if let value = value as? Float {
-            sqlite3_bind_double(handle, Int32(idx), value.datatypeValue)
-        } else if let value = value as? Int64 {
-            sqlite3_bind_int64(handle, Int32(idx), value)
-        } else if let value = value as? String {
-            sqlite3_bind_text(handle, Int32(idx), value, -1, SQLITE_TRANSIENT)
-        } else if let value = value as? Int {
-            self.bind(value.datatypeValue, atIndex: idx)
-        } else if let value = value as? Bool {
-            self.bind(value.datatypeValue, atIndex: idx)
-        } else if let value = value {
-            fatalError("tried to bind unexpected value \(value)")
         }
-        
+        else{
+            let mirror = Mirror(reflecting: value)
+            
+            switch unwrapType(mirror.children.first!.value) {
+            case is String.Type, is NSString.Type:
+                sqlite3_bind_text(handle, Int32(idx), value as! String, -1, SQLITE_TRANSIENT)
+                break
+            case is Int.Type:
+                let v = value as! Int
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is Int8.Type:
+                let v = value as! Int8
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is Int16.Type:
+                let v = value as! Int16
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is Int32.Type:
+                let v = value as! Int32
+                sqlite3_bind_int(handle, Int32(idx), v)
+                break
+            case is Int64.Type:
+                let v = value as! Int64
+                sqlite3_bind_int64(handle, Int32(idx), v)
+                break
+            case is UInt.Type:
+                let v = value as! UInt
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is UInt8.Type:
+                let v = value as! UInt8
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is UInt16.Type:
+                let v = value as! UInt16
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is UInt32.Type:
+                let v = value as! UInt32
+                sqlite3_bind_int(handle, Int32(idx), Int32(v))
+                break
+            case is UInt64.Type:
+                let v = value as! UInt64
+                sqlite3_bind_int64(handle, Int32(idx), Int64(v))
+                break
+            case is Double.Type:
+                let v = value as! Double
+                sqlite3_bind_double(handle, Int32(idx), v)
+                break
+            case is Float.Type:
+                let v = value as! Float
+                sqlite3_bind_double(handle, Int32(idx), Double(v))
+                break
+            case is Bool.Type:
+                let v = value as! Bool
+                sqlite3_bind_int(handle, Int32(idx), v ? 1 : 0)
+                break
+            case is NSNumber.Type:
+                let v = value as! NSNumber
+                sqlite3_bind_double(handle, Int32(idx), v.doubleValue)
+                break
+            case is NSDate.Type:
+                let v = value as! NSDate
+                sqlite3_bind_text(handle, Int32(idx), v.datatypeValue, -1, SQLITE_TRANSIENT)
+                break
+            case is NSData.Type:
+                let v = value as! NSData
+                sqlite3_bind_blob(handle, Int32(idx), v.bytes, Int32(v.length), SQLITE_TRANSIENT)
+                break
+            default:
+                fatalError("tried to bind unexpected value \(value)")
+                break
+            }
+        }        
+    }
+    
+    private func unwrapType(value: Any) -> Any.Type {
+        let mirror = Mirror(reflecting: value)
+        return mirror.subjectType
     }
     
 }

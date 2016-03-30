@@ -55,7 +55,6 @@ public enum Schema<T: ReflectProtocol> {
             var dataArgs:[Value?] = []
             var placeholder:[String] = []
             let columns = propertyData.map { value in
-                print(value.value)
                 dataArgs.append(value.value)
                 placeholder.append("?")
                 return value.name!

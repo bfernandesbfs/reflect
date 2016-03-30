@@ -34,7 +34,7 @@ public class Query<T :ReflectProtocol>{
         dataArgs   = []
     }
     
-    func filter(key:String, _ comparison: Comparison, value:Value...) -> Self {
+    func filter(key:String, _ comparison: Comparison, value:Value?...) -> Self {
         if value.count > 1 {
             dataClause.append(Filter.Subset(key, comparison, value))
         }
@@ -68,6 +68,9 @@ public class Query<T :ReflectProtocol>{
     private func filterOutput(filter: Filter) -> String {
         switch filter {
         case .Compare(let field, let comparison, let value):
+            if value == nil {
+                return "\(field) \(comparison.description) NULL"
+            }
             dataArgs.append(value)
             return "\(field) \(comparison.description) ?"
         case .Subset(let field, let scope, let values):

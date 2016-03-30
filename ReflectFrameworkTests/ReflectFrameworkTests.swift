@@ -47,7 +47,7 @@ class ReflectFrameworkTests: XCTestCase {
     func testFind(){
         let n = Car.findById(1)
         
-        XCTAssert(n?.name == "GM", "Fetch Object is different")
+        XCTAssert(n?.name == "Renault", "Fetch Object is different")
     }
     
     func testFetch(){

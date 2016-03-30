@@ -35,8 +35,7 @@ internal struct ReflectData {
         switch mirror.subjectType {
         case is Optional<String>.Type:      return String.self
         case is Optional<NSString>.Type:    return NSString.self
-        case is Optional<Character>.Type:   return Character.self
-            
+
         case is Optional<NSDate>.Type:      return NSDate.self
         case is Optional<NSNumber>.Type:    return NSNumber.self
         case is Optional<NSData>.Type:      return NSData.self

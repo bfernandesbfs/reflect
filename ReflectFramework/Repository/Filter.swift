@@ -7,13 +7,13 @@
 //
 
 enum Filter {
-    case Compare(String, Comparison, Value)
-    case Subset(String, Comparison, [Value])
+    case Compare(String, Comparison, Value?)
+    case Subset(String, Comparison, [Value?])
     case Group(Operation, [Filter])
 }
 
 enum Comparison: CustomStringConvertible{
-    case Equals, GreaterThan, LessThan, NotEquals, In, NotIn
+    case Equals, GreaterThan, LessThan, NotEquals, In, NotIn, Is
     
     var description: String {
         switch self {
@@ -29,6 +29,8 @@ enum Comparison: CustomStringConvertible{
             return "IN"
         case .NotIn:
             return "NOT IN"
+        case .Is:
+            return "IS"
         }
     }
 }
