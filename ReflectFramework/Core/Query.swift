@@ -8,22 +8,23 @@
 
 import Foundation
 
-public class Query<T :ReflectProtocol>{
+public class Query<T where T:ReflectProtocol> {
     public typealias Handler = (query: Query) -> Query
     
     public var dataArgs:[Value?]
     
-    private var dataClause:[Filter]
-    private var dataOrder :[Filter]
-    private var dataPage  :[Pagination]
+    private var dataDistinct :Bool
+    private var dataAggregate:Aggregate
+    private var dataFields  :[String]
+    private var dataClause  :[Filter]
+    private var dataOrder   :[Filter]
+    private var dataPage    :[Pagination]
     
     var statement:(sql:String, args:[Value?]) {
-        let entity = T.entityName()
-        var query: [String] = ["SELECT * FROM \(entity)"]
+        var query: [String] = [resolveSelect()]
         if dataClause.count == 0 {
             return (query.first!, [])
         }
-    
         //Where
         var filterClause: [String] = []
         for filter in dataClause {
@@ -51,10 +52,18 @@ public class Query<T :ReflectProtocol>{
     }
     
     public init(){
-        dataClause = []
-        dataArgs   = []
-        dataOrder  = []
-        dataPage   = []
+        dataDistinct  = false
+        dataAggregate = Aggregate.Default
+        dataFields   = []
+        dataClause   = []
+        dataArgs     = []
+        dataOrder    = []
+        dataPage     = []
+    }
+    
+    public func fields(key:String...) -> Self {
+        dataFields += key
+        return self
     }
     
     public func filter(key:String, _ comparison: Comparison, value:Value?...) -> Self {
@@ -97,8 +106,53 @@ public class Query<T :ReflectProtocol>{
         return self
     }
     
+    public func distinct() -> Self {
+        dataDistinct = true
+        return self
+    }
+    
+    public func count(field: String = "*") -> Double {
+        dataAggregate = Aggregate.Count(field)
+        return aggregateObject(dataAggregate.field)
+    }
+    
+    public func average(field: String = "*") -> Double {
+        dataAggregate = Aggregate.Average(field)
+        return aggregateObject(dataAggregate.field)
+    }
+    
+    public func max(field: String = "*") -> Double {
+        dataAggregate = Aggregate.Max(field)
+        return aggregateObject(dataAggregate.field)
+    }
+    
+    public func min(field: String = "*") -> Double {
+        dataAggregate = Aggregate.Min(field)
+        return aggregateObject(dataAggregate.field)
+    }
+    
+    public func sum(field: String = "*") -> Double {
+        dataAggregate = Aggregate.Sum(field)
+        return Double(aggregateObject(dataAggregate.field))
+    }
+    
     public func findObject() -> [T] {
         return try! Driver().find(self)
+    }
+    
+    private func aggregateObject(field:String) -> Double {
+        if let value = try! Driver().find(self, column: field) {
+            if let v = value as? Int64 {
+                return Double(v)
+            }
+            else if let v = value as? Double {
+                return v
+            }
+            else if let v = value as? Float {
+                return Double(v)
+            }
+        }
+        return 0
     }
     
 }
@@ -107,6 +161,27 @@ extension Query {
     /*
     // MARK: - Private Methods
     */
+    
+    private func resolveSelect() -> String {
+        let entity = T.entityName()
+        var select = ["SELECT"]
+        
+        if dataDistinct {
+            select.append("DISTINCT")
+        }
+        
+        if dataFields.count > 0 && dataAggregate.field == Aggregate.Default.field {
+            select.append(dataFields.joinWithSeparator(", "))
+        } else {
+            select.append(dataAggregate.description)
+        }
+        
+        select.append("FROM \(entity)")
+        
+        return select.joinWithSeparator(" ")
+        
+    }
+    
     private func filterOutput(filter: Filter) -> String {
         switch filter {
         case .Compare(let field, let comparison, let value):

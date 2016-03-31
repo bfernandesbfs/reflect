@@ -6,7 +6,7 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-public class Driver<T :ReflectProtocol>: DriverProtocol {
+public class Driver<T where T:ReflectProtocol>: DriverProtocol {
     
     private lazy var db: Connection = {
         let path = Reflect.settings.createPath()
@@ -75,12 +75,33 @@ public class Driver<T :ReflectProtocol>: DriverProtocol {
         }
         return results
     }
+    
+    public func find(query: String) throws -> [[String: Value?]] {
+        
+        var results:[[String: Value?]] = []
+        for (index ,row) in try db.prepareQuery(query)!.enumerate() {
+            var item:[String: Value?] = [:]
+            for names in row[index] {
+                item[names] = row[names].asValue()
+            }
+        
+            results.append(item)
+        }
+        return results
+    }
+    
+    public func find(query: Query<T>, column:String) throws -> Value? {
+        if let row = try db.prepareFetch(query) {
+            return row[column].asValue()
+        }
+        return nil
+    }
 
 }
 
 extension Driver {
     
-    public func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row) {
+    private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row) {
         let propertyData = ReflectData.validPropertyDataForObject(object)
         for property in propertyData {
             if let value = bindValue(property, row: row) {
@@ -90,31 +111,32 @@ extension Driver {
     }
     
     private func bindValue(property:ReflectData , row:Row) -> AnyObject? {
-        
-        switch property.type {
-        case is String.Type, is NSString.Type:
-            return row[property.name!].asString()
-        case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type:
-            return row[property.name!].asInt()
-        case is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type:
-            return row[property.name!].asInt()
-        case is Int64.Type, is UInt64.Type:
-            return row[property.name!].asInt()
-        case is Double.Type:
-            return row[property.name!].asDouble()
-        case is Float.Type:
-            return row[property.name!].asFloat()
-        case is Bool.Type:
-            return row[property.name!].asBool()
-        case is NSNumber.Type:
-            return row[property.name!].asNumber()
-        case is NSDate.Type:
-            return row[property.name!].asDate()
-        case is NSData.Type:
-            return row[property.name!].asData()
-        default:
-            return nil
+        if row[property.name!] {
+            switch property.type {
+            case is String.Type, is NSString.Type:
+                return row[property.name!].asString()
+            case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type:
+                return row[property.name!].asInt()
+            case is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type:
+                return row[property.name!].asInt()
+            case is Int64.Type, is UInt64.Type:
+                return row[property.name!].asInt()
+            case is Double.Type:
+                return row[property.name!].asDouble()
+            case is Float.Type:
+                return row[property.name!].asFloat()
+            case is Bool.Type:
+                return row[property.name!].asBool()
+            case is NSNumber.Type:
+                return row[property.name!].asNumber()
+            case is NSDate.Type:
+                return row[property.name!].asDate()
+            case is NSData.Type:
+                return row[property.name!].asData()
+            default:
+                return nil
+            }
         }
-        
+        return nil
     }
 }

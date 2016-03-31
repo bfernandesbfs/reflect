@@ -116,9 +116,17 @@ public struct Row {
     public subscript(column: String) -> RowValue {
         return get(column)
     }
+    
+    public subscript(column: String) -> Bool {
+        return !(columnNames[column] == nil)
+    }
 
     public subscript(index: Int) -> String {
         return Array(columnNames.keys)[index]
+    }
+    
+    public subscript(index: Int) -> [String] {
+        return Array(columnNames.keys)
     }
     
 }
@@ -179,6 +187,10 @@ public struct RowValue {
     
     public func asAnyObject() -> AnyObject? {
         return value as? AnyObject
+    }
+    
+    public func asValue() -> Value? {
+        return value
     }
     
     // MARK: - Private Methods

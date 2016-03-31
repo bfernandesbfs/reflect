@@ -61,3 +61,11 @@ extension Reflect {
         return (success! , data)
     }
 }
+
+extension Reflect {
+    
+    public class func query(sql:String) -> [[String: Value?]] {
+        return try! Driver<Reflect>().find(sql)
+    }
+    
+}

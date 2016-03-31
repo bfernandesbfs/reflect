@@ -146,10 +146,18 @@ public final class Connection {
         }
     }
     
+    public func prepareQuery(query: String) throws -> AnySequence<Row>? {
+        let statement = prepare(query)
+        return querySequence(statement)
+    }
+    
     public func prepareQuery<T: ReflectProtocol>(query: Query<T>) throws -> AnySequence<Row>? {
         let stm = query.statement
         let statement = prepare(stm.sql, stm.args)
-        
+        return querySequence(statement)
+    }
+    
+    private func querySequence(statement:Statement) -> AnySequence<Row>? {
         let columnNames: [String: Int] = {
             var (columnNames, _) = ([String: Int](), 0)
             for i in 0..<statement.columnNames.count {
@@ -157,10 +165,10 @@ public final class Connection {
             }
             return columnNames
         }()
-   
+        
         return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
     }
-
+    
     public func prepareFetch<T: ReflectProtocol>(query: Query<T>) throws -> Row? {
         return try prepareQuery(query)!.generate().next()
     }

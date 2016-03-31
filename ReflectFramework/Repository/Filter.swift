@@ -74,3 +74,41 @@ public enum Pagination: CustomStringConvertible  {
         }
     }
 }
+
+public enum Aggregate: CustomStringConvertible  {
+    case Default, Count(String), Average(String), Max(String), Min(String), Sum(String)
+    
+    public var description: String {
+        switch self {
+        case .Default:
+            return "*"
+        case .Count(let field):
+            return "COUNT(\(field)) AS \(self.field)"
+        case .Average(let field):
+            return "AVG(\(field)) AS \(self.field)"
+        case .Max(let field):
+            return "MAX(\(field)) AS \(self.field)"
+        case .Min(let field):
+            return "MIN(\(field)) AS \(self.field)"
+        case .Sum(let field):
+            return "SUM(\(field)) AS \(self.field)"
+        }
+    }
+    
+    public var field: String {
+        switch self {
+        case .Default:
+            return "default"
+        case .Count:
+            return "count"
+        case .Average:
+            return "average"
+        case .Max:
+            return "maximum"
+        case .Min:
+            return "minimum"
+        case .Sum:
+            return "value"
+        }
+    }
+}

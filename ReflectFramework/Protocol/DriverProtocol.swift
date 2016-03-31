@@ -17,4 +17,6 @@ public protocol DriverProtocol {
     func fetch(obj: T) throws
     func find(id: Int) throws -> T?
     func find(query:Query<T>) throws -> [T]
+    func find(query: String) throws -> [[String: Value?]]
+    func find(query: Query<T>, column:String) throws -> Value?
 }
