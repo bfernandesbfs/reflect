@@ -6,16 +6,17 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-enum Filter {
+public enum Filter {
     case Compare(String, Comparison, Value?)
     case Subset(String, Comparison, [Value?])
     case Group(Operation, [Filter])
+    case Order(String, Sort)
 }
 
-enum Comparison: CustomStringConvertible{
+public enum Comparison: CustomStringConvertible{
     case Equals, GreaterThan, LessThan, NotEquals, In, NotIn, Is
     
-    var description: String {
+    public var description: String {
         switch self {
         case .Equals:
             return "="
@@ -35,10 +36,10 @@ enum Comparison: CustomStringConvertible{
     }
 }
 
-enum Operation: CustomStringConvertible  {
+public enum Operation: CustomStringConvertible  {
     case And, Or
     
-    var description: String {
+    public var description: String {
         switch self {
         case .And:
             return "AND"
@@ -48,3 +49,28 @@ enum Operation: CustomStringConvertible  {
     }
 }
 
+public enum Sort: CustomStringConvertible  {
+    case Asc, Desc
+    
+    public var description: String {
+        switch self {
+        case .Asc:
+            return "ASC"
+        case .Desc:
+            return "DESC"
+        }
+    }
+}
+
+public enum Pagination: CustomStringConvertible  {
+    case Limit(Int), Offset(Int)
+    
+    public var description: String {
+        switch self {
+        case .Limit(let count):
+            return "LIMIT \(count)"
+        case .Offset(let count):
+            return "OFFSET \(count)"
+        }
+    }
+}

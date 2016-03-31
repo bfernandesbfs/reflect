@@ -167,7 +167,10 @@ public struct RowValue {
     }
     
     public func asDate() -> NSDate? {
-        return NSDate.fromDatatypeValue(value as! String)
+        guard let v = value as? String else {
+            return nil
+        }
+        return NSDate.fromDatatypeValue(v)
     }
     
     public func asData() -> NSData? {
@@ -180,22 +183,26 @@ public struct RowValue {
     
     // MARK: - Private Methods
     private func checkNumber() -> NSNumber? {
-        let mirror = Mirror(reflecting: value)
-        switch unwrapType(mirror.children.first!.value) {
-        case is Int.Type, is Int64.Type:
-            return asInt() as NSNumber?
-        case is Float.Type:
-            return asFloat() as NSNumber?
-        case is Double.Type:
-            return asDouble() as NSNumber?
-        case is String.Type:
-            if let stringValue = asString() {
-                return Int(stringValue)
+        if value != nil {
+            let mirror = Mirror(reflecting: value)
+            switch unwrapType(mirror.children.first!.value) {
+            case is Int.Type, is Int64.Type:
+                return asInt() as NSNumber?
+            case is Float.Type:
+                return asFloat() as NSNumber?
+            case is Double.Type:
+                return asDouble() as NSNumber?
+            case is String.Type:
+                if let stringValue = asString() {
+                    return Int(stringValue)
+                }
+                return nil
+            default:
+                return nil
             }
-            return nil
-        default:
-            return nil
         }
+        
+        return nil
     }
 
     private func unwrapType(value: Any) -> Any.Type {
@@ -204,101 +211,3 @@ public struct RowValue {
     }
     
 }
-
-
-
-//public struct Row {
-//
-//    private let columnNames: [String: Int]
-//
-//    private let values: [Value?]
-//
-//    public init(_ columnNames: [String: Int], _ values: [Value?]) {
-//        self.columnNames = columnNames
-//        self.values = values
-//    }
-//    
-//    public func get<V: Binding>(column: String) -> V {
-//        return get(column)!
-//    }
-//    
-//    private func get<V: Binding>(column: String) -> V? {
-//        
-//        func valueAtIndex(idx: Int) -> V? {
-//            guard let value = values[idx] as? V.Datatype else {
-//                return nil
-//            }
-//            
-//            return (V.fromDatatypeValue(value) as? V)!
-//        }
-//        
-//        guard let idx = columnNames[column] else {
-//            let similar = Array(columnNames.keys).filter { $0.hasSuffix(".\(column)") }
-//            
-//            switch similar.count {
-//            case 0:
-//                fatalError("no such column '\(column)' in columns: \(columnNames.keys.sort())")
-//            case 1:
-//                return valueAtIndex(columnNames[similar[0]]!)
-//            default:
-//                fatalError("ambiguous column '\(column)' (please disambiguate: \(similar))")
-//            }
-//        }
-//        
-//        return valueAtIndex(idx)
-//    }
-//    
-//    
-//    public subscript(column: String , type:Int.Type) -> Int {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:String.Type) -> String {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:String.Type) -> String? {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:Float.Type) -> Float {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:Double.Type) -> Double {
-//        return get(column)
-//    }
-//
-//    
-//    public subscript(column: String , type:Bool.Type) -> Bool {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:Bool.Type) -> Bool? {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:NSDate.Type) -> NSDate {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:NSDate.Type) -> NSDate? {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:NSData.Type) -> NSData {
-//        return get(column)
-//    }
-//    
-//    public subscript(column: String , type:NSData.Type) -> NSData? {
-//        return get(column)
-//    }
-//    
-//    public subscript(index: Int) -> String {
-//        return Array(columnNames.keys)[index]
-//    }
-//    
-//    
-//}
-
-

@@ -49,7 +49,7 @@ class QueryFrameworkTests: XCTestCase {
         
         let t = TesteObjectsOptional.query()
         
-        t.filter("optionalString", Comparison.Is, value: nil)
+        t.filter("objectId", Comparison.GreaterThan, value: 2).sort("optionalString", .Desc).sort("objectId", .Asc).limit(2)
         
         let list:[TesteObjectsOptional] = TesteObjectsOptional.findObject(t)
         

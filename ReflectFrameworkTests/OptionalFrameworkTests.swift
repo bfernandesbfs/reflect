@@ -89,7 +89,7 @@ class OptionalFrameworkTests: XCTestCase {
         //Objc
         testeObjectsOptional.optionalNSString  = "nsstring çã óê"
         testeObjectsOptional.optionalDate   = NSDate()
-        testeObjectsOptional.optionalNumber = 12
+        testeObjectsOptional.optionalNumber = 1.45
         testeObjectsOptional.optionalData   = String("Test Data").dataUsingEncoding(NSUTF8StringEncoding)!
         
         XCTAssert(testeObjectsOptional.pin(), "Not was created a new object for TesteObjectsOptional")
@@ -116,7 +116,7 @@ class OptionalFrameworkTests: XCTestCase {
     }
     
     func testFindOptional(){
-        let testeObjectsOptional = TesteObjectsOptional.findById(2)
+        let testeObjectsOptional = TesteObjectsOptional.findById(4)
         XCTAssert(testeObjectsOptional?.optionalString == "New String", "Fetch Object is different")
     }
 
