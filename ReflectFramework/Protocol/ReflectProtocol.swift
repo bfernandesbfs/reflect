@@ -22,7 +22,6 @@ public protocol FieldsProtocol {
 }
 
 extension ReflectProtocol {
-    
     static func query() -> Query<Self> {
         return Query()
     }
@@ -30,32 +29,35 @@ extension ReflectProtocol {
     static func register() -> Bool {
         return Reflect.execute {
             return try Driver().create(self)
-        }.success
+            }.success
     }
     
     static func unRegister() -> Bool {
         return Reflect.execute {
             return try Driver().drop(self)
-        }.success
+            }.success
     }
-
+    
     static func findObject(query:Query<Self>) -> [Self] {
         return Reflect.execute {
             return try Driver().find(query)
-        }.data!
+            }.data!
     }
     
     static func findById(id: Int) -> Self? {
         return Reflect.execute {
             return try Driver().find(id)
-        }.data!
+            }.data!
     }
-
+    
     static func clean() -> Bool {
         return Reflect.execute {
             return try Driver().removeAll(self)
-        }.success
+            }.success
     }
+}
+
+extension ReflectProtocol {
     
     func fetch() -> Bool {
         return Reflect.execute {

@@ -14,6 +14,8 @@
 		4A90145D1CA1A30A00E8CCCB /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145C1CA1A30A00E8CCCB /* Query.swift */; };
 		4A90145F1CA1A35D00E8CCCB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145E1CA1A35D00E8CCCB /* Filter.swift */; };
 		4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */; };
+		4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE1C3781CADB1650038CF74 /* ModelTest.swift */; };
+		4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */; };
 		4AEBBCEE1C9C74D0009BEA05 /* ReflectFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBCED1C9C74D0009BEA05 /* ReflectFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4AEBBCF51C9C74D0009BEA05 /* ReflectFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AEBBCEA1C9C74D0009BEA05 /* ReflectFramework.framework */; };
 		4AEBBCFA1C9C74D0009BEA05 /* ReflectFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBCF91C9C74D0009BEA05 /* ReflectFrameworkTests.swift */; };
@@ -51,6 +53,8 @@
 		4A90145C1CA1A30A00E8CCCB /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
 		4A90145E1CA1A35D00E8CCCB /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFrameworkTests.swift; sourceTree = "<group>"; };
+		4AE1C3781CADB1650038CF74 /* ModelTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTest.swift; sourceTree = "<group>"; };
+		4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelFrameworkTest.swift; sourceTree = "<group>"; };
 		4AEBBCEA1C9C74D0009BEA05 /* ReflectFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReflectFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AEBBCED1C9C74D0009BEA05 /* ReflectFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReflectFramework.h; sourceTree = "<group>"; };
 		4AEBBCEF1C9C74D0009BEA05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -95,6 +99,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4AE1C37A1CADB2410038CF74 /* TestObjects */ = {
+			isa = PBXGroup;
+			children = (
+				4AEBBD161C9C77D5009BEA05 /* Test.swift */,
+				4AEBBCF91C9C74D0009BEA05 /* ReflectFrameworkTests.swift */,
+				4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */,
+				4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */,
+			);
+			name = TestObjects;
+			sourceTree = "<group>";
+		};
 		4AEBBCE01C9C74D0009BEA05 = {
 			isa = PBXGroup;
 			children = (
@@ -130,10 +145,9 @@
 		4AEBBCF81C9C74D0009BEA05 /* ReflectFrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
-				4AEBBD161C9C77D5009BEA05 /* Test.swift */,
-				4AEBBCF91C9C74D0009BEA05 /* ReflectFrameworkTests.swift */,
-				4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */,
-				4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */,
+				4AE1C37A1CADB2410038CF74 /* TestObjects */,
+				4AE1C3781CADB1650038CF74 /* ModelTest.swift */,
+				4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */,
 				4AEBBCFB1C9C74D0009BEA05 /* Info.plist */,
 			);
 			path = ReflectFrameworkTests;
@@ -340,6 +354,8 @@
 				4AEBBCFA1C9C74D0009BEA05 /* ReflectFrameworkTests.swift in Sources */,
 				4A1815561CAB1EE8007DF21A /* OptionalFrameworkTests.swift in Sources */,
 				4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */,
+				4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */,
+				4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
