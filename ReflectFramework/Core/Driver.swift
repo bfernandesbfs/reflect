@@ -102,15 +102,16 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
 extension Driver {
     
     private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row) {
+
         let propertyData = ReflectData.validPropertyDataForObject(object)
         for property in propertyData {
             if property.isClass {
-                print("ok")
                 if let sub = property.type as? Reflect.Type {
                     let objectSub = sub.init()
                     let propertyDataSub = ReflectData.validPropertyDataForObject(objectSub)
                     for propertySub in propertyDataSub {
-                        if let value = bindValue(propertySub, row: row) {
+                        let column = "\(sub.entityName()).\(propertySub.name!)"
+                        if let value = bindValue(propertySub.type, column: column,  row: row) {
                             objectSub.setValue(value, forKey: propertySub.name!)
                         }
                     }
@@ -119,36 +120,37 @@ extension Driver {
                 
             }
             else{
-                if let value = bindValue(property, row: row) {
+                if let value = bindValue(property.type, column: property.name!, row: row) {
                     object.setValue(value, forKey: property.name!)
                 }
             }
         }
     }
     
-    private func bindValue(property:ReflectData , row:Row) -> AnyObject? {
-        if row[property.name!] {
-            switch property.type {
+    
+    private func bindValue(type: Any.Type?, column:String, row:Row) -> AnyObject? {
+        if row[column] {
+            switch type {
             case is String.Type, is NSString.Type:
-                return row[property.name!].asString()
+                return row[column].asString()
             case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type:
-                return row[property.name!].asInt()
+                return row[column].asInt()
             case is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type:
-                return row[property.name!].asInt()
+                return row[column].asInt()
             case is Int64.Type, is UInt64.Type:
-                return row[property.name!].asInt()
+                return row[column].asInt()
             case is Double.Type:
-                return row[property.name!].asDouble()
+                return row[column].asDouble()
             case is Float.Type:
-                return row[property.name!].asFloat()
+                return row[column].asFloat()
             case is Bool.Type:
-                return row[property.name!].asBool()
+                return row[column].asBool()
             case is NSNumber.Type:
-                return row[property.name!].asNumber()
+                return row[column].asNumber()
             case is NSDate.Type:
-                return row[property.name!].asDate()
+                return row[column].asDate()
             case is NSData.Type:
-                return row[property.name!].asData()
+                return row[column].asData()
             default:
                 return nil
             }

@@ -12,7 +12,7 @@ internal struct ReflectData {
     internal let isClass:    Bool
     internal var type:       Any.Type?  = nil
     internal var name:       String?
-    internal var value:      Value? = nil
+    internal var value:      Any? = nil
     
     internal var isValid: Bool {
         return type != nil && name != nil
@@ -25,7 +25,7 @@ internal struct ReflectData {
         isOptional = mirror.displayStyle == .Optional
         isClass = mirror.displayStyle == .Class
         
-        value = unwrap(property.value) as? Value
+        value = unwrap(property.value)
         type = typeForMirror(mirror)
     }
     
@@ -69,6 +69,7 @@ internal struct ReflectData {
         if mirror.displayStyle != .Optional {
             return value
         }
+        
         /* The encapsulated optional value if not nil, otherwise nil */
         return mirror.children.first?.value
     }

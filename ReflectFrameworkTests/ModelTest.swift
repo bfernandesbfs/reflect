@@ -82,18 +82,17 @@ class Address: Reflect {
     var number :Int
     var state:String
     var zip:Int
-    var User_objectId:NSNumber
     
     required init() {
         street = ""
         number = 0
         state  = ""
         zip    = 0
-        User_objectId   = 0
     }
     
-    class func getAddress(index:Int) -> Address {
+    class func populate() -> [Address] {
         
+        var results:[Address] = []
         var data:[[String:AnyObject]]!
         
         data = [["number": 226, "street": "Highland Drive Temple Hills", "state": "MD", "zip": 20748],
@@ -118,15 +117,15 @@ class Address: Reflect {
                 ["number": 525, "street": "Park Street Fairmont", "state": "WV", "zip": 26554]]
         
         
-        let address = Address()
-        
-        let d = data[index]
-        
-        address.street = d["street"] as! String
-        address.number = d["number"] as! Int
-        address.state  = d["state"] as! String
-        address.zip    = d["zip"] as! Int
-        
-        return address
+        for d in data {
+            let address = Address()
+            address.street = d["street"] as! String
+            address.number = d["number"] as! Int
+            address.state  = d["state"] as! String
+            address.zip    = d["zip"] as! Int
+            
+            results.append(address)
+        }
+        return results
     }
 }

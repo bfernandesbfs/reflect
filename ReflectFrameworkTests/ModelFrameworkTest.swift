@@ -23,7 +23,7 @@ class ModelFrameworkTest: XCTestCase {
     
     func testRegisterClass() {
         XCTAssertTrue(Address.register(), "This object wasn't created")
-         XCTAssertTrue(User.register(), "This object wasn't created")
+        XCTAssertTrue(User.register(), "This object wasn't created")
     }
     
     func testDestroyClass() {
@@ -31,30 +31,48 @@ class ModelFrameworkTest: XCTestCase {
         XCTAssertTrue(User.unRegister(), "This object wasn't deleted")
     }
     
-    func testPopulate() {
+    func testRemoveAll() {
+        XCTAssertTrue(User.clean(),"Not was delete all object")
+    }
     
-        Address.register()
-        User.register()
-        
+    func testPopulate() {
         var result = 0
-        for (index, var u) in User.populate().enumerate() {
-            u.pin()
-
-            var address = Address.getAddress(index)
-            address.User_objectId = u.objectId!
-            address.pin()
-            
+        for (index, var a) in Address.populate().enumerate() {
+            a.pin()
             result = index
         }
         XCTAssertTrue(result != 20 , "results is not in accordance with the objects that were saved in data base")
+        
+        func populateUser() -> Int {
+            var result = 0
+            for (index, var u) in User.populate().enumerate() {
+                u.pin()
+                result = index
+            }
+            return result
+        }
+
+        XCTAssertTrue(populateUser() != 20 , "results is not in accordance with the objects that were saved in data base")
+        
+    }
+    
+    func testPopulateUser() {
+        
+        var result = 0
+        for (index, var u) in User.populate().enumerate() {
+            u.address = Address.findById(index + 1)!
+            u.pin()
+            result = index
+        }
+        
+        XCTAssertTrue(result != 20 , "results is not in accordance with the objects that were saved in data base")
+        
     }
     
     func testPopulateChange() {
         var result = 0
         for (index, var u) in User.query().findObject().enumerate() {
-            let cal = NSCalendar.currentCalendar()
-            let date = cal.dateByAddingUnit(.Minute, value: -Int(arc4random_uniform(60)), toDate: u.birthday!, options: [])
-            u.birthday = date
+            u.address = Address.findById(Int(arc4random_uniform(19)) + 1)!
             u.pin()
             result = index
         }

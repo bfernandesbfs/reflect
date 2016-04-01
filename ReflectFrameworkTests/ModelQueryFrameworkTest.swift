@@ -38,13 +38,14 @@ class ModelQueryFrameworkTest: XCTestCase {
     func testRelationQuery() {
         
         let query = User.query()
-        query.filter("age", Comparison.GreaterThan, value: 50).limit()
+        query.filter("age", Comparison.GreaterThan, value: 50)
         
         query.join(Address.self)
-        
-        let n = query.findObject()
-        
-        print(n)
+    
+        for q in query.findObject(){
+            print("\(q.objectId!)\t\t\(q.firstName)\t\t\t\(q.lastName!)\t\t\t\(q.age)")
+            print("\(q.address.objectId!)\t\(q.address.state)")
+        }
         
     }
 

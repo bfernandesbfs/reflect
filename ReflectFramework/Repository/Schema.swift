@@ -25,7 +25,15 @@ public enum Schema<T: ReflectProtocol> {
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
             statement += "objectId INTEGER PRIMARY KEY AUTOINCREMENT, "
             let _ = propertyData.map { value in
-                var data = "\(value.name!) \(ReflectData.validPropertyTypeForSchema(value.type!))"
+                var data:String = ""
+                if value.isClass {
+                    if let sub = value.type as? Reflect.Type {
+                        data = "\(sub.entityName())_objectId INTEGER"
+                    }
+                }
+                else {
+                    data = "\(value.name!) \(ReflectData.validPropertyTypeForSchema(value.type!))"
+                }
                 data += value.isOptional ? "" : " NOT NULL"
                 fields.append(data)
             }
@@ -55,9 +63,18 @@ public enum Schema<T: ReflectProtocol> {
             var dataArgs:[Value?] = []
             var placeholder:[String] = []
             let columns = propertyData.map { value in
-                dataArgs.append(value.value)
+                var column:String = value.name!
+                if value.isClass{
+                    if let sub = value.value as? Reflect {
+                        dataArgs.append(sub.objectId)
+                        column = "\(sub.dynamicType.entityName())_objectId"
+                    }
+                }
+                else{
+                    dataArgs.append(value.value as? Value)
+                }
                 placeholder.append("?")
-                return value.name!
+                return column
                 }.joinWithSeparator(", ")
             
             /* Columns to be inserted */
@@ -71,8 +88,17 @@ public enum Schema<T: ReflectProtocol> {
             
             var dataArgs:[Value?] = []
             let columns = propertyData.map { value in
-                dataArgs.append(value.value)
-                return "\(value.name!) = ?"
+                var column:String = "\(value.name!) = ?"
+                if value.isClass{
+                    if let sub = value.value as? Reflect {
+                        dataArgs.append(sub.objectId)
+                        column = "\(sub.dynamicType.entityName())_objectId = ?"
+                    }
+                }
+                else{
+                    dataArgs.append(value.value as? Value)
+                }
+                return column
                 }.joinWithSeparator(", ")
             
             dataArgs.append(object.objectId)

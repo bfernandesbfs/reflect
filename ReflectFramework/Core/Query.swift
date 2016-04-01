@@ -102,11 +102,12 @@ public class Query<T where T:ReflectProtocol> {
         return self
     }
     
-    public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil) -> Self? {
-        let fk = foreignKey ?? "\(type.entityName()).\(entity)_objectId"
-        let ok = otherKey ?? "\(entity).objectId"
+    public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil ,alias:String = "" ) -> Self? {
+        let fk = foreignKey ?? "\(entity).\(type.entityName())_objectId"
+        let ok = otherKey ?? "\(type.entityName()).objectId"
         let union = Filter.Union(operation, T.entityName(), fk, comparison, ok)
         dataUnion.append(union)
+        createFieldsAlias(type,alias: alias)
         return self
     }
     
@@ -189,6 +190,7 @@ extension Query {
         }
         
         if dataFields.count > 0 && dataAggregate.field == Aggregate.Default.field {
+            dataFields.append("\(entity).*")
             select.append(dataFields.joinWithSeparator(", "))
         } else {
             select.append(dataAggregate.description)
@@ -197,7 +199,15 @@ extension Query {
         select.append("FROM \(entity)")
         
         return select.joinWithSeparator(" ")
-        
+    }
+    
+    private func createFieldsAlias<T: ReflectProtocol>(type: T.Type, alias:String) {
+        let properties = ReflectData.validPropertyDataForObject(type.init())
+        let namespace  = alias.isEmpty ? type.entityName() : alias
+        let columns = properties.map { value in
+            return "\(namespace).\(value.name!) AS '\(namespace).\(value.name!)'"
+        }
+        dataFields += columns
     }
     
     private func filterOutput(filter: Filter) -> String {
