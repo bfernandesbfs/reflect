@@ -98,6 +98,7 @@ public struct Row {
         }
         
         guard let idx = columnNames[column] else {
+            print(column)
             let similar = Array(columnNames.keys).filter { $0.hasSuffix(".\(column)") }
             
             switch similar.count {

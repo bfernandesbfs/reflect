@@ -22,20 +22,28 @@ class ModelFrameworkTest: XCTestCase {
     }
     
     func testRegisterClass() {
+        XCTAssertTrue(Address.register(), "This object wasn't created")
          XCTAssertTrue(User.register(), "This object wasn't created")
     }
     
     func testDestroyClass() {
+        XCTAssertTrue(Address.unRegister(), "This object wasn't deleted")
         XCTAssertTrue(User.unRegister(), "This object wasn't deleted")
     }
     
     func testPopulate() {
     
+        Address.register()
         User.register()
         
         var result = 0
         for (index, var u) in User.populate().enumerate() {
             u.pin()
+
+            var address = Address.getAddress(index)
+            address.User_objectId = u.objectId!
+            address.pin()
+            
             result = index
         }
         XCTAssertTrue(result != 20 , "results is not in accordance with the objects that were saved in data base")
@@ -52,19 +60,7 @@ class ModelFrameworkTest: XCTestCase {
         }
         XCTAssertTrue(result != 20 , "results is not in accordance with the objects that were changed in data base")
     }
-
-    func testPopulateRemove() {
-    
-        for u in User.query().findObject() {
-            u.unPin()
-        }
         
-        let result = User.query().count()
-        
-        XCTAssertFalse(result > 0 , "results is not in accordance with the objects that were deleted in data base")
-    }
-    
-    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {

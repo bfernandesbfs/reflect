@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0403861CAE9E6100114573 /* ModelQueryFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0403851CAE9E6100114573 /* ModelQueryFrameworkTest.swift */; };
 		4A1815561CAB1EE8007DF21A /* OptionalFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */; };
 		4A779FF51CA956F900EE2953 /* ReflectProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF41CA956F900EE2953 /* ReflectProtocol.swift */; };
 		4A779FF71CA9594500EE2953 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF61CA9594500EE2953 /* Driver.swift */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4A0403851CAE9E6100114573 /* ModelQueryFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelQueryFrameworkTest.swift; sourceTree = "<group>"; };
 		4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalFrameworkTests.swift; sourceTree = "<group>"; };
 		4A779FF41CA956F900EE2953 /* ReflectProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectProtocol.swift; sourceTree = "<group>"; };
 		4A779FF61CA9594500EE2953 /* Driver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				4AE1C37A1CADB2410038CF74 /* TestObjects */,
 				4AE1C3781CADB1650038CF74 /* ModelTest.swift */,
 				4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */,
+				4A0403851CAE9E6100114573 /* ModelQueryFrameworkTest.swift */,
 				4AEBBCFB1C9C74D0009BEA05 /* Info.plist */,
 			);
 			path = ReflectFrameworkTests;
@@ -356,6 +359,7 @@
 				4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */,
 				4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */,
 				4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */,
+				4A0403861CAE9E6100114573 /* ModelQueryFrameworkTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

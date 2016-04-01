@@ -16,14 +16,26 @@ public class Query<T where T:ReflectProtocol> {
     private var dataDistinct :Bool
     private var dataAggregate:Aggregate
     private var dataFields  :[String]
+    private var dataUnion   :[Filter]
     private var dataClause  :[Filter]
     private var dataOrder   :[Filter]
     private var dataPage    :[Pagination]
+    private var entity: String {
+        return T.entityName()
+    }
     
     var statement:(sql:String, args:[Value?]) {
         var query: [String] = [resolveSelect()]
         if dataClause.count == 0 {
             return (query.first!, [])
+        }
+        //JOIN
+        if dataUnion.count > 0 {
+            var filterUnion: [String] = []
+            for filter in dataUnion {
+                filterUnion.append(filterOutput(filter))
+            }
+            query.append(filterUnion.joinWithSeparator(" "))
         }
         //Where
         var filterClause: [String] = []
@@ -31,7 +43,6 @@ public class Query<T where T:ReflectProtocol> {
             filterClause.append(filterOutput(filter))
         }
         query.append("WHERE \(filterClause.joinWithSeparator(" AND "))")
-        
         //Order by
         if dataOrder.count > 0 {
             query.append("ORDER BY")
@@ -55,6 +66,7 @@ public class Query<T where T:ReflectProtocol> {
         dataDistinct  = false
         dataAggregate = Aggregate.Default
         dataFields   = []
+        dataUnion    = []
         dataClause   = []
         dataArgs     = []
         dataOrder    = []
@@ -87,6 +99,14 @@ public class Query<T where T:ReflectProtocol> {
         let q = handler(query: Query())
         let filter = Filter.Group(.And, q.dataClause)
         dataClause.append(filter)
+        return self
+    }
+    
+    public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil) -> Self? {
+        let fk = foreignKey ?? "\(type.entityName()).\(entity)_objectId"
+        let ok = otherKey ?? "\(entity).objectId"
+        let union = Filter.Union(operation, T.entityName(), fk, comparison, ok)
+        dataUnion.append(union)
         return self
     }
     
@@ -163,9 +183,7 @@ extension Query {
     */
     
     private func resolveSelect() -> String {
-        let entity = T.entityName()
         var select = ["SELECT"]
-        
         if dataDistinct {
             select.append("DISTINCT")
         }
@@ -206,6 +224,8 @@ extension Query {
             return "(" + f.joinWithSeparator(" \(op.description) ") + ")"
         case .Order(let field, let order):
             return "\(field) \(order)"
+        case .Union(let join, let entity, let fk, let comparison, let ok):
+            return "\(join.description) \(entity) ON \(fk) \(comparison.description) \(ok)"
         }
     }
 }

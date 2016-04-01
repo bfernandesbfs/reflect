@@ -104,8 +104,24 @@ extension Driver {
     private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row) {
         let propertyData = ReflectData.validPropertyDataForObject(object)
         for property in propertyData {
-            if let value = bindValue(property, row: row) {
-                object.setValue(value, forKey: property.name!)
+            if property.isClass {
+                print("ok")
+                if let sub = property.type as? Reflect.Type {
+                    let objectSub = sub.init()
+                    let propertyDataSub = ReflectData.validPropertyDataForObject(objectSub)
+                    for propertySub in propertyDataSub {
+                        if let value = bindValue(propertySub, row: row) {
+                            objectSub.setValue(value, forKey: propertySub.name!)
+                        }
+                    }
+                    object.setValue(objectSub, forKey: property.name!)
+                }
+                
+            }
+            else{
+                if let value = bindValue(property, row: row) {
+                    object.setValue(value, forKey: property.name!)
+                }
             }
         }
     }

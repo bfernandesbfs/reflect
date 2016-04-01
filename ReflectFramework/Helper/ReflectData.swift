@@ -9,6 +9,7 @@
 internal struct ReflectData {
     
     internal let isOptional: Bool
+    internal let isClass:    Bool
     internal var type:       Any.Type?  = nil
     internal var name:       String?
     internal var value:      Value? = nil
@@ -22,8 +23,9 @@ internal struct ReflectData {
         
         let mirror = Mirror(reflecting: property.value)
         isOptional = mirror.displayStyle == .Optional
-        value = unwrap(property.value) as? Value
+        isClass = mirror.displayStyle == .Class
         
+        value = unwrap(property.value) as? Value
         type = typeForMirror(mirror)
     }
     
@@ -55,18 +57,18 @@ internal struct ReflectData {
             
         case is Optional<Float>.Type:       return Float.self
         case is Optional<Double>.Type:      return Double.self
+        case is Optional<AnyClass>.Type:    return AnyClass.self
         default:                            return nil
         }
     }
     
-    internal func unwrap(value: Any) -> Any? {
+    internal mutating func unwrap(value: Any) -> Any? {
         let mirror = Mirror(reflecting: value)
         
         /* Raw value */
         if mirror.displayStyle != .Optional {
             return value
         }
-        
         /* The encapsulated optional value if not nil, otherwise nil */
         return mirror.children.first?.value
     }

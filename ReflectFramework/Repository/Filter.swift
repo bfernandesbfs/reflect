@@ -11,6 +11,7 @@ public enum Filter {
     case Subset(String, Comparison, [Value?])
     case Group(Operation, [Filter])
     case Order(String, Sort)
+    case Union(Join, String, String, Comparison, String)
 }
 
 public enum Comparison: CustomStringConvertible{
@@ -45,6 +46,21 @@ public enum Operation: CustomStringConvertible  {
             return "AND"
         case .Or:
             return "OR"
+        }
+    }
+}
+
+public enum Join: CustomStringConvertible {
+    case Inner, Right, Left
+    
+    public var description: String {
+        switch self {
+        case .Inner:
+            return "INNER JOIN"
+        case .Left:
+            return "LEFT JOIN"
+        case .Right:
+            return "RIGHT JOIN"
         }
     }
 }

@@ -17,11 +17,14 @@ class User: Reflect {
     var email:String
     var registerNumber:Int
     
+    var address: Address
+    
     required init() {
         firstName = ""
         age       = 0
         email     = ""
         registerNumber = 0
+        address = Address()
     }
     
     class func populate() -> [User] {
@@ -71,5 +74,59 @@ class User: Reflect {
         }
         
         return users
+    }
+}
+
+class Address: Reflect {
+    var street:String
+    var number :Int
+    var state:String
+    var zip:Int
+    var User_objectId:NSNumber
+    
+    required init() {
+        street = ""
+        number = 0
+        state  = ""
+        zip    = 0
+        User_objectId   = 0
+    }
+    
+    class func getAddress(index:Int) -> Address {
+        
+        var data:[[String:AnyObject]]!
+        
+        data = [["number": 226, "street": "Highland Drive Temple Hills", "state": "MD", "zip": 20748],
+                ["number": 584, "street": "Union Street Detroit", "state": "MI", "zip": 48205],
+                ["number": 486, "street": "Homestead Drive Arlington Heights", "state": "IL", "zip": 60004],
+                ["number": 988, "street": "Pin Oak Drive Ottumwa", "state": "IA", "zip": 52501],
+                ["number": 533, "street": "Monroe Street Biloxi", "state": "MS", "zip": 39532],
+                ["number": 760, "street": "2nd Street West Waukesha", "state": "WI", "zip": 53186],
+                ["number": 668, "street": "12th Street Lititz", "state": "PA", "zip": 17543],
+                ["number": 752, "street": "Pennsylvania Avenue Rossville", "state": "GA", "zip": 30741],
+                ["number": 728, "street": "Orchard Street Hagerstown", "state": "MD", "zip": 21740],
+                ["number": 128, "street": "Sycamore Drive Gulfport", "state": "MS", "zip": 39503],
+                ["number": 640, "street": "10th Street East Lansing", "state": "MI", "zip": 48823],
+                ["number": 721, "street": "Willow Avenue Warren", "state": "MI", "zip": 48089],
+                ["number": 953, "street": "Brown Street Grand Haven", "state": "MI", "zip": 49417],
+                ["number": 803, "street": "Main Street Riverdale", "state": "GA", "zip": 30274],
+                ["number": 829, "street": "1st Street Winter Garden", "state": "FL", "zip": 34787],
+                ["number": 768, "street": "Willow Lane Norristown", "state": "PA", "zip": 19401],
+                ["number": 105, "street": "Route 64 Fairfield", "state": "CT", "zip": 06824],
+                ["number": 659, "street": "Ridge Avenue Chattanooga", "state": "TN", "zip": 37421],
+                ["number": 995, "street": "11th Street Lombard", "state": "IL","zip": 60148],
+                ["number": 525, "street": "Park Street Fairmont", "state": "WV", "zip": 26554]]
+        
+        
+        let address = Address()
+        
+        let d = data[index]
+        
+        address.street = d["street"] as! String
+        address.number = d["number"] as! Int
+        address.state  = d["state"] as! String
+        address.zip    = d["zip"] as! Int
+        
+        return address
     }
 }

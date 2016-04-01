@@ -16,8 +16,9 @@ public final class Statement {
     
     public lazy var columnCount: Int = Int(sqlite3_column_count(self.handle))
     
-    public lazy var columnNames: [String] = (0..<Int32(self.columnCount)).map {
-        String.fromCString(sqlite3_column_name(self.handle, $0))!
+    public lazy var columnNames: [String] = (0..<Int32(self.columnCount)).map { value in
+        let c = String.fromCString(sqlite3_column_name (self.handle, value))!
+        return c
     }
     
     /// A cursor pointing to the current row.
