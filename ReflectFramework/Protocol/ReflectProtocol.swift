@@ -44,9 +44,9 @@ extension ReflectProtocol {
             }.data!
     }
     
-    static func findById(id: Int) -> Self? {
+    static func findById(id: Int, include:Any.Type...) -> Self? {
         return Reflect.execute {
-            return try Driver().find(id)
+            return try Driver().find(id, include: include)
             }.data!
     }
     
@@ -59,9 +59,9 @@ extension ReflectProtocol {
 
 extension ReflectProtocol {
     
-    func fetch() -> Bool {
+    func fetch(include include:Any.Type...) -> Bool {
         return Reflect.execute {
-            try Driver().fetch(self)
+            try Driver().fetch(self, include: include)
         }.success
     }
     

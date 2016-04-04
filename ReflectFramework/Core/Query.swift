@@ -105,7 +105,7 @@ public class Query<T where T:ReflectProtocol> {
     public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil ,alias:String = "" ) -> Self? {
         let fk = foreignKey ?? "\(entity).\(type.entityName())_objectId"
         let ok = otherKey ?? "\(type.entityName()).objectId"
-        let union = Filter.Union(operation, T.entityName(), fk, comparison, ok)
+        let union = Filter.Union(operation, type.entityName(), fk, comparison, ok)
         dataUnion.append(union)
         createFieldsAlias(type,alias: alias)
         return self

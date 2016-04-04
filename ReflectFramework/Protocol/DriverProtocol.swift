@@ -14,8 +14,8 @@ public protocol DriverProtocol {
     func save(obj: T) throws
     func change(obj: T) throws -> Int
     func delete(obj: T) throws -> Int
-    func fetch(obj: T) throws
-    func find(id: Int) throws -> T?
+    func fetch(obj: T, include:[Any.Type]) throws
+    func find(id: Int, include:[Any.Type]) throws -> T?
     func find(query:Query<T>) throws -> [T]
     func find(query: String) throws -> [[String: Value?]]
     func find(query: Query<T>, column:String) throws -> Value?

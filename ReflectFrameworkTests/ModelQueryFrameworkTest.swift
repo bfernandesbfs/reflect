@@ -23,6 +23,14 @@ class ModelQueryFrameworkTest: XCTestCase {
 
     func testQuery() {
         
+        let user1 = User()
+        user1.objectId = 35
+        user1.fetch(include: Address.self)
+        
+        let user2 = User.findById(35, include: Address.self)!
+        
+        XCTAssertTrue(user1.firstName == user2.firstName , "Not match object when user querys")
+        
         let query = User.query()
         var value = query.filter("age", Comparison.LessThan, value: 20) .count()
         
@@ -38,7 +46,7 @@ class ModelQueryFrameworkTest: XCTestCase {
     func testRelationQuery() {
         
         let query = User.query()
-        query.filter("age", Comparison.GreaterThan, value: 50)
+        query.filter("User.objectId", Comparison.GreaterThan, value: 22).filter("firstName", .Like, value: "%da") .distinct()
         
         query.join(Address.self)
     

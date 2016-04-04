@@ -48,8 +48,15 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
         return try db.runChange(Schema.Delete(obj))
     }
     
-    public func fetch(obj: T) throws {
-        let q = Query<T>().filter("objectId", Comparison.Equals, value: obj.objectId!)
+    public func fetch(obj: T, include:[Any.Type] = []) throws {
+        let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.Equals, value: obj.objectId!)
+        
+        for k in include {
+            if let sub = k as? Reflect.Type {
+                q.join(sub)
+            }
+        }
+        
         if let row = try db.prepareFetch(q) {
             objectsForType(obj as! Reflect, row: row)
         }
@@ -58,13 +65,15 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
         }
     }
     
-    public func find(id: Int) throws -> T? {
+    //Find by Id
+    public func find(id: Int, include:[Any.Type] = []) throws -> T? {
         var rft = T()
         rft.objectId = id
-        try fetch(rft)
+        try fetch(rft, include: include)
         return rft
     }
     
+    //Find Query
     public func find(query: Query<T>) throws -> [T] {
         
         var results:[T] = []
@@ -76,6 +85,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
         return results
     }
     
+    //Find String Reflect
     public func find(query: String) throws -> [[String: Value?]] {
         
         var results:[[String: Value?]] = []
@@ -90,6 +100,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
         return results
     }
     
+    //Find Aggregate
     public func find(query: Query<T>, column:String) throws -> Value? {
         if let row = try db.prepareFetch(query) {
             return row[column].asValue()
@@ -101,32 +112,25 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
 
 extension Driver {
     
-    private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row) {
-
+    private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row, alias:String = "") {
+        
         let propertyData = ReflectData.validPropertyDataForObject(object)
         for property in propertyData {
             if property.isClass {
                 if let sub = property.type as? Reflect.Type {
                     let objectSub = sub.init()
-                    let propertyDataSub = ReflectData.validPropertyDataForObject(objectSub)
-                    for propertySub in propertyDataSub {
-                        let column = "\(sub.entityName()).\(propertySub.name!)"
-                        if let value = bindValue(propertySub.type, column: column,  row: row) {
-                            objectSub.setValue(value, forKey: propertySub.name!)
-                        }
-                    }
+                    objectsForType(objectSub, row: row, alias: "\(sub.entityName()).")
                     object.setValue(objectSub, forKey: property.name!)
                 }
-                
             }
             else{
-                if let value = bindValue(property.type, column: property.name!, row: row) {
+                let column = "\(alias)\(property.name!)"
+                if let value = bindValue(property.type, column: column, row: row) {
                     object.setValue(value, forKey: property.name!)
                 }
             }
         }
     }
-    
     
     private func bindValue(type: Any.Type?, column:String, row:Row) -> AnyObject? {
         if row[column] {
