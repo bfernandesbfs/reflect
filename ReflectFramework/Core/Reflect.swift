@@ -23,6 +23,10 @@ public class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
         return []
     }
     
+    public static func uniqueProperties() -> Set<String> {
+        return []
+    }
+    
     override required public init(){
         super.init()
     }

@@ -35,6 +35,11 @@ class ModelFrameworkTest: XCTestCase {
         XCTAssertTrue(User.clean(),"Not was delete all object")
     }
     
+    func testIndex() {
+        User.removeIndex("email")
+        User.removeIndex("firstName")
+    }
+    
     func testPopulate() {
         var result = 0
         for (index, var a) in Address.populate().enumerate() {

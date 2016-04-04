@@ -24,6 +24,16 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
         try db.execute(schema.statement.sql)
     }
     
+    public func index(obj:T.Type, field: String, unique: Bool = false) throws {
+        let schema = Schema<T>.Index(entity: obj.entityName(), field: field, unique: unique)
+        try db.run(schema)
+    }
+    
+    public func dropIndex(obj: T.Type, field: String) throws {
+        let schema = Schema<T>.DropIndex(entity: T.entityName(), field: field)
+        try db.run(schema)
+    }
+    
     public func removeAll(obj: T.Type) throws {
         let rft = obj.init()
         try db.runChange(Schema.Delete(rft))

@@ -19,6 +19,7 @@ public protocol ReflectProtocol {
 public protocol FieldsProtocol {
     static func primaryKeys() -> Set<String>
     static func ignoredProperties() -> Set<String>
+    static func uniqueProperties() -> Set<String>
 }
 
 extension ReflectProtocol {
@@ -55,6 +56,19 @@ extension ReflectProtocol {
             return try Driver().removeAll(self)
             }.success
     }
+    
+    static func index(field: String, unique:Bool = false) -> Bool {
+        return Reflect.execute {
+            return try Driver().index(self, field: field, unique: unique)
+            }.success
+    }
+    
+    static func removeIndex(field: String) -> Bool {
+        return Reflect.execute {
+            return try Driver().dropIndex(self, field: field)
+            }.success
+    }
+
 }
 
 extension ReflectProtocol {

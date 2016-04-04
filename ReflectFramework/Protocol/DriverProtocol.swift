@@ -10,6 +10,8 @@ public protocol DriverProtocol {
     associatedtype T: ReflectProtocol
     func create(obj: T.Type) throws
     func drop(obj: T.Type) throws
+    func index(obj:T.Type, field: String, unique: Bool) throws
+    func dropIndex(obj: T.Type, field: String) throws
     func removeAll(obj: T.Type) throws
     func save(obj: T) throws
     func change(obj: T) throws -> Int

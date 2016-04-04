@@ -10,9 +10,12 @@ public enum Schema<T: ReflectProtocol> {
     
     case Create(T)
     case Drop(String)
+    case Index(entity:String, field: String , unique: Bool)
+    case DropIndex(entity:String, field: String)
     case Insert(T)
     case Update(T)
     case Delete(T)
+    
     
     var statement: (sql:String, args:[Value?]) {
         switch self {
@@ -50,9 +53,21 @@ public enum Schema<T: ReflectProtocol> {
             statement += ")"
         
             return (statement, [])
-            
+        
         case .Drop(let tableName):
             return ("DROP TABLE \(tableName)" , [])
+            
+        case .Index(let entityName, let field , let unique):
+            var statement = unique ? "CREATE UNIQUE INDEX" : "CREATE INDEX"
+            statement += " IF NOT EXISTS index_\(entityName)_on_\(field) ON \(entityName) (\(field))"
+            
+            return (statement , [])
+        
+        case .DropIndex(let entityName, let field):
+            var statement = "DROP INDEX"
+            statement += " IF EXISTS index_\(entityName)_on_\(field)"
+
+            return (statement , [])
             
         case .Insert(var object):
             var statement = "INSERT OR REPLACE INTO " + T.entityName()

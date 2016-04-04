@@ -82,12 +82,18 @@ class Address: Reflect {
     var number :Int
     var state:String
     var zip:Int
+    var status:Bool
     
     required init() {
         street = ""
         number = 0
         state  = ""
         zip    = 0
+        status = true
+    }
+    
+    override class func ignoredProperties() -> Set<String> {
+        return ["status"]
     }
     
     class func populate() -> [Address] {

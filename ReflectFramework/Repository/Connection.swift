@@ -22,7 +22,7 @@ public final class Connection {
     
     private var _handle: COpaquePointer = nil
     
-    private var queue = dispatch_queue_create("br.com.bfs.BaseFramework", DISPATCH_QUEUE_SERIAL)
+    private var queue = dispatch_queue_create("xyz.ReflectFramework", DISPATCH_QUEUE_SERIAL)
     
     private static let queueKey = unsafeBitCast(Connection.self, UnsafePointer<Void>.self)
     
@@ -157,6 +157,10 @@ public final class Connection {
         return querySequence(statement)
     }
     
+    public func prepareFetch<T: ReflectProtocol>(query: Query<T>) throws -> Row? {
+        return try prepareQuery(query)!.generate().next()
+    }
+    
     private func querySequence(statement:Statement) -> AnySequence<Row>? {
         let columnNames: [String: Int] = {
             var (columnNames, _) = ([String: Int](), 0)
@@ -167,10 +171,6 @@ public final class Connection {
         }()
         
         return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
-    }
-    
-    public func prepareFetch<T: ReflectProtocol>(query: Query<T>) throws -> Row? {
-        return try prepareQuery(query)!.generate().next()
     }
     
     // MARK: - Transactions
