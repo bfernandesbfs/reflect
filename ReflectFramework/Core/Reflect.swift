@@ -33,9 +33,9 @@ public class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
     
 }
 
-extension Reflect {
+public extension Reflect {
     
-    static var settings:Configuration = Configuration.defaultSettings()
+    public static var settings:Configuration = Configuration.defaultSettings()
     
     class func configuration(appGroup:String, baseNamed:String){
         settings = Configuration(defaultName: baseNamed, appGroup: appGroup)

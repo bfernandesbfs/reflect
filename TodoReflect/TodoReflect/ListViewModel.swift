@@ -1,0 +1,47 @@
+//
+//  ListViewModel
+//  TodoReflect
+//
+//  Created by Bruno Fernandes on 04/04/16.
+//  Copyright © 2016 BFS. All rights reserved.
+//
+
+import Foundation
+
+public class ListViewModel {
+    
+    public let context = Context.defaultContext
+    public var items = [Item]()
+    
+    public func refresh() {
+        items = context.list().map {
+            self.itemForPayback($0)
+        }
+        print(items)
+    }
+    
+    func itemForPayback(payback: Payback) -> Item {
+        let singleLetter = payback.lastName.substringToIndex(payback.lastName.startIndex.successor())
+        
+        let title = "\(payback.firstName) \(singleLetter)."
+        let subtitle = NSDateFormatter.localizedStringFromDate(payback.createAt!, dateStyle: NSDateFormatterStyle.LongStyle, timeStyle: NSDateFormatterStyle.NoStyle)
+        
+        let rounded = NSNumber(double: round(payback.amount)).longLongValue
+        let amount = "$\(rounded)"
+        
+        let item = Item(title: title, subtitle: subtitle, amount: amount)
+        
+        return item
+    }
+    
+    func removePayback(index: Int) {
+        context.removePayback(index)
+    }
+    
+    public struct Item {
+        public let title: String
+        public let subtitle: String
+        public let amount: String
+    }
+    
+}

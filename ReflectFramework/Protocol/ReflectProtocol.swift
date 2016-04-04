@@ -22,7 +22,7 @@ public protocol FieldsProtocol {
     static func uniqueProperties() -> Set<String>
 }
 
-extension ReflectProtocol {
+public extension ReflectProtocol {
     static func query() -> Query<Self> {
         return Query()
     }
@@ -71,7 +71,7 @@ extension ReflectProtocol {
 
 }
 
-extension ReflectProtocol {
+public extension ReflectProtocol {
     
     func fetch(include include:Any.Type...) -> Bool {
         return Reflect.execute {
@@ -79,7 +79,7 @@ extension ReflectProtocol {
         }.success
     }
     
-    mutating func pin() -> Bool {
+    func pin() -> Bool {
         return Reflect.execute {
             try Driver().save(self)
         }.success

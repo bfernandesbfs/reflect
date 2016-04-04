@@ -120,7 +120,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
 
 }
 
-extension Driver {
+public extension Driver {
     
     private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row, alias:String = "") {
         

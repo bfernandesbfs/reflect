@@ -14,7 +14,7 @@ public var dateFormatter: NSDateFormatter = {
     return NSDateFormatter.defaultFormart()
 }()
 
-extension String {
+public extension String {
     
     func quote(mark: Character = "\"") -> String {
         let escaped = characters.reduce("") { string, character in
@@ -68,7 +68,7 @@ extension String {
     }
 }
 
-extension NSDateFormatter {
+public extension NSDateFormatter {
     
     convenience init(format:String?){
         self.init()

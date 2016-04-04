@@ -6,7 +6,7 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-struct Configuration {
+public struct Configuration {
     private var defaultName:String = "ReflectDB"
     private var appGroup:String = ""
     
@@ -22,15 +22,15 @@ struct Configuration {
     /*
     // MARK: - Public Methods
     */
-    func getDBName() -> String {
+    public func getDBName() -> String {
         return defaultName
     }
     
-    func getAppGroup() -> String {
+    public func getAppGroup() -> String {
         return appGroup
     }
     
-    func createPath() -> String {
+    public func createPath() -> String {
         
         let fm = NSFileManager.defaultManager()
         

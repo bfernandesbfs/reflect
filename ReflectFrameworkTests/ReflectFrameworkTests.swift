@@ -99,7 +99,7 @@ class ReflectFrameworkTests: XCTestCase {
         XCTAssert(Reflect.settings.getDBName() == "Teste.db", "Data base and path not created")
         
         XCTAssert(Car.register(), "found error when if register the object")
-        var n = Car()
+        let n = Car()
         n.model = "Polo"
         n.year  = 2008
         

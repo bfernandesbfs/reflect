@@ -178,7 +178,7 @@ public class Query<T where T:ReflectProtocol> {
     
 }
 
-extension Query {
+private extension Query {
     /*
     // MARK: - Private Methods
     */

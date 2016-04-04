@@ -75,7 +75,7 @@ internal struct ReflectData {
     }
 }
 
-extension ReflectData {
+internal extension ReflectData {
     internal static func validPropertyDataForObject (object: ReflectProtocol) -> [ReflectData] {
         return validPropertyDataForMirror(Mirror(reflecting: object))
     }
