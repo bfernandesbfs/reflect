@@ -11,7 +11,11 @@ import Foundation
 let SQLITE_TRANSIENT = unsafeBitCast(-1, sqlite3_destructor_type.self)
 
 public var dateFormatter: NSDateFormatter = {
-    return NSDateFormatter.defaultFormart()
+    let formatter = NSDateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    formatter.locale = NSLocale.currentLocale()
+    formatter.timeZone = NSTimeZone.systemTimeZone()
+    return formatter
 }()
 
 public extension String {
@@ -67,25 +71,3 @@ public extension String {
         return nsSt.stringByAppendingPathExtension(ext)
     }
 }
-
-public extension NSDateFormatter {
-    
-    convenience init(format:String?){
-        self.init()
-        dateFormat = format == nil ? "yyyy-MM-dd HH:mm:ss" : format
-        locale = NSLocale.currentLocale()
-        timeZone = NSTimeZone.systemTimeZone()
-    }
-    
-    class func defaultFormart() -> NSDateFormatter {
-        let formatter = NSDateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        formatter.locale = NSLocale.currentLocale()
-        formatter.timeZone = NSTimeZone.systemTimeZone()
-        return formatter
-    }
-}
-
-
-
-

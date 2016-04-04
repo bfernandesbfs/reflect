@@ -39,12 +39,12 @@ class OptionalFrameworkTests: XCTestCase {
 
     
     func testPin() {
-        var testeObjects = TesteObjects()
+        let testeObjects = TesteObjects()
         XCTAssert(testeObjects.pin(), "Not was created a new object for TesteObjects")
     }
     
     func testChange() {
-        var testeObjects = TesteObjects()
+        let testeObjects = TesteObjects()
         
         testeObjects.objectId = 5
         testeObjects.string    = "New String"
@@ -83,7 +83,7 @@ class OptionalFrameworkTests: XCTestCase {
     
     
     func testPinOptional() {
-        var testeObjectsOptional = TesteObjectsOptional()
+        let testeObjectsOptional = TesteObjectsOptional()
         
         testeObjectsOptional.optionalString = nil
         //Objc
@@ -96,7 +96,7 @@ class OptionalFrameworkTests: XCTestCase {
     }
     
     func testChangeOptional() {
-        var testeObjectsOptional = TesteObjectsOptional()
+        let testeObjectsOptional = TesteObjectsOptional()
         
         testeObjectsOptional.objectId = 4
         testeObjectsOptional.optionalString = "New String"

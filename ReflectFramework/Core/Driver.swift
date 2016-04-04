@@ -6,40 +6,40 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-public class Driver<T where T:ReflectProtocol>: DriverProtocol {
+internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
     
     private lazy var db: Connection = {
         let path = Reflect.settings.createPath()
         return try! Connection(path)
     }()
     
-    public func create(obj: T.Type) throws {
+    internal func create(obj: T.Type) throws {
         let rft = obj.init()
         let schema = Schema.Create(rft)
         try db.execute(schema.statement.sql)
     }
     
-    public func drop(obj: T.Type) throws {
+    internal func drop(obj: T.Type) throws {
         let schema = Schema<T>.Drop(T.entityName())
         try db.execute(schema.statement.sql)
     }
     
-    public func index(obj:T.Type, field: String, unique: Bool = false) throws {
+    internal func index(obj:T.Type, field: String, unique: Bool = false) throws {
         let schema = Schema<T>.Index(entity: obj.entityName(), field: field, unique: unique)
         try db.run(schema)
     }
     
-    public func dropIndex(obj: T.Type, field: String) throws {
+    internal func dropIndex(obj: T.Type, field: String) throws {
         let schema = Schema<T>.DropIndex(entity: T.entityName(), field: field)
         try db.run(schema)
     }
     
-    public func removeAll(obj: T.Type) throws {
+    internal func removeAll(obj: T.Type) throws {
         let rft = obj.init()
         try db.runChange(Schema.Delete(rft))
     }
     
-    public func save(obj: T) throws {
+    internal func save(obj: T) throws {
         var rft = obj
         if rft.objectId == nil {
             let rowId = try db.runRowId(Schema.Insert(rft))
@@ -50,15 +50,15 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
         }
     }
     
-    public func change(obj: T) throws -> Int {
+    internal func change(obj: T) throws -> Int {
         return Int(try db.runChange(Schema.Update(obj)))
     }
     
-    public func delete(obj: T) throws -> Int {
+    internal func delete(obj: T) throws -> Int {
         return try db.runChange(Schema.Delete(obj))
     }
     
-    public func fetch(obj: T, include:[Any.Type] = []) throws {
+    internal func fetch(obj: T, include:[Any.Type] = []) throws {
         let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.Equals, value: obj.objectId!)
         
         for k in include {
@@ -76,7 +76,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
     }
     
     //Find by Id
-    public func find(id: Int, include:[Any.Type] = []) throws -> T? {
+    internal func find(id: Int, include:[Any.Type] = []) throws -> T? {
         var rft = T()
         rft.objectId = id
         try fetch(rft, include: include)
@@ -84,7 +84,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
     }
     
     //Find Query
-    public func find(query: Query<T>) throws -> [T] {
+    internal func find(query: Query<T>) throws -> [T] {
         
         var results:[T] = []
         for row in try db.prepareQuery(query)! {
@@ -96,7 +96,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
     }
     
     //Find String Reflect
-    public func find(query: String) throws -> [[String: Value?]] {
+    internal func find(query: String) throws -> [[String: Value?]] {
         
         var results:[[String: Value?]] = []
         for (index ,row) in try db.prepareQuery(query)!.enumerate() {
@@ -111,7 +111,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
     }
     
     //Find Aggregate
-    public func find(query: Query<T>, column:String) throws -> Value? {
+    internal func find(query: Query<T>, column:String) throws -> Value? {
         if let row = try db.prepareFetch(query) {
             return row[column].asValue()
         }
@@ -120,7 +120,7 @@ public class Driver<T where T:ReflectProtocol>: DriverProtocol {
 
 }
 
-public extension Driver {
+private extension Driver {
     
     private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row, alias:String = "") {
         

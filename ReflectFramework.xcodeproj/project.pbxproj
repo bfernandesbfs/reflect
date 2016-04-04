@@ -478,6 +478,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.brunofernandes.ReflectFramework;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -497,6 +498,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = xyz.brunofernandes.ReflectFramework;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};

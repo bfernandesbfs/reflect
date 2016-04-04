@@ -161,21 +161,6 @@ public class Query<T where T:ReflectProtocol> {
         return try! Driver().find(self)
     }
     
-    private func aggregateObject(field:String) -> Double {
-        if let value = try! Driver().find(self, column: field) {
-            if let v = value as? Int64 {
-                return Double(v)
-            }
-            else if let v = value as? Double {
-                return v
-            }
-            else if let v = value as? Float {
-                return Double(v)
-            }
-        }
-        return 0
-    }
-    
 }
 
 private extension Query {
@@ -237,5 +222,20 @@ private extension Query {
         case .Union(let join, let entity, let fk, let comparison, let ok):
             return "\(join.description) \(entity) ON \(fk) \(comparison.description) \(ok)"
         }
+    }
+    
+    private func aggregateObject(field:String) -> Double {
+        if let value = try! Driver().find(self, column: field) {
+            if let v = value as? Int64 {
+                return Double(v)
+            }
+            else if let v = value as? Double {
+                return v
+            }
+            else if let v = value as? Float {
+                return Double(v)
+            }
+        }
+        return 0
     }
 }

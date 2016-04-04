@@ -50,7 +50,7 @@ class ModelFrameworkTest: XCTestCase {
         
         func populateUser() -> Int {
             var result = 0
-            for (index, var u) in User.populate().enumerate() {
+            for (index, u) in User.populate().enumerate() {
                 u.pin()
                 result = index
             }
@@ -64,7 +64,7 @@ class ModelFrameworkTest: XCTestCase {
     func testPopulateUser() {
         
         var result = 0
-        for (index, var u) in User.populate().enumerate() {
+        for (index, u) in User.populate().enumerate() {
             u.address = Address.findById(index + 1)!
             u.pin()
             result = index
@@ -76,7 +76,7 @@ class ModelFrameworkTest: XCTestCase {
     
     func testPopulateChange() {
         var result = 0
-        for (index, var u) in User.query().findObject().enumerate() {
+        for (index, u) in User.query().findObject().enumerate() {
             u.address = Address.findById(Int(arc4random_uniform(19)) + 1)!
             u.pin()
             result = index
