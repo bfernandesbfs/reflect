@@ -6,24 +6,34 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-import Foundation
-
+/// Query 
+//  Controla a criação dos filtros para gerar o sql text and argumentos 
+//  para acessar oos dados no Data Base
 public class Query<T where T:ReflectProtocol> {
+    /// Alias Handlee para clauses AND and OR
     public typealias Handler = (query: Query) -> Query
-    
+    /// Argumentos to Query
     public var dataArgs:[Value?]
-    
+    /// Distinct values
     private var dataDistinct :Bool
+    /// Aggregate value (COUNT, SUM, MAX, MIN and AVG)
     private var dataAggregate:Aggregate
+    /// Information to Fieds
     private var dataFields  :[String]
+    /// Join beetween Reflect object
     private var dataUnion   :[Filter]
+    /// Filters
     private var dataClause  :[Filter]
+    /// Order by objects
     private var dataOrder   :[Filter]
+    /// Limit and Offset
     private var dataPage    :[Pagination]
+    /// Entity name
     private var entity: String {
         return T.entityName()
     }
     
+    /// Statement Sql contem intrução sql and argumentos
     var statement:(sql:String, args:[Value?]) {
         var query: [String] = [resolveSelect()]
         if dataClause.count == 0 {
@@ -61,7 +71,10 @@ public class Query<T where T:ReflectProtocol> {
         print(x.0)
         return ("\(query.joinWithSeparator(" "));" , dataArgs)
     }
-    
+    /**
+     Initialize Object
+     
+     */
     public init(){
         dataDistinct  = false
         dataAggregate = Aggregate.Default
@@ -72,12 +85,26 @@ public class Query<T where T:ReflectProtocol> {
         dataOrder    = []
         dataPage     = []
     }
-    
+    /**
+     Selecione column
+     
+     - parameter key: Column names
+     
+     - returns: Self
+     */
     public func fields(key:String...) -> Self {
         dataFields += key
         return self
     }
-    
+    /**
+     Filter 
+     
+     - parameter key:        <#key description#>
+     - parameter comparison: <#comparison description#>
+     - parameter value:      <#value description#>
+     
+     - returns: <#return value description#>
+     */
     public func filter(key:String, _ comparison: Comparison, value:Value?...) -> Self {
         if value.count > 1 {
             dataClause.append(Filter.Subset(key, comparison, value))

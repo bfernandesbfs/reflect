@@ -6,39 +6,79 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
+/// Drive Class execute instrution on Data Base
 internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
-    
+    /// Connection with data base SQLite
     private lazy var db: Connection = {
         let path = Reflect.settings.createPath()
         return try! Connection(path)
     }()
-    
+    /**
+     Create object
+     
+     - parameter obj: Reflect Object
+     
+     - throws: `Result.Error`
+     */
     internal func create(obj: T.Type) throws {
         let rft = obj.init()
         let schema = Schema.Create(rft)
         try db.execute(schema.statement.sql)
     }
-    
+    /**
+     Destroy object
+     
+     - parameter obj: Reflect Object
+     
+     - throws: `Result.Error`
+     */
     internal func drop(obj: T.Type) throws {
         let schema = Schema<T>.Drop(T.entityName())
         try db.execute(schema.statement.sql)
     }
-    
+    /**
+     Create Index
+     
+     - parameter obj:    Object Reflect
+     - parameter field:  Column names that the index will be applied
+     - parameter unique: True if the index should be unique, false if it should not be unique (defaults to false)
+     
+     - throws: `Result.Error`
+     */
     internal func index(obj:T.Type, field: String, unique: Bool = false) throws {
         let schema = Schema<T>.Index(entity: obj.entityName(), field: field, unique: unique)
         try db.run(schema)
     }
-    
+    /**
+     Delete all Object
+     
+     - parameter obj: Object Reflect
+     - parameter field:  Column names that the index will be applied
+     
+     - throws: `Result.Error`
+     */
     internal func dropIndex(obj: T.Type, field: String) throws {
         let schema = Schema<T>.DropIndex(entity: T.entityName(), field: field)
         try db.run(schema)
     }
-    
+    /**
+     Delete all Object
+     
+     - parameter obj: Object Reflect
+     
+     - throws: `Result.Error`
+     */
     internal func removeAll(obj: T.Type) throws {
         let rft = obj.init()
         try db.runChange(Schema.Delete(rft))
     }
-    
+    /**
+     Save or Update Object
+     
+     - parameter obj: Object Reflect
+     
+     - throws: `Result.Error`
+     */
     internal func save(obj: T) throws {
         var rft = obj
         if rft.objectId == nil {
@@ -49,15 +89,38 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
             try change(obj)
         }
     }
-    
+    /**
+     Change Object
+     
+     - parameter obj: Object Reflect
+     
+     - throws:  `Result.Error`
+     
+     - returns: total of changes
+     */
     internal func change(obj: T) throws -> Int {
         return Int(try db.runChange(Schema.Update(obj)))
     }
-    
+    /**
+     Delete Object
+     
+     - parameter obj: Object Reflect
+     
+     - throws: `Result.Error`
+     
+     - returns: total of changes
+     */
     internal func delete(obj: T) throws -> Int {
         return try db.runChange(Schema.Delete(obj))
     }
-    
+    /**
+     Select One
+     
+     - parameter obj:     Object Reflect
+     - parameter include: Class in conform with protocol Reflect Protocol
+     
+     - throws:  `Result.Error`
+     */
     internal func fetch(obj: T, include:[Any.Type] = []) throws {
         let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.Equals, value: obj.objectId!)
         
@@ -74,16 +137,31 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
             throw Result.Error(message: "Not found", code: 1001, statement: nil)
         }
     }
-    
-    //Find by Id
+    /**
+     Select Object with objectId
+     
+     - parameter id:      objectId selected
+     - parameter include: Class in conform with protocol Reflect Protocol
+     
+     - throws: `Result.Error`
+     
+     - returns: return a new instance to Object Reflect
+     */
     internal func find(id: Int, include:[Any.Type] = []) throws -> T? {
         var rft = T()
         rft.objectId = id
         try fetch(rft, include: include)
         return rft
     }
-    
-    //Find Query
+    /**
+     Select Objects with Query Filter
+     
+     - parameter query: Query filter
+     
+     - throws: `Result.Error`
+     
+     - returns: return a new instances to Objects of type Reflect
+     */
     internal func find(query: Query<T>) throws -> [T] {
         
         var results:[T] = []
@@ -94,8 +172,15 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
         }
         return results
     }
-    
-    //Find String Reflect
+    /**
+     Select Objects
+     
+     - parameter query: String query
+     
+     - throws: `Result.Error`
+     
+     - returns: return Array Dictionary
+     */
     internal func find(query: String) throws -> [[String: Value?]] {
         
         var results:[[String: Value?]] = []
@@ -109,19 +194,32 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
         }
         return results
     }
-    
-    //Find Aggregate
+    /**
+     Select Object
+     
+     - parameter query:  Query object
+     - parameter column: Field name
+     
+     - throws: `Result.Error`
+     
+     - returns: Return a value
+     */
     internal func find(query: Query<T>, column:String) throws -> Value? {
         if let row = try db.prepareFetch(query) {
             return row[column].asValue()
         }
         return nil
     }
-
 }
-
+// MARK: Extension Driver Methods Private
 private extension Driver {
-    
+    /**
+     Get objects of a specified type, matching a filter, from the database
+     
+     - parameter object: Reflect Object
+     - parameter row:    Row Object Data Base
+     - parameter alias:  alias name to find subscript Row
+     */
     private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row, alias:String = "") {
         
         let propertyData = ReflectData.validPropertyDataForObject(object)
@@ -141,7 +239,15 @@ private extension Driver {
             }
         }
     }
-    
+    /**
+     Bind Value
+     
+     - parameter type:   Type Object
+     - parameter column: column name data Base
+     - parameter row:    Row Object
+     
+     - returns: retunr object valid if nothing nil
+     */
     private func bindValue(type: Any.Type?, column:String, row:Row) -> AnyObject? {
         if row[column] {
             switch type {

@@ -16,7 +16,6 @@ public enum Schema<T: ReflectProtocol> {
     case Update(T)
     case Delete(T)
     
-    
     var statement: (sql:String, args:[Value?]) {
         switch self {
         case .Create(let object):
@@ -71,8 +70,8 @@ public enum Schema<T: ReflectProtocol> {
             
         case .Insert(var object):
             var statement = "INSERT OR REPLACE INTO " + T.entityName()
-            object.createAt = NSDate()
-            object.updateAt = object.createAt
+            object.createdAt = NSDate()
+            object.updatedAt = object.createdAt
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
             
             var dataArgs:[Value?] = []
@@ -98,7 +97,7 @@ public enum Schema<T: ReflectProtocol> {
             
         case .Update(var object):
             var statement = "UPDATE \(T.entityName()) SET"
-            object.updateAt = NSDate()
+            object.updatedAt = NSDate()
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId" , "createAt"])
             
             var dataArgs:[Value?] = []
