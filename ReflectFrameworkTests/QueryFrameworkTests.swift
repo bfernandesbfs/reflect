@@ -30,7 +30,7 @@ class QueryFrameworkTests: XCTestCase {
         
         let list:[Car] = Car.findObject(t)
         
-        print(list.count , list.first!.createAt)
+        print(list.count , list.first!.createdAt)
     }
     
     func testQuery() {
@@ -53,7 +53,7 @@ class QueryFrameworkTests: XCTestCase {
         
         let list:[TesteObjectsOptional] = TesteObjectsOptional.findObject(testeObjectsOptional)
         
-        print(list.count , list.first!.createAt)
+        print(list.count , list.first!.createdAt)
     }
     
     func testOptionalQuery() {
