@@ -66,9 +66,6 @@ public class Query<T where T:ReflectProtocol> {
         for page in dataPage {
             query.append(page.description)
         }
-        
-        let x = ("\(query.joinWithSeparator(" "));" , dataArgs)
-        print(x.0)
         return ("\(query.joinWithSeparator(" "));" , dataArgs)
     }
     /**

@@ -16,15 +16,16 @@ public final class Connection {
         case URI(String)
     }
     
-    public var handle: COpaquePointer { return _handle }
-    
-    private var _handle: COpaquePointer = nil
-    
-    private var queue = dispatch_queue_create("xyz.ReflectFramework", DISPATCH_QUEUE_SERIAL)
+    private typealias Trace = @convention(block) UnsafePointer<Int8> -> Void
     
     private static let queueKey = unsafeBitCast(Connection.self, UnsafePointer<Void>.self)
     
+    private var _handle: COpaquePointer = nil
+    private var queue = dispatch_queue_create("xyz.ReflectFramework", DISPATCH_QUEUE_SERIAL)
     private lazy var queueContext: UnsafeMutablePointer<Void> = unsafeBitCast(self, UnsafeMutablePointer<Void>.self)
+    private var trace: Trace?
+    
+    public var handle: COpaquePointer { return _handle }
     
     /// Initializes a new SQLite connection.
     ///
@@ -105,15 +106,15 @@ public final class Connection {
         try sync { try self.check(sqlite3_exec(self.handle, SQL, nil, nil, nil)) }
     }
     
-    private func prepare(statement: String, _ bindings: Value?...) -> Statement {
+    private func prepare(statement: String, _ bindings: Value?...) throws -> Statement {
         if !bindings.isEmpty {
-            return prepare(statement, bindings)
+            return try prepare(statement, bindings)
         }
         return Statement(self, statement)
     }
     
-    private func prepare(statement: String, _ bindings: [Value?]) -> Statement {
-        return prepare(statement).bind(bindings)
+    public func prepare(statement: String, _ bindings: [Value?]) throws -> Statement {
+        return try prepare(statement).bind(bindings)
     }
     
     private func run(statement: String, _ bindings: Value?...) throws -> Statement {
@@ -145,13 +146,13 @@ public final class Connection {
     }
     
     public func prepareQuery(query: String) throws -> AnySequence<Row>? {
-        let statement = prepare(query)
+        let statement = try prepare(query)
         return querySequence(statement)
     }
     
     public func prepareQuery<T: ReflectProtocol>(query: Query<T>) throws -> AnySequence<Row>? {
         let stm = query.statement
-        let statement = prepare(stm.sql, stm.args)
+        let statement = try prepare(stm.sql, stm.args)
         return querySequence(statement)
     }
     
@@ -250,6 +251,27 @@ public final class Connection {
     /// Interrupts any long-running queries.
     public func interrupt() {
         sqlite3_interrupt(handle)
+    }
+    
+    /// Sets a handler to call when a statement is executed with the compiled
+    /// SQL.
+    ///
+    /// - Parameter callback: This block is invoked when a statement is executed
+    ///   with the compiled SQL as its argument.
+    ///
+    ///       db.trace { SQL in print(SQL) }
+    public func trace(callback: (String -> Void)?) {
+        guard let callback = callback else {
+            sqlite3_trace(handle, nil, nil)
+            trace = nil
+            return
+        }
+        
+        let box: Trace = { callback(String.fromCString($0)!) }
+        sqlite3_trace(handle, { callback, SQL in
+            unsafeBitCast(callback, Trace.self)(SQL)
+            }, unsafeBitCast(box, UnsafeMutablePointer<Void>.self))
+        trace = box
     }
     
     // MARK: - Error Handling

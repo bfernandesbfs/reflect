@@ -181,14 +181,14 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      - returns: return Array Dictionary
      */
     internal func find(query: String) throws -> [[String: Value?]] {
-        
+    
+        let stmt = try db.prepare(query,[])
         var results:[[String: Value?]] = []
-        for (index ,row) in try db.prepareQuery(query)!.enumerate() {
+        for row in stmt {
             var item:[String: Value?] = [:]
-            for names in row[index] {
-                item[names] = row[names].asValue()
+            for (index, name) in stmt.columnNames.enumerate() {
+                item[name] = row[index]!
             }
-        
             results.append(item)
         }
         return results
@@ -209,6 +209,10 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
     
     internal func transaction(obj: T.Type, callback: () throws -> Void) throws {
         return try db.transaction(block: callback)
+    }
+    
+    internal func log() {
+        db.trace { SQL in print("LOG --> \(SQL)") }
     }
 }
 // MARK: Extension Driver Methods Private

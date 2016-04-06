@@ -120,4 +120,8 @@ extension Reflect {
         return try! Driver<Reflect>().find(sql)
     }
     
+    public class func log(){
+        Driver<Reflect>().log()
+    }
+    
 }

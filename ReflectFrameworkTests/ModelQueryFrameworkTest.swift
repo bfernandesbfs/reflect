@@ -14,6 +14,7 @@ class ModelQueryFrameworkTest: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        
     }
     
     override func tearDown() {
@@ -22,7 +23,7 @@ class ModelQueryFrameworkTest: XCTestCase {
     }
 
     func testQuery() {
-        
+    
         let user1 = User()
         user1.objectId = 35
         user1.fetch(include: Address.self)
@@ -55,6 +56,10 @@ class ModelQueryFrameworkTest: XCTestCase {
             print("\(q.address.objectId!)\t\(q.address.state)")
         }
         
+        
+        let value = Reflect.query("SELECT objectId, firstName, email FROM User WHERE User.objectId > 2").count
+        
+        XCTAssertGreaterThan(value, 1, "Count Objects Not found")
     }
 
     func testPerformanceExample() {

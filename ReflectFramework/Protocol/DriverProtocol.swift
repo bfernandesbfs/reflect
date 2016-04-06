@@ -143,4 +143,6 @@ public protocol DriverProtocol {
     func scalar(query: Query<T>, column:String) throws -> Value?
     
     func transaction(obj: T.Type, callback: () throws -> Void) throws
+    
+    func log()
 }
