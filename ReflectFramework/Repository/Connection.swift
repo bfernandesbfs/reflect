@@ -6,8 +6,6 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-import Foundation
-
 /// A connection to SQLite.
 public final class Connection {
     

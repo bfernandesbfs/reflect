@@ -14,6 +14,8 @@ public struct Configuration {
     private var defaultName:String = "ReflectDB"
     /// App group
     private var appGroup:String = ""
+    /// Connection Data Base
+    private var connection: Connection!
     /**
      Initialize
      
@@ -24,6 +26,20 @@ public struct Configuration {
     init(defaultName: String, appGroup: String){
         self.defaultName = defaultName + ".db"
         self.appGroup    = appGroup
+        self.connection  = try! Connection(self.createPath())
+    }
+    /**
+     Initialize
+     
+     - parameter defaultName: Name to data base
+     - parameter appGroup:    App group information
+     - parameter location:    Local data base
+     - parameter readonly:    mode read
+
+     */
+    init(defaultName: String = "", appGroup: String = "", location: Connection.Location, readonly: Bool = false){
+        self.init(defaultName: defaultName, appGroup: appGroup)
+        self.connection  = try! Connection(location , readonly: readonly)
     }
     /**
      Default Settings
@@ -33,8 +49,15 @@ public struct Configuration {
     static func defaultSettings() -> Configuration {
         return Configuration(defaultName: "ReflectDB", appGroup: "")
     }
-    
     // MARK: - Public Methods
+    /**
+     Connection Data base
+     
+     - returns: return an instante to Connection
+     */
+    public func getConnection() -> Connection {
+        return connection
+    }
     /**
      Data Base name
      
@@ -51,6 +74,7 @@ public struct Configuration {
     public func getAppGroup() -> String {
         return appGroup
     }
+    
     /**
      Path data base
      

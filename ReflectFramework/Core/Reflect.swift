@@ -66,6 +66,17 @@ public extension Reflect {
         settings = Configuration(defaultName: baseNamed, appGroup: appGroup)
     }
     /**
+      Configure App Group and name of Data base
+     
+     - parameter appGroup:  App Group information
+     - parameter baseNamed: Name to Data Base
+     - parameter location:  Local for save data base
+     - parameter readonly:  mode read
+     */
+    class func configuration(appGroup:String, baseNamed:String, location: Connection.Location, readonly: Bool = false){
+        settings = Configuration(defaultName: baseNamed, appGroup: appGroup, location: location, readonly: readonly)
+    }
+    /**
      Este metodo auxilia para o tratamentos de erros relacionsado ao Data Base
      
      - parameter block: block para executar

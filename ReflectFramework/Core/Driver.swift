@@ -10,8 +10,7 @@
 internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
     /// Connection with data base SQLite
     private lazy var db: Connection = {
-        let path = Reflect.settings.createPath()
-        return try! Connection(path)
+        return Reflect.settings.getConnection()
     }()
     /**
      Create object

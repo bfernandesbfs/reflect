@@ -42,23 +42,12 @@ class ModelFrameworkTest: XCTestCase {
     
     func testPopulate() {
         var result = 0
-        for (index, var a) in Address.populate().enumerate() {
+        for (index, a) in Address.populate().enumerate() {
             a.pin()
             result = index
         }
         XCTAssertTrue(result != 20 , "results is not in accordance with the objects that were saved in data base")
-        
-        func populateUser() -> Int {
-            var result = 0
-            for (index, u) in User.populate().enumerate() {
-                u.pin()
-                result = index
-            }
-            return result
-        }
-
-        XCTAssertTrue(populateUser() != 20 , "results is not in accordance with the objects that were saved in data base")
-        
+    
     }
     
     func testPopulateUser() {
