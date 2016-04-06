@@ -24,7 +24,7 @@ public class ListViewModel {
         let singleLetter = payback.lastName.substringToIndex(payback.lastName.startIndex.successor())
         
         let title = "\(payback.firstName) \(singleLetter)."
-        let subtitle = NSDateFormatter.localizedStringFromDate(payback.createAt!, dateStyle: NSDateFormatterStyle.LongStyle, timeStyle: NSDateFormatterStyle.NoStyle)
+        let subtitle = NSDateFormatter.localizedStringFromDate(payback.createdAt!, dateStyle: NSDateFormatterStyle.LongStyle, timeStyle: NSDateFormatterStyle.NoStyle)
         
         let rounded = NSNumber(double: round(payback.amount)).longLongValue
         let amount = "$\(rounded)"

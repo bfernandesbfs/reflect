@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		4AD73CD41CB5677A00BB0069 /* ReflectAggregate */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4AD73CD51CB5677B00BB0069 /* Build configuration list for PBXAggregateTarget "ReflectAggregate" */;
+			buildPhases = (
+				4AD73CD81CB567B800BB0069 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = ReflectAggregate;
+			productName = ReflectAggregate;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		4A0403861CAE9E6100114573 /* ModelQueryFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0403851CAE9E6100114573 /* ModelQueryFrameworkTest.swift */; };
 		4A1815561CAB1EE8007DF21A /* OptionalFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */; };
@@ -25,10 +39,8 @@
 		4AEBBD101C9C765C009BEA05 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD0F1C9C765C009BEA05 /* Configuration.swift */; };
 		4AEBBD151C9C7704009BEA05 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD141C9C7704009BEA05 /* Schema.swift */; };
 		4AEBBD171C9C77D5009BEA05 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD161C9C77D5009BEA05 /* Test.swift */; };
-		4AEBBD1F1C9C8788009BEA05 /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBD1D1C9C8788009BEA05 /* fts3_tokenizer.h */; };
 		4AEBBD201C9C8788009BEA05 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBD1E1C9C8788009BEA05 /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4AEBBD281C9C898D009BEA05 /* Reflect-Bridging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBD261C9C898D009BEA05 /* Reflect-Bridging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4AEBBD291C9C898D009BEA05 /* Reflect-Bridging.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD271C9C898D009BEA05 /* Reflect-Bridging.m */; };
 		4AEBBD2B1C9C8BCC009BEA05 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD2A1C9C8BCC009BEA05 /* Connection.swift */; };
 		4AEBBD2D1C9C8BDE009BEA05 /* Statement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD2C1C9C8BDE009BEA05 /* Statement.swift */; };
 		4AEBBD2F1C9C8BEE009BEA05 /* Bind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AEBBD2E1C9C8BEE009BEA05 /* Bind.swift */; };
@@ -71,10 +83,8 @@
 		4AEBBD191C9C86F6009BEA05 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		4AEBBD1A1C9C870B009BEA05 /* Test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Test.xcconfig; sourceTree = "<group>"; };
 		4AEBBD1B1C9C871B009BEA05 /* Sqlite.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sqlite.xcconfig; sourceTree = "<group>"; };
-		4AEBBD1D1C9C8788009BEA05 /* fts3_tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fts3_tokenizer.h; sourceTree = "<group>"; };
 		4AEBBD1E1C9C8788009BEA05 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		4AEBBD261C9C898D009BEA05 /* Reflect-Bridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Reflect-Bridging.h"; sourceTree = "<group>"; };
-		4AEBBD271C9C898D009BEA05 /* Reflect-Bridging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Reflect-Bridging.m"; sourceTree = "<group>"; };
 		4AEBBD2A1C9C8BCC009BEA05 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		4AEBBD2C1C9C8BDE009BEA05 /* Statement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statement.swift; sourceTree = "<group>"; };
 		4AEBBD2E1C9C8BEE009BEA05 /* Bind.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bind.swift; sourceTree = "<group>"; };
@@ -212,10 +222,8 @@
 		4AEBBD1C1C9C8788009BEA05 /* Header */ = {
 			isa = PBXGroup;
 			children = (
-				4AEBBD1D1C9C8788009BEA05 /* fts3_tokenizer.h */,
 				4AEBBD1E1C9C8788009BEA05 /* sqlite3.h */,
 				4AEBBD261C9C898D009BEA05 /* Reflect-Bridging.h */,
-				4AEBBD271C9C898D009BEA05 /* Reflect-Bridging.m */,
 			);
 			path = Header;
 			sourceTree = "<group>";
@@ -228,7 +236,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4AEBBD281C9C898D009BEA05 /* Reflect-Bridging.h in Headers */,
-				4AEBBD1F1C9C8788009BEA05 /* fts3_tokenizer.h in Headers */,
 				4AEBBD201C9C8788009BEA05 /* sqlite3.h in Headers */,
 				4AEBBCEE1C9C74D0009BEA05 /* ReflectFramework.h in Headers */,
 			);
@@ -283,6 +290,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = BFS;
 				TargetAttributes = {
+					4AD73CD41CB5677A00BB0069 = {
+						CreatedOnToolsVersion = 7.3;
+					};
 					4AEBBCE91C9C74D0009BEA05 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
@@ -305,6 +315,7 @@
 			targets = (
 				4AEBBCE91C9C74D0009BEA05 /* ReflectFramework */,
 				4AEBBCF31C9C74D0009BEA05 /* ReflectFrameworkTests */,
+				4AD73CD41CB5677A00BB0069 /* ReflectAggregate */,
 			);
 		};
 /* End PBXProject section */
@@ -326,6 +337,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4AD73CD81CB567B800BB0069 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Merge Script\n\n# 1\n# Set bash script to exit immediately if any commands fail.\nset -e\n\n# 2\n# Setup some constants for use later on.\nFRAMEWORK_NAME=\"ReflectFramework\"\n\n# 3\n# If remnants from a previous build exist, delete them.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi\n\n# 4\n# Build the framework for device and for simulator (using\n# all needed architectures).\nxcodebuild -target \"${FRAMEWORK_NAME}\" -configuration Release -arch arm64 -arch armv7 -arch armv7s only_active_arch=no defines_module=yes -sdk \"iphoneos\"\nxcodebuild -target \"${FRAMEWORK_NAME}\" -configuration Release -arch x86_64 -arch i386 only_active_arch=no defines_module=yes -sdk \"iphonesimulator\"\n\n# 5\n# Remove .framework file if exists on Desktop from previous run.\nif [ -d \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\" ]; then\nrm -rf \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\nfi\n\n# 6\n# Copy the device version of framework to Desktop.\ncp -r \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework\"\n\n# 7\n# Replace the framework executable within the framework with\n# a new version created by merging the device and simulator\n# frameworks' executables with lipo.\nlipo -create -output \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphoneos/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\"\n\n# 8\n# Copy the Swift module mappings for the simulator into the\n# framework.  The device mappings already exist from step 6.\ncp -r \"${SRCROOT}/build/Release-iphonesimulator/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule/\" \"${HOME}/Desktop/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule\"\n\n# 9\n# Delete the most recent build.\nif [ -d \"${SRCROOT}/build\" ]; then\nrm -rf \"${SRCROOT}/build\"\nfi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4AEBBCE51C9C74D0009BEA05 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -343,7 +370,6 @@
 				4AEBBD061C9C751E009BEA05 /* Reflect.swift in Sources */,
 				4A90145D1CA1A30A00E8CCCB /* Query.swift in Sources */,
 				4A779FF71CA9594500EE2953 /* Driver.swift in Sources */,
-				4AEBBD291C9C898D009BEA05 /* Reflect-Bridging.m in Sources */,
 				4AEBBD151C9C7704009BEA05 /* Schema.swift in Sources */,
 				4AEBBD2D1C9C8BDE009BEA05 /* Statement.swift in Sources */,
 			);
@@ -374,6 +400,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4AD73CD61CB5677B00BB0069 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4AD73CD71CB5677B00BB0069 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		4AEBBCFC1C9C74D0009BEA05 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -413,7 +453,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -527,6 +567,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4AD73CD51CB5677B00BB0069 /* Build configuration list for PBXAggregateTarget "ReflectAggregate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4AD73CD61CB5677B00BB0069 /* Debug */,
+				4AD73CD71CB5677B00BB0069 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		4AEBBCE41C9C74D0009BEA05 /* Build configuration list for PBXProject "ReflectFramework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -112,12 +112,6 @@ typedef int swift_int4  __attribute__((__ext_vector_type__(4)));
 @end
 
 
-@interface NSDateFormatter (SWIFT_EXTENSION(ReflectFramework))
-- (nonnull instancetype)initWithFormat:(NSString * _Nullable)format;
-+ (NSDateFormatter * _Nonnull)defaultFormart;
-@end
-
-
 @interface NSNumber (SWIFT_EXTENSION(ReflectFramework))
 + (NSString * _Nonnull)declaredDatatype;
 + (NSNumber * _Nonnull)fromDatatypeValue:(NSNumber * _Nonnull)datatypeValue;
@@ -132,13 +126,32 @@ typedef int swift_int4  __attribute__((__ext_vector_type__(4)));
 
 SWIFT_CLASS("_TtC16ReflectFramework7Reflect")
 @interface Reflect : NSObject
+
+/// Idetifier of register to persistence
 @property (nonatomic, strong) NSNumber * _Nullable objectId;
-@property (nonatomic, strong) NSDate * _Nullable createAt;
-@property (nonatomic, strong) NSDate * _Nullable updateAt;
+
+/// Date to created register
+@property (nonatomic, strong) NSDate * _Nullable createdAt;
+
+/// Date to changed register
+@property (nonatomic, strong) NSDate * _Nullable updatedAt;
+
+/// Entity Name
+///
+/// \returns  return name to entity
 + (NSString * _Nonnull)entityName;
+
+/// Primary keys
+///
+/// \returns  return list to the primary keys
 + (NSSet<NSString *> * _Nonnull)primaryKeys;
+
+/// Ignore properties
+///
+/// \returns  return list of properties
 + (NSSet<NSString *> * _Nonnull)ignoredProperties;
-+ (NSSet<NSString *> * _Nonnull)uniqueProperties;
+
+/// Initialiaze Class
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -148,6 +161,12 @@ SWIFT_CLASS("_TtC16ReflectFramework7Reflect")
 
 
 @interface Reflect (SWIFT_EXTENSION(ReflectFramework))
+
+/// Configure App Group and name of Data base
+///
+/// \param appGroup App Group information
+///
+/// \param baseNamed Name to Data Base
 + (void)configuration:(NSString * _Nonnull)appGroup baseNamed:(NSString * _Nonnull)baseNamed;
 @end
 
