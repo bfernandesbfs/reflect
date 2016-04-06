@@ -6,18 +6,30 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
+/**
+ *  ReflectData
+ */
 internal struct ReflectData {
-    
+    /// Optinal object
     internal let isOptional: Bool
+    /// Object type Class
     internal let isClass:    Bool
+    /// Type of object
     internal var type:       Any.Type?  = nil
+    /// Name of property
     internal var name:       String?
+    /// Value of property
     internal var value:      Any? = nil
-    
+    /// Valid data on object
     internal var isValid: Bool {
         return type != nil && name != nil
     }
+    /**
+     Initialize
+     
+     - parameter property: Mirror Child
     
+     */
     internal init(property: Mirror.Child) {
         self.name = property.label
         
@@ -28,7 +40,13 @@ internal struct ReflectData {
         value = unwrap(property.value)
         type = typeForMirror(mirror)
     }
-    
+    /**
+     Type to property
+     
+     - parameter mirror: Mirror
+     
+     - returns: return Any.Type if nothing nil
+     */
     internal func typeForMirror(mirror: Mirror) -> Any.Type? {
         if !isOptional {
             return mirror.subjectType
@@ -61,7 +79,13 @@ internal struct ReflectData {
         default:                            return nil
         }
     }
-    
+    /**
+     Un wrap value
+     
+     - parameter value: property value
+     
+     - returns: return value
+     */
     internal mutating func unwrap(value: Any) -> Any? {
         let mirror = Mirror(reflecting: value)
         
@@ -74,8 +98,9 @@ internal struct ReflectData {
         return mirror.children.first?.value
     }
 }
-
+// MARK: - Extension ReflectData Methods Static
 internal extension ReflectData {
+    
     internal static func validPropertyDataForObject (object: ReflectProtocol) -> [ReflectData] {
         return validPropertyDataForMirror(Mirror(reflecting: object))
     }
@@ -132,5 +157,4 @@ internal extension ReflectData {
             fatalError("Error object not supported")
         }
     }
-    
 }

@@ -9,7 +9,7 @@
 import Foundation
 
 let SQLITE_TRANSIENT = unsafeBitCast(-1, sqlite3_destructor_type.self)
-
+/// Date formmart default
 public var dateFormatter: NSDateFormatter = {
     let formatter = NSDateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -17,7 +17,7 @@ public var dateFormatter: NSDateFormatter = {
     formatter.timeZone = NSTimeZone.systemTimeZone()
     return formatter
 }()
-
+// MARK: - Extension String
 public extension String {
     
     func quote(mark: Character = "\"") -> String {

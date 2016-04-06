@@ -97,13 +97,13 @@ public class Query<T where T:ReflectProtocol> {
         return self
     }
     /**
-     Filter 
+     Basic Filter - Atribui condição AND , merge od filtros com AND
      
-     - parameter key:        <#key description#>
-     - parameter comparison: <#comparison description#>
-     - parameter value:      <#value description#>
+     - parameter key:        Column name
+     - parameter comparison: Comparison option
+     - parameter value:      value to filter
      
-     - returns: <#return value description#>
+     - returns: Self
      */
     public func filter(key:String, _ comparison: Comparison, value:Value?...) -> Self {
         if value.count > 1 {
@@ -114,21 +114,44 @@ public class Query<T where T:ReflectProtocol> {
         }
         return self
     }
-    
+    /**
+     Or Filter - Create an block  with condição OR para as confinações de filtro especifico with OR
+     
+     - parameter handler: Block Handler
+     
+     - returns: Self
+     */
     public func or(handler: Handler) -> Self {
         let q = handler(query: Query())
         let filter = Filter.Group(.Or, q.dataClause)
         dataClause.append(filter)
         return self
     }
-    
+    /**
+     And Filter -  Create an block with condição AND para as confinaç~eos de filtro especifico with OR
+     
+     - parameter handler: Block Handler
+     
+     - returns: Self
+     */
     public func and(handler: Handler) -> Self {
         let q = handler(query: Query())
         let filter = Filter.Group(.And, q.dataClause)
         dataClause.append(filter)
         return self
     }
-    
+    /**
+     Join Filter Class
+     
+     - parameter type:       Reflect Object
+     - parameter operation:  Join option
+     - parameter foreignKey: Column name to entity
+     - parameter comparison: Comparison option
+     - parameter otherKey:   Column name to entity
+     - parameter alias:      Alias name to entity
+     
+     - returns: Self
+     */
     public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil ,alias:String = "" ) -> Self? {
         let fk = foreignKey ?? "\(entity).\(type.entityName())_objectId"
         let ok = otherKey ?? "\(type.entityName()).objectId"
@@ -137,64 +160,122 @@ public class Query<T where T:ReflectProtocol> {
         createFieldsAlias(type,alias: alias)
         return self
     }
-    
+    /**
+     Sort Filter
+     
+     - parameter field:     Column name
+     - parameter direction: Sort option
+     
+     - returns: Self
+     */
     public func sort(field: String, _ direction: Sort) -> Self {
         let order = Filter.Order(field, direction)
         dataOrder.append(order)
         return self
     }
-    
+    /**
+     Limit Filter
+     
+     - parameter count: value to quantity of results
+     
+     - returns: Self
+     */
     public func limit(count: Int = 1) -> Self {
         dataPage.append(Pagination.Limit(count))
         return self
     }
-    
+    /**
+     Offset Filter
+     
+     - parameter count: value to quantity of offset
+     
+     - returns: Self
+     */
     public func offset(count: Int = 1) -> Self {
         dataPage.append(Pagination.Offset(count))
         return self
     }
-    
+    /**
+     Distinct Filter
+     
+     - returns: Self
+     */
     public func distinct() -> Self {
         dataDistinct = true
         return self
     }
-    
+    /**
+     Count Object
+     
+     - parameter field: Column Name
+     
+     - returns: Quantity value found
+     */
     public func count(field: String = "*") -> Double {
         dataAggregate = Aggregate.Count(field)
         return aggregateObject(dataAggregate.field)
     }
-    
+    /**
+     Average Object
+     
+     - parameter field: Column Name
+     
+     - returns: Average of result
+     */
     public func average(field: String = "*") -> Double {
         dataAggregate = Aggregate.Average(field)
         return aggregateObject(dataAggregate.field)
     }
-    
+    /**
+     Max Object
+     
+     - parameter field: Column Name
+     
+     - returns: Value max found
+     */
     public func max(field: String = "*") -> Double {
         dataAggregate = Aggregate.Max(field)
         return aggregateObject(dataAggregate.field)
     }
-    
+    /**
+     Min Object
+     
+     - parameter field: Column Name
+     
+     - returns: Value min found
+     */
     public func min(field: String = "*") -> Double {
         dataAggregate = Aggregate.Min(field)
         return aggregateObject(dataAggregate.field)
     }
-    
+    /**
+     Sum Object
+     
+     - parameter field: Column Name
+     
+     - returns: Sum of result
+     */
     public func sum(field: String = "*") -> Double {
         dataAggregate = Aggregate.Sum(field)
         return Double(aggregateObject(dataAggregate.field))
     }
-    
+    /**
+     Find Objects
+     This method executa a query
+     
+     - returns: return Arry of Reflect Object
+     */
     public func findObject() -> [T] {
         return try! Driver().find(self)
     }
-    
 }
-
+// MARK: - Extension Query Private Methods
 private extension Query {
-    /*
-    // MARK: - Private Methods
-    */
-    
+    /**
+     Resolve a criação do select
+     
+     - returns: return string contendo a instrução do Select
+     */
     private func resolveSelect() -> String {
         var select = ["SELECT"]
         if dataDistinct {
@@ -212,7 +293,12 @@ private extension Query {
         
         return select.joinWithSeparator(" ")
     }
-    
+    /**
+     Create Alias
+     
+     - parameter type:  Reflect Object
+     - parameter alias: text it's optional
+     */
     private func createFieldsAlias<T: ReflectProtocol>(type: T.Type, alias:String) {
         let properties = ReflectData.validPropertyDataForObject(type.init())
         let namespace  = alias.isEmpty ? type.entityName() : alias
@@ -221,7 +307,13 @@ private extension Query {
         }
         dataFields += columns
     }
-    
+    /**
+     Filter output - Resolve as intrução para o Where
+     
+     - parameter filter: Filter object
+     
+     - returns: return string value
+     */
     private func filterOutput(filter: Filter) -> String {
         switch filter {
         case .Compare(let field, let comparison, let value):
@@ -250,7 +342,13 @@ private extension Query {
             return "\(join.description) \(entity) ON \(fk) \(comparison.description) \(ok)"
         }
     }
-    
+    /**
+     Aggregate
+     
+     - parameter field: Column Name
+     
+     - returns: return value of query
+     */
     private func aggregateObject(field:String) -> Double {
         if let value = try! Driver().find(self, column: field) {
             if let v = value as? Int64 {
