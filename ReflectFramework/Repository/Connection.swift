@@ -171,6 +171,23 @@ public final class Connection {
         return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
     }
     
+    // MARK: - Scalar
+    
+    /// Runs a single SQL statement (with optional parameter bindings),
+    /// returning the first value of the first row.
+    ///
+    /// - Parameters:
+    ///
+    ///   - statement: A single SQL statement.
+    ///
+    ///   - bindings: A list of parameters to bind to the statement.
+    ///
+    /// - Returns: The first value of the first row returned.
+    public func scalar<T: ReflectProtocol>(query: Query<T>) throws -> Value? {
+        let stm = query.statement
+        return try prepare(stm.sql).scalar(stm.args)
+    }
+
     // MARK: - Transactions
     
     // TODO: Consider not requiring a throw to roll back?

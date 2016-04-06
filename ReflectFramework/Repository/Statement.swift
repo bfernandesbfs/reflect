@@ -71,6 +71,26 @@ public final class Statement {
         return try bind(bindings).run()
     }
     
+    /// - Parameter bindings: A list of parameters to bind to the statement.
+    ///
+    /// - Returns: The first value of the first row returned.
+    public func scalar(bindings: Value?...) throws -> Value? {
+        guard bindings.isEmpty else {
+            return try scalar(bindings)
+        }
+        
+        reset(clearBindings: false)
+        try! step()
+        return row[0]
+    }
+    
+    /// - Parameter bindings: A list of parameters to bind to the statement.
+    ///
+    /// - Returns: The first value of the first row returned.
+    public func scalar(bindings: [Value?]) throws -> Value? {
+        return try bind(bindings).scalar()
+    }
+    
     /// Binds a list of parameters to a statement.
     ///
     /// - Parameter values: A list of parameters to bind to the statement.

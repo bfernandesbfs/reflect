@@ -53,10 +53,12 @@ class ModelFrameworkTest: XCTestCase {
     func testPopulateUser() {
         
         var result = 0
-        for (index, u) in User.populate().enumerate() {
-            u.address = Address.findById(index + 1)!
-            u.pin()
-            result = index
+        User.transaction {
+            for (index, u) in User.populate().enumerate() {
+                u.address = Address.findById(index + 1)!
+                u.pin()
+                result = index
+            }
         }
         
         XCTAssertTrue(result != 20 , "results is not in accordance with the objects that were saved in data base")

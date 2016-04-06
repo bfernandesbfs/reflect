@@ -350,7 +350,7 @@ private extension Query {
      - returns: return value of query
      */
     private func aggregateObject(field:String) -> Double {
-        if let value = try! Driver().find(self, column: field) {
+        if let value = try! Driver().scalar(self, column: field) {
             if let v = value as? Int64 {
                 return Double(v)
             }

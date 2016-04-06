@@ -141,6 +141,12 @@ public extension ReflectProtocol {
             return try Driver().dropIndex(self, field: field)
             }.success
     }
+    
+    static func transaction(callback: () throws -> Void) {
+        Reflect.execute {
+            try Driver().transaction(self, callback: callback)
+        }
+    }
 }
 // MARK: - Extension ReflectProtocol Public methods
 public extension ReflectProtocol {

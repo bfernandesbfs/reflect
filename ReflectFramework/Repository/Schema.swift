@@ -98,7 +98,7 @@ public enum Schema<T: ReflectProtocol> {
         case .Update(var object):
             var statement = "UPDATE \(T.entityName()) SET"
             object.updatedAt = NSDate()
-            let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId" , "createAt"])
+            let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId" , "createdAt"])
             
             var dataArgs:[Value?] = []
             let columns = propertyData.map { value in

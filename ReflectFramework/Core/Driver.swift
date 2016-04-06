@@ -203,11 +203,12 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: Return a value
      */
-    internal func find(query: Query<T>, column:String) throws -> Value? {
-        if let row = try db.prepareFetch(query) {
-            return row[column].asValue()
-        }
-        return nil
+    internal func scalar(query: Query<T>, column:String) throws -> Value? {
+        return try db.scalar(query)
+    }
+    
+    internal func transaction(obj: T.Type, callback: () throws -> Void) throws {
+        return try db.transaction(block: callback)
     }
 }
 // MARK: Extension Driver Methods Private

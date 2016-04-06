@@ -140,5 +140,7 @@ public protocol DriverProtocol {
      
      - returns: Return a value 
      */
-    func find(query: Query<T>, column:String) throws -> Value?
+    func scalar(query: Query<T>, column:String) throws -> Value?
+    
+    func transaction(obj: T.Type, callback: () throws -> Void) throws
 }

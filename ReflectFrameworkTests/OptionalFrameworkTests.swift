@@ -85,11 +85,11 @@ class OptionalFrameworkTests: XCTestCase {
     func testPinOptional() {
         let testeObjectsOptional = TesteObjectsOptional()
         
-        testeObjectsOptional.optionalString = nil
+        testeObjectsOptional.optionalString = "String test"
         //Objc
-        testeObjectsOptional.optionalNSString  = "nsstring çã óê"
+        testeObjectsOptional.optionalNSString  = "NSString test"
         testeObjectsOptional.optionalDate   = NSDate()
-        testeObjectsOptional.optionalNumber = 1.45
+        testeObjectsOptional.optionalNumber = 10.20
         testeObjectsOptional.optionalData   = String("Test Data").dataUsingEncoding(NSUTF8StringEncoding)!
         
         XCTAssert(testeObjectsOptional.pin(), "Not was created a new object for TesteObjectsOptional")
