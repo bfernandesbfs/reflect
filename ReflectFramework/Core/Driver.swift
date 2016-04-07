@@ -211,8 +211,8 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
         return try db.transaction(block: callback)
     }
     
-    internal func log() {
-        db.trace { SQL in print("LOG --> \(SQL)") }
+    internal func log(callback: (String -> Void)?) {
+        db.trace(callback)
     }
 }
 // MARK: Extension Driver Methods Private

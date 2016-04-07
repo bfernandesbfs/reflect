@@ -38,12 +38,6 @@ public protocol ReflectProtocol {
  */
 public protocol FieldsProtocol {
     /**
-     Method used to define a set of primary keys for the types table
-     
-     - returns: set of property names
-     */
-    static func primaryKeys() -> Set<String>
-    /**
      Method used to define a set of ignored properties
      
      - returns: set of property names

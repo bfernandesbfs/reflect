@@ -144,5 +144,5 @@ public protocol DriverProtocol {
     
     func transaction(obj: T.Type, callback: () throws -> Void) throws
     
-    func log()
+    func log(callback: (String -> Void)?)
 }

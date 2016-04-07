@@ -28,14 +28,6 @@ public class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
         return String(self)
     }
     /**
-     Primary keys
-     
-     - returns: return list to the primary keys
-     */
-    public class func primaryKeys() -> Set<String> {
-        return []
-    }
-    /**
      Ignore properties
      
      - returns: return list of properties
@@ -55,7 +47,7 @@ public extension Reflect {
     /**
      Default Configuration for Data Base Reflect
      */
-    public static var settings:Configuration = Configuration.defaultSettings()
+    static var settings:Configuration!
     /**
      Configure App Group and name of Data base
      
@@ -68,13 +60,11 @@ public extension Reflect {
     /**
       Configure App Group and name of Data base
      
-     - parameter appGroup:  App Group information
-     - parameter baseNamed: Name to Data Base
      - parameter location:  Local for save data base
      - parameter readonly:  mode read
      */
-    class func configuration(appGroup:String, baseNamed:String, location: Connection.Location, readonly: Bool = false){
-        settings = Configuration(defaultName: baseNamed, appGroup: appGroup, location: location, readonly: readonly)
+    class func configuration(location: Connection.Location, readonly: Bool = false){
+        settings = Configuration(location: location, readonly: readonly)
     }
     /**
      Este metodo auxilia para o tratamentos de erros relacionsado ao Data Base
@@ -120,8 +110,12 @@ extension Reflect {
         return try! Driver<Reflect>().find(sql)
     }
     
-    public class func log(){
-        Driver<Reflect>().log()
+    public class func removeDefaultSettings(){
+        let fm = NSFileManager.defaultManager()
+        let path = settings.getPath()
+        
+        if fm.fileExistsAtPath(path) {
+            try! fm.removeItemAtPath(path)
+        }
     }
-    
 }

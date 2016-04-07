@@ -29,6 +29,8 @@
 		4A90145D1CA1A30A00E8CCCB /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145C1CA1A30A00E8CCCB /* Query.swift */; };
 		4A90145F1CA1A35D00E8CCCB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145E1CA1A35D00E8CCCB /* Filter.swift */; };
 		4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */; };
+		4AC9E1C81CB68592007B1C5E /* CreateFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */; };
+		4ADB50DE1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */; };
 		4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE1C3781CADB1650038CF74 /* ModelTest.swift */; };
 		4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */; };
 		4AEBBCEE1C9C74D0009BEA05 /* ReflectFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AEBBCED1C9C74D0009BEA05 /* ReflectFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -67,6 +69,8 @@
 		4A90145C1CA1A30A00E8CCCB /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
 		4A90145E1CA1A35D00E8CCCB /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFrameworkTests.swift; sourceTree = "<group>"; };
+		4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateFrameworkTest.swift; sourceTree = "<group>"; };
+		4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectFraneworkTest.swift; sourceTree = "<group>"; };
 		4AE1C3781CADB1650038CF74 /* ModelTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTest.swift; sourceTree = "<group>"; };
 		4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelFrameworkTest.swift; sourceTree = "<group>"; };
 		4AEBBCEA1C9C74D0009BEA05 /* ReflectFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReflectFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,8 +161,10 @@
 		4AEBBCF81C9C74D0009BEA05 /* ReflectFrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
-				4AE1C37A1CADB2410038CF74 /* TestObjects */,
 				4AE1C3781CADB1650038CF74 /* ModelTest.swift */,
+				4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */,
+				4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */,
+				4AE1C37A1CADB2410038CF74 /* TestObjects */,
 				4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */,
 				4A0403851CAE9E6100114573 /* ModelQueryFrameworkTest.swift */,
 				4AEBBCFB1C9C74D0009BEA05 /* Info.plist */,
@@ -287,7 +293,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = BFS;
 				TargetAttributes = {
 					4AD73CD41CB5677A00BB0069 = {
@@ -385,6 +391,8 @@
 				4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */,
 				4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */,
 				4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */,
+				4ADB50DE1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift in Sources */,
+				4AC9E1C81CB68592007B1C5E /* CreateFrameworkTest.swift in Sources */,
 				4A0403861CAE9E6100114573 /* ModelQueryFrameworkTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -453,7 +461,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -574,6 +582,7 @@
 				4AD73CD71CB5677B00BB0069 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4AEBBCE41C9C74D0009BEA05 /* Build configuration list for PBXProject "ReflectFramework" */ = {
 			isa = XCConfigurationList;

@@ -14,7 +14,6 @@ class QueryFrameworkTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        Reflect.log()
     }
     
     override func tearDown() {

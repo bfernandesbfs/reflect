@@ -11,7 +11,7 @@
  */
 public struct Configuration {
     /// Data base default name
-    private var defaultName:String = "ReflectDB"
+    private var defaultName:String = "ReflectDB.db"
     /// App group
     private var appGroup:String = ""
     /// Connection Data Base
@@ -24,9 +24,9 @@ public struct Configuration {
      
      */
     init(defaultName: String, appGroup: String){
-        self.defaultName = defaultName + ".db"
+        self.defaultName = defaultName
         self.appGroup    = appGroup
-        self.connection  = try! Connection(self.createPath())
+        self.connection  = try! Connection(getPath())
     }
     /**
      Initialize
@@ -37,9 +37,13 @@ public struct Configuration {
      - parameter readonly:    mode read
 
      */
-    init(defaultName: String = "", appGroup: String = "", location: Connection.Location, readonly: Bool = false){
-        self.init(defaultName: defaultName, appGroup: appGroup)
-        self.connection  = try! Connection(location , readonly: readonly)
+    init(location: Connection.Location, readonly: Bool = false){
+        do {
+            self.connection  = try Connection(location , readonly: readonly)
+        }
+        catch let error {
+            print(error)
+        }
     }
     /**
      Default Settings
@@ -47,7 +51,7 @@ public struct Configuration {
      - returns: a instance to Configuration
      */
     static func defaultSettings() -> Configuration {
-        return Configuration(defaultName: "ReflectDB", appGroup: "")
+        return Configuration(defaultName: "ReflectDB.db", appGroup: "")
     }
     // MARK: - Public Methods
     /**
@@ -80,7 +84,7 @@ public struct Configuration {
      
      - returns: return the path for data base
      */
-    public func createPath() -> String {
+    public func getPath() -> String {
         
         let fm = NSFileManager.defaultManager()
         
@@ -105,4 +109,9 @@ public struct Configuration {
         print(path)
         return path
     }
+    
+    public func log(callback: (String -> Void)?){
+        getConnection().trace(callback)
+    }
+
 }

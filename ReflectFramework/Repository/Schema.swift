@@ -36,20 +36,12 @@ public enum Schema<T: ReflectProtocol> {
                 else {
                     data = "\(value.name!) \(ReflectData.validPropertyTypeForSchema(value.type!))"
                 }
+                
                 data += value.isOptional ? "" : " NOT NULL"
                 fields.append(data)
             }
-            
-            statement += fields.joinWithSeparator(", ")
-            
-            if T.self is FieldsProtocol.Type {
-                let fieds = T.self as! FieldsProtocol.Type
-                if !fieds.primaryKeys().isEmpty {
-                    statement += ", PRIMARY KEY (\(fieds.primaryKeys().joinWithSeparator(", ")))"
-                }
-            }
-            
-            statement += ")"
+
+            statement += "\(fields.joinWithSeparator(", ")))"
         
             return (statement, [])
         
@@ -80,7 +72,7 @@ public enum Schema<T: ReflectProtocol> {
                 var column:String = value.name!
                 if value.isClass{
                     if let sub = value.value as? Reflect {
-                        dataArgs.append(sub.objectId)
+                        dataArgs.append(sub.objectId!.longLongValue)
                         column = "\(sub.dynamicType.entityName())_objectId"
                     }
                 }
@@ -105,7 +97,7 @@ public enum Schema<T: ReflectProtocol> {
                 var column:String = "\(value.name!) = ?"
                 if value.isClass{
                     if let sub = value.value as? Reflect {
-                        dataArgs.append(sub.objectId)
+                        dataArgs.append(sub.objectId!.longLongValue)
                         column = "\(sub.dynamicType.entityName())_objectId = ?"
                     }
                 }
@@ -115,14 +107,14 @@ public enum Schema<T: ReflectProtocol> {
                 return column
                 }.joinWithSeparator(", ")
             
-            dataArgs.append(object.objectId)
+            dataArgs.append(object.objectId!.longLongValue)
             statement += " \(columns) WHERE objectId = ?"
             
             return (statement, dataArgs)
             
         case .Delete(let object):
             let comp = object.objectId == nil ? "" : " WHERE objectId = ?"
-            return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!])
+            return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!.longLongValue])
         }
     }
     

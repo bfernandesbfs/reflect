@@ -13,7 +13,7 @@ internal struct ReflectData {
     /// Optinal object
     internal let isOptional: Bool
     /// Object type Class
-    internal let isClass:    Bool
+    internal var isClass:    Bool = false
     /// Type of object
     internal var type:       Any.Type?  = nil
     /// Name of property
@@ -35,8 +35,6 @@ internal struct ReflectData {
         
         let mirror = Mirror(reflecting: property.value)
         isOptional = mirror.displayStyle == .Optional
-        isClass = mirror.displayStyle == .Class
-        
         value = unwrap(property.value)
         type = typeForMirror(mirror)
     }
@@ -47,10 +45,14 @@ internal struct ReflectData {
      
      - returns: return Any.Type if nothing nil
      */
-    internal func typeForMirror(mirror: Mirror) -> Any.Type? {
+    internal mutating func typeForMirror(mirror: Mirror) -> Any.Type? {
         if !isOptional {
+            if mirror.subjectType is Reflect.Type {
+                isClass =  true
+            }
             return mirror.subjectType
         }
+    
         
         switch mirror.subjectType {
         case is Optional<String>.Type:      return String.self
@@ -75,7 +77,9 @@ internal struct ReflectData {
             
         case is Optional<Float>.Type:       return Float.self
         case is Optional<Double>.Type:      return Double.self
-        case is Optional<AnyClass>.Type:    return AnyClass.self
+        case is Optional<Reflect.Type>.Type:
+            isClass =  true
+            return Reflect.self
         default:                            return nil
         }
     }
@@ -153,6 +157,8 @@ internal extension ReflectData {
             return NSDate.declaredDatatype
         case is NSData.Type:
             return NSData.declaredDatatype
+        case is Reflect.Type:
+            return Int.declaredDatatype
         default:
             fatalError("Error object not supported")
         }

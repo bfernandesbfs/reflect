@@ -135,3 +135,93 @@ class Address: Reflect {
         return results
     }
 }
+
+class TestField: Reflect {
+    /*
+     Data Type support
+    */
+    var varstring  : String
+    var varint     : Int
+    var varint8    : Int8
+    var varint16   : Int16
+    var varint32   : Int32
+    var varint64   : Int64
+    var varuint    : UInt
+    var varuint8   : UInt8
+    var varuint16  : UInt16
+    var varuint32  : UInt32
+    var varuint64  : UInt64
+    var varbool    : Bool
+    var varfloat   : Float
+    var vardouble  : Double
+    //Objc
+    var varnsstring: NSString
+    var vardate    : NSDate
+    var varnumber  : NSNumber
+    var vardata    : NSData
+    
+    var status  :Bool
+    var register:Int
+    var value   :String
+    var identifier:String
+    
+    required init(){
+        varstring = "string"
+        varint    = 1
+        varint8   = 2
+        varint16  = 3
+        varint32  = 4
+        varint64  = 5
+        varuint   = 6
+        varuint8  = 7
+        varuint16 = 8
+        varuint32 = 9
+        varuint64 = 10
+        varbool   = false
+        varfloat  = 1.1
+        vardouble = 1.2
+        varnsstring  = "nsstring"
+        vardate   = NSDate()
+        varnumber = 111
+        vardata   = String("Test Data").dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        status   = false
+        register = 0
+        value    = ""
+        identifier = NSUUID().UUIDString
+    }
+    
+    /**
+     Implement this func to change name of class as entity to another selected
+     
+     - returns: a new name to entity for class
+     */
+    override class func entityName() -> String {
+        return "FieldTest"
+    }
+    
+    /**
+     Implement this func to ignore property when the Reflect Object create an Table on Data Base
+     
+     - returns: List to ignore properties
+     */
+    override class func ignoredProperties() -> Set<String> {
+        return ["status", "register", "value"]
+    }
+}
+
+class TestFieldOptional: Reflect {
+    /*
+     Data Type optionls support
+     */
+    var optionalString   : String?
+    var optionalNSString : NSString?
+    var optionalNSInteger: NSInteger?
+    var optionalDate     : NSDate?
+    var optionalNumber   : NSNumber?
+    var optionalData     : NSData?
+    
+    required init() {
+        
+    }
+}

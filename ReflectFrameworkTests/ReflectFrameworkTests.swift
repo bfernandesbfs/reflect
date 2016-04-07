@@ -95,7 +95,7 @@ class ReflectFrameworkTests: XCTestCase {
     }
     
     func testFlow(){
-        Reflect.configuration("", baseNamed: "Teste", location: .Temporary, readonly: false)
+        Reflect.configuration(.Temporary, readonly: false)
         XCTAssert(Reflect.settings.getDBName() == "Teste.db", "Data base and path not created")
         
         XCTAssert(Car.register(), "found error when if register the object")
