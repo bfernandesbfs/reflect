@@ -111,6 +111,10 @@ extension Bool: Value, Binding  {
     public static func fromDatatypeValue(datatypeValue: Int64) -> Bool {
         return datatypeValue != 0
     }
+    
+    public var datatypeValue: Int {
+        return self ? 1 : 0
+    }
 }
 
 // OBJC
@@ -152,5 +156,15 @@ extension NSData: Value, Binding {
     public class func fromDatatypeValue(datatypeValue: NSData) -> NSData {
         return datatypeValue
     }
+    
+    public var datatypeValue: String {
+        return "x'\(toHex())'"
+    }
+    
+    private func toHex() -> String {
+        let bytes: [UInt8] = [UInt8](UnsafeBufferPointer(start: UnsafePointer(self.bytes), count: length))
+        return bytes.map {
+            ($0 < 16 ? "0" : "") + String($0, radix: 16, uppercase: false)
+            }.joinWithSeparator("")
+    }
 }
-

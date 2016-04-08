@@ -29,6 +29,7 @@
 		4A90145D1CA1A30A00E8CCCB /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145C1CA1A30A00E8CCCB /* Query.swift */; };
 		4A90145F1CA1A35D00E8CCCB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145E1CA1A35D00E8CCCB /* Filter.swift */; };
 		4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */; };
+		4AC7431C1CB8000E00C2358D /* HelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC7431B1CB8000E00C2358D /* HelperTest.swift */; };
 		4AC9E1C81CB68592007B1C5E /* CreateFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */; };
 		4ADB50DE1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */; };
 		4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE1C3781CADB1650038CF74 /* ModelTest.swift */; };
@@ -69,6 +70,7 @@
 		4A90145C1CA1A30A00E8CCCB /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
 		4A90145E1CA1A35D00E8CCCB /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFrameworkTests.swift; sourceTree = "<group>"; };
+		4AC7431B1CB8000E00C2358D /* HelperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperTest.swift; sourceTree = "<group>"; };
 		4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateFrameworkTest.swift; sourceTree = "<group>"; };
 		4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectFraneworkTest.swift; sourceTree = "<group>"; };
 		4AE1C3781CADB1650038CF74 /* ModelTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTest.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 		4AEBBCF81C9C74D0009BEA05 /* ReflectFrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
+				4AC7431B1CB8000E00C2358D /* HelperTest.swift */,
 				4AE1C3781CADB1650038CF74 /* ModelTest.swift */,
 				4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */,
 				4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */,
@@ -392,6 +395,7 @@
 				4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */,
 				4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */,
 				4ADB50DE1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift in Sources */,
+				4AC7431C1CB8000E00C2358D /* HelperTest.swift in Sources */,
 				4AC9E1C81CB68592007B1C5E /* CreateFrameworkTest.swift in Sources */,
 				4A0403861CAE9E6100114573 /* ModelQueryFrameworkTest.swift in Sources */,
 			);

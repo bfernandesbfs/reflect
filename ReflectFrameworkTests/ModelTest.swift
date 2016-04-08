@@ -208,6 +208,38 @@ class TestField: Reflect {
     override class func ignoredProperties() -> Set<String> {
         return ["status", "register", "value"]
     }
+    
+    /**
+     Generate value to sample
+     
+     - parameter index: index of list
+     */
+    func generateValue(index:Int) {
+        let i  = index * 10
+        varstring = "string \(index)"
+        varint    = 1 * i
+        varint8   = 2 + Int8(arc4random_uniform(125))
+        varint16  = 3 + Int16(varint8)
+        varint32  = 4 + Int32(varint16)
+        varint64  = 5 + Int64(varint32)
+        varuint   = 6 + UInt(i)
+        varuint8  = 7 + UInt8(varuint)
+        varuint16 = 8 + UInt16(varuint8)
+        varuint32 = 9 + UInt32(varuint16)
+        varuint64 = 10 + UInt64(varuint32)
+        varbool   = arc4random_uniform(2) == 1
+        varfloat  = 1.1 * Float(i / 2)
+        vardouble = 1.2 * Double(i / 10)
+        varnsstring  = "nsstring \(index)"
+        vardate   = NSDate()
+        varnumber = 111.0 * vardouble
+        vardata   = String("Test Data Number \(index) ").dataUsingEncoding(NSUTF8StringEncoding)!
+        
+        status   = arc4random_uniform(2) == 1
+        register = index + 15
+        value    = "value \(index)"
+        identifier = NSUUID().UUIDString
+    }
 }
 
 class TestFieldOptional: Reflect {
@@ -222,6 +254,38 @@ class TestFieldOptional: Reflect {
     var optionalData     : NSData?
     
     required init() {
+    }
+    
+    /**
+     Generate value to sample
+     
+     - parameter index: index of list
+     */
+    func generateValue(index:Int) {
+        let i  = index * 10
         
+        if Int(arc4random_uniform(1000)) % 2 == 0 {
+            optionalString    = "String \(index)"
+        }
+        
+        if Int(arc4random_uniform(1000)) % 2 == 0 {
+            optionalNSString  = "NSString \(index)"
+        }
+        
+        if Int(arc4random_uniform(1000)) % 2 == 0 {
+            optionalNSInteger = 2 + i
+        }
+        
+        if Int(arc4random_uniform(1000)) % 2 == 0 {
+            optionalDate   = NSDate()
+        }
+        
+        if Int(arc4random_uniform(1000)) % 2 == 0 {
+            optionalNumber = 111.43 * Double(i)
+        }
+        
+        if Int(arc4random_uniform(100)) % 2 == 0 {
+            optionalData   = String("Test Data Optional Number \(index) ").dataUsingEncoding(NSUTF8StringEncoding)!
+        }
     }
 }
