@@ -121,7 +121,7 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      - throws:  `Result.Error`
      */
     internal func fetch(obj: T, include:[Any.Type] = []) throws {
-        let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.Equals, value: obj.objectId!)
+        let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.Equals, value: obj.objectId!.longLongValue)
         
         for k in include {
             if let sub = k as? Reflect.Type {

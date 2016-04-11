@@ -26,9 +26,10 @@
 		4A779FF51CA956F900EE2953 /* ReflectProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF41CA956F900EE2953 /* ReflectProtocol.swift */; };
 		4A779FF71CA9594500EE2953 /* Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF61CA9594500EE2953 /* Driver.swift */; };
 		4A779FF91CA95BB900EE2953 /* ReflectData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A779FF81CA95BB900EE2953 /* ReflectData.swift */; };
+		4A8545891CBBFD5B006A767A /* QueryFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8545881CBBFD5B006A767A /* QueryFrameworkTest.swift */; };
 		4A90145D1CA1A30A00E8CCCB /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145C1CA1A30A00E8CCCB /* Query.swift */; };
 		4A90145F1CA1A35D00E8CCCB /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A90145E1CA1A35D00E8CCCB /* Filter.swift */; };
-		4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */; };
+		4A9014611CA1A3F300E8CCCB /* XQueryFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A9014601CA1A3F300E8CCCB /* XQueryFrameworkTests.swift */; };
 		4AC7431C1CB8000E00C2358D /* HelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC7431B1CB8000E00C2358D /* HelperTest.swift */; };
 		4AC9E1C81CB68592007B1C5E /* CreateFrameworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */; };
 		4ADB50DE1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */; };
@@ -67,9 +68,10 @@
 		4A779FF41CA956F900EE2953 /* ReflectProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectProtocol.swift; sourceTree = "<group>"; };
 		4A779FF61CA9594500EE2953 /* Driver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Driver.swift; sourceTree = "<group>"; };
 		4A779FF81CA95BB900EE2953 /* ReflectData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectData.swift; sourceTree = "<group>"; };
+		4A8545881CBBFD5B006A767A /* QueryFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFrameworkTest.swift; sourceTree = "<group>"; };
 		4A90145C1CA1A30A00E8CCCB /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
 		4A90145E1CA1A35D00E8CCCB /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
-		4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryFrameworkTests.swift; sourceTree = "<group>"; };
+		4A9014601CA1A3F300E8CCCB /* XQueryFrameworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XQueryFrameworkTests.swift; sourceTree = "<group>"; };
 		4AC7431B1CB8000E00C2358D /* HelperTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperTest.swift; sourceTree = "<group>"; };
 		4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateFrameworkTest.swift; sourceTree = "<group>"; };
 		4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectFraneworkTest.swift; sourceTree = "<group>"; };
@@ -122,7 +124,7 @@
 			children = (
 				4AEBBD161C9C77D5009BEA05 /* Test.swift */,
 				4AEBBCF91C9C74D0009BEA05 /* ReflectFrameworkTests.swift */,
-				4A9014601CA1A3F300E8CCCB /* QueryFrameworkTests.swift */,
+				4A9014601CA1A3F300E8CCCB /* XQueryFrameworkTests.swift */,
 				4A1815551CAB1EE8007DF21A /* OptionalFrameworkTests.swift */,
 			);
 			name = TestObjects;
@@ -167,6 +169,7 @@
 				4AE1C3781CADB1650038CF74 /* ModelTest.swift */,
 				4AC9E1C71CB68592007B1C5E /* CreateFrameworkTest.swift */,
 				4ADB50DD1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift */,
+				4A8545881CBBFD5B006A767A /* QueryFrameworkTest.swift */,
 				4AE1C37A1CADB2410038CF74 /* TestObjects */,
 				4AE1C37B1CADB2740038CF74 /* ModelFrameworkTest.swift */,
 				4A0403851CAE9E6100114573 /* ModelQueryFrameworkTest.swift */,
@@ -391,9 +394,10 @@
 				4AEBBD171C9C77D5009BEA05 /* Test.swift in Sources */,
 				4AEBBCFA1C9C74D0009BEA05 /* ReflectFrameworkTests.swift in Sources */,
 				4A1815561CAB1EE8007DF21A /* OptionalFrameworkTests.swift in Sources */,
-				4A9014611CA1A3F300E8CCCB /* QueryFrameworkTests.swift in Sources */,
+				4A9014611CA1A3F300E8CCCB /* XQueryFrameworkTests.swift in Sources */,
 				4AE1C37C1CADB2740038CF74 /* ModelFrameworkTest.swift in Sources */,
 				4AE1C3791CADB1650038CF74 /* ModelTest.swift in Sources */,
+				4A8545891CBBFD5B006A767A /* QueryFrameworkTest.swift in Sources */,
 				4ADB50DE1CB6E0DA0060FD2A /* ObjectFraneworkTest.swift in Sources */,
 				4AC7431C1CB8000E00C2358D /* HelperTest.swift in Sources */,
 				4AC9E1C81CB68592007B1C5E /* CreateFrameworkTest.swift in Sources */,

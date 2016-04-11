@@ -210,7 +210,7 @@ public class Query<T where T:ReflectProtocol> {
      */
     public func count(field: String = "*") -> Double {
         dataAggregate = Aggregate.Count(field)
-        return aggregateObject(dataAggregate.field)
+        return  convertValueToDouble(aggregateObject(dataAggregate.field))
     }
     /**
      Average Object
@@ -221,29 +221,7 @@ public class Query<T where T:ReflectProtocol> {
      */
     public func average(field: String = "*") -> Double {
         dataAggregate = Aggregate.Average(field)
-        return aggregateObject(dataAggregate.field)
-    }
-    /**
-     Max Object
-     
-     - parameter field: Column Name
-     
-     - returns: Value max found
-     */
-    public func max(field: String = "*") -> Double {
-        dataAggregate = Aggregate.Max(field)
-        return aggregateObject(dataAggregate.field)
-    }
-    /**
-     Min Object
-     
-     - parameter field: Column Name
-     
-     - returns: Value min found
-     */
-    public func min(field: String = "*") -> Double {
-        dataAggregate = Aggregate.Min(field)
-        return aggregateObject(dataAggregate.field)
+        return convertValueToDouble(aggregateObject(dataAggregate.field))
     }
     /**
      Sum Object
@@ -254,8 +232,31 @@ public class Query<T where T:ReflectProtocol> {
      */
     public func sum(field: String = "*") -> Double {
         dataAggregate = Aggregate.Sum(field)
-        return Double(aggregateObject(dataAggregate.field))
+        return convertValueToDouble(aggregateObject(dataAggregate.field))
     }
+    /**
+     Max Object
+     
+     - parameter field: Column Name
+     
+     - returns: Value max found
+     */
+    public func max(field: String = "*") -> Value {
+        dataAggregate = Aggregate.Max(field)
+        return aggregateObject(dataAggregate.field)!
+    }
+    /**
+     Min Object
+     
+     - parameter field: Column Name
+     
+     - returns: Value min found
+     */
+    public func min(field: String = "*") -> Value {
+        dataAggregate = Aggregate.Min(field)
+        return aggregateObject(dataAggregate.field)!
+    }
+    
     /**
      Find Objects
      This method executa a query
@@ -346,18 +347,25 @@ private extension Query {
      
      - returns: return value of query
      */
-    private func aggregateObject(field:String) -> Double {
+    private func aggregateObject(field:String) -> Value? {
         if let value = try! Driver().scalar(self, column: field) {
-            if let v = value as? Int64 {
-                return Double(v)
-            }
-            else if let v = value as? Double {
-                return v
-            }
-            else if let v = value as? Float {
-                return Double(v)
-            }
+            return value
         }
+        return nil
+    }
+    
+    private func convertValueToDouble(value:Value?) -> Double {
+    
+        if let v = value as? Int64 {
+            return Double(v)
+        }
+        else if let v = value as? Double {
+            return v
+        }
+        else if let v = value as? Float {
+            return Double(v)
+        }
+        
         return 0
     }
 }
