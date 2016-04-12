@@ -63,7 +63,9 @@ func populateData() {
 
 func populateDataFake() {
     addressList = Address.query().findObject()
-    userList    = User.query().findObject()
+    let query = User.query()
+    query.join(Address.self)
+    userList = query.findObject()
 }
 
 //Operator Overloading Methods

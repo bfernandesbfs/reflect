@@ -36,9 +36,7 @@ public class Query<T where T:ReflectProtocol> {
     /// Statement Sql contem intrução sql and argumentos
     var statement:(sql:String, args:[Value?]) {
         var query: [String] = [resolveSelect()]
-        if dataClause.count == 0 {
-            return (query.first!, [])
-        }
+        
         //JOIN
         if dataUnion.count > 0 {
             var filterUnion: [String] = []
@@ -47,7 +45,12 @@ public class Query<T where T:ReflectProtocol> {
             }
             query.append(filterUnion.joinWithSeparator(" "))
         }
+        
         //Where
+        if dataClause.count == 0 {
+            return (query.joinWithSeparator(" "), [])
+        }
+        
         var filterClause: [String] = []
         for filter in dataClause {
             filterClause.append(filterOutput(filter))
@@ -149,7 +152,7 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil ,alias:String = "" ) -> Self? {
+    public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil ,alias:String = "" ) -> Self {
         let fk = foreignKey ?? "\(entity).\(type.entityName())_objectId"
         let ok = otherKey ?? "\(type.entityName()).objectId"
         let union = Filter.Union(operation, type.entityName(), fk, comparison, ok)
