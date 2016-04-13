@@ -207,6 +207,22 @@ class QueryFrameworkTest: XCTestCase {
         
         XCTAssertTrue(trace[8] == "SELECT * FROM User WHERE firstName NOT LIKE '%mi%';", "it isn't compatible")
         XCTAssertTrue(users.count == usersFake.count , "it isn't compatible")
+        
+        /**
+         Select Fields
+         */
+        query = User.query()
+        query.fields("objectId", "firstName", "lastName", "age").findObject()
+        
+        XCTAssertTrue(trace[9] == "SELECT objectId, firstName, lastName, age FROM User;", "it isn't compatible")
+        
+        query = User.query()
+        users = query.fields("age").distinct().findObject()
+        
+        let distinct = unique( userList.map { return $0.age })
+        
+        XCTAssertTrue(trace[10] == "SELECT DISTINCT age FROM User;", "it isn't compatible")
+        XCTAssertTrue(users.count == distinct.count , "it isn't compatible")
     }
 
     func testQueryFilterAdvanced() {
@@ -282,14 +298,14 @@ class QueryFrameworkTest: XCTestCase {
          */
         let query = User.query()
         let count = query.count()
-        XCTAssertTrue(trace[0] == "SELECT COUNT(*) AS count FROM User", "it isn't compatible")
+        XCTAssertTrue(trace[0] == "SELECT COUNT(*) AS count FROM User;", "it isn't compatible")
         XCTAssertTrue(count == Double(userList.count), "it isn't compatible")
         
         /**
          Sum Object
          */
         let sum = query.sum("age")
-        XCTAssertTrue(trace[1] == "SELECT SUM(age) AS value FROM User", "it isn't compatible")
+        XCTAssertTrue(trace[1] == "SELECT SUM(age) AS value FROM User;", "it isn't compatible")
         
         let agesTotal:Int = userList.map {
             return $0.age
@@ -303,14 +319,14 @@ class QueryFrameworkTest: XCTestCase {
          Avg Object
          */
         let avg = query.average("age")
-        XCTAssertTrue(trace[2] == "SELECT AVG(age) AS average FROM User", "it isn't compatible")
+        XCTAssertTrue(trace[2] == "SELECT AVG(age) AS average FROM User;", "it isn't compatible")
         XCTAssertTrue(avg == (Double(agesTotal) / count ), "it isn't compatible")
         
         /**
          Max Object
          */
         let max = query.max("birthday") as! String
-        XCTAssertTrue(trace[3] == "SELECT MAX(birthday) AS maximum FROM User", "it isn't compatible")
+        XCTAssertTrue(trace[3] == "SELECT MAX(birthday) AS maximum FROM User;", "it isn't compatible")
         
         let listDate = userList.map ({ $0.birthday! })
         let maxDate = listDate.reduce(listDate[0]){$0 > $1 ? $1 : $0}.datatypeValue
@@ -322,11 +338,78 @@ class QueryFrameworkTest: XCTestCase {
          Min Object
          */
         let min = query.min("birthday") as! String
-        XCTAssertTrue(trace[4] == "SELECT MIN(birthday) AS minimum FROM User", "it isn't compatible")
+        XCTAssertTrue(trace[4] == "SELECT MIN(birthday) AS minimum FROM User;", "it isn't compatible")
         
         let minDate = listDate.reduce(listDate[0]){$0 < $1 ? $1 : $0}.datatypeValue
         
         XCTAssertTrue(minDate == min, "it isn't compatible")
+        
+    }
+    
+    func testQuerySort() {
+        trace = []
+        
+        /**
+         Sort Object
+         type Sort : Asc and Desc
+         */
+        
+        //ASC
+        var query = User.query()
+        var users = query.sort("age", .Asc).findObject()
+        
+        var order = userList.sort {
+            $0.age < $1.age
+        }
+        
+        XCTAssertTrue(trace[0] == "SELECT * FROM User ORDER BY age ASC;", "it isn't compatible")
+        XCTAssertTrue(users.first!.age == order.first!.age, "it isn't compatible")
+        
+        //DESC
+        query = User.query()
+        users = query.filter("gender", .Equals, value: "male").sort("age", .Desc).findObject()
+        
+        order = userList.filter({ (u:User) -> Bool in
+            u.gender == "male"
+        }).sort {
+            $0.age > $1.age
+        }
+        
+        XCTAssertTrue(trace[1] == "SELECT * FROM User WHERE gender = 'male' ORDER BY age DESC;", "it isn't compatible")
+        XCTAssertTrue(users.first!.age == order.first!.age, "it isn't compatible")
+    }
+    
+    func testQueryPage() {
+        trace = []
+        
+        /**
+         Limit and Offset
+         */
+        
+        var query = User.query()
+        var users = query.sort("age", .Asc).limit(2).findObject()
+        
+        var limit = userList.sort {
+            $0.age < $1.age
+        }[0..<2]
+        
+        XCTAssertTrue(trace[0] == "SELECT * FROM User ORDER BY age ASC LIMIT 2;", "it isn't compatible")
+        XCTAssertTrue(users.count == limit.count, "it isn't compatible")
+        XCTAssertTrue(users.last!.age == limit.last!.age, "it isn't compatible")
+        
+        //Offset
+        query = User.query()
+        users = query.filter("gender", .Equals, value: "female").sort("age", .Desc).limit(3).offset(2).findObject()
+        
+        limit = userList.filter({ (u:User) -> Bool in
+            u.gender == "female"
+        }).sort {
+            $0.age > $1.age
+        }[2..<5]
+
+        XCTAssertTrue(trace[1] == "SELECT * FROM User WHERE gender = 'female' ORDER BY age DESC LIMIT 3 OFFSET 2;", "it isn't compatible")
+        XCTAssertTrue(users.count == limit.count, "it isn't compatible")
+        XCTAssertTrue(users.last!.age == limit.last!.age, "it isn't compatible")
         
     }
     

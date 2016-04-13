@@ -241,9 +241,15 @@ class ObjectFraneworkTest: XCTestCase {
     }
     
     func testPerformanceExample() {
-        // This is an example of a performance test case.
+        // Media : 3.410
         self.measureBlock {
-            // Put the code you want to measure the time of here.
+            TestField.register()
+            for _ in 0..<1000 {
+                let t = TestField()
+                t.pin()
+            }
+            TestField.clean()
+            TestField.unRegister()
         }
     }
     

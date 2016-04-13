@@ -47,15 +47,14 @@ public class Query<T where T:ReflectProtocol> {
         }
         
         //Where
-        if dataClause.count == 0 {
-            return (query.joinWithSeparator(" "), [])
+        if dataClause.count > 0 {
+            var filterClause: [String] = []
+            for filter in dataClause {
+                filterClause.append(filterOutput(filter))
+            }
+            query.append("WHERE \(filterClause.joinWithSeparator(" AND "))")
         }
         
-        var filterClause: [String] = []
-        for filter in dataClause {
-            filterClause.append(filterOutput(filter))
-        }
-        query.append("WHERE \(filterClause.joinWithSeparator(" AND "))")
         //Order by
         if dataOrder.count > 0 {
             query.append("ORDER BY")
@@ -65,10 +64,12 @@ public class Query<T where T:ReflectProtocol> {
             }
             query.append(filterOrder.joinWithSeparator(", "))
         }
+        
         //Limit and Offset
         for page in dataPage {
             query.append(page.description)
         }
+        
         return ("\(query.joinWithSeparator(" "));" , dataArgs)
     }
     /**
@@ -284,7 +285,9 @@ private extension Query {
         }
         
         if dataFields.count > 0 && dataAggregate.field == Aggregate.Default.field {
-            dataFields.append("\(entity).*")
+            if dataUnion.count > 0 {
+                dataFields.append("\(entity).*")
+            }
             select.append(dataFields.joinWithSeparator(", "))
         } else {
             select.append(dataAggregate.description)

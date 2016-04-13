@@ -63,9 +63,7 @@ func populateData() {
 
 func populateDataFake() {
     addressList = Address.query().findObject()
-    let query = User.query()
-    query.join(Address.self)
-    userList = query.findObject()
+    userList    = User.query().join(Address.self).findObject()
 }
 
 //Operator Overloading Methods
@@ -75,4 +73,11 @@ func >(lhs: NSDate, rhs: NSDate) -> Bool {
 
 func <(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs.compare(rhs) == NSComparisonResult.OrderedDescending
+}
+
+func unique<S: SequenceType, E: Hashable where E==S.Generator.Element>(source: S) -> [E] {
+    var seen: [E:Bool] = [:]
+    return source.filter({ (v) -> Bool in
+        return seen.updateValue(true, forKey: v) == nil
+    })
 }
