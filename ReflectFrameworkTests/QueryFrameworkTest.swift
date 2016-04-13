@@ -195,7 +195,6 @@ class QueryFrameworkTest: XCTestCase {
          Not Like
          Example : 'A%' '%A' '%a%'
          */
-        
         query = User.query()
         query.filter("firstName", .NotLike, value: "%mi%")
         
@@ -209,19 +208,34 @@ class QueryFrameworkTest: XCTestCase {
         XCTAssertTrue(users.count == usersFake.count , "it isn't compatible")
         
         /**
+         Between
+         */
+        query = User.query()
+        query.filter("age", .Between, value: 20, 30)
+        
+        users = query.findObject()
+        
+        usersFake = userList.filter { (u:User) -> Bool in
+            u.age >= 20 && u.age <= 30
+        }
+        
+        XCTAssertTrue(trace[9] == "SELECT * FROM User WHERE age BETWEEN 20 AND 30;", "it isn't compatible")
+        XCTAssertTrue(users.count == usersFake.count , "it isn't compatible")
+        
+        /**
          Select Fields
          */
         query = User.query()
         query.fields("objectId", "firstName", "lastName", "age").findObject()
         
-        XCTAssertTrue(trace[9] == "SELECT objectId, firstName, lastName, age FROM User;", "it isn't compatible")
+        XCTAssertTrue(trace[10] == "SELECT objectId, firstName, lastName, age FROM User;", "it isn't compatible")
         
         query = User.query()
         users = query.fields("age").distinct().findObject()
         
         let distinct = unique( userList.map { return $0.age })
         
-        XCTAssertTrue(trace[10] == "SELECT DISTINCT age FROM User;", "it isn't compatible")
+        XCTAssertTrue(trace[11] == "SELECT DISTINCT age FROM User;", "it isn't compatible")
         XCTAssertTrue(users.count == distinct.count , "it isn't compatible")
     }
 

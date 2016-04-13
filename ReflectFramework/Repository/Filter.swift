@@ -15,7 +15,7 @@ public enum Filter {
 }
 
 public enum Comparison: CustomStringConvertible{
-    case Equals, GreaterThan, LessThan, NotEquals, In, NotIn, Is, Like, NotLike
+    case Equals, GreaterThan, LessThan, NotEquals, In, NotIn, Is, Like, NotLike ,Between
     
     public var description: String {
         switch self {
@@ -37,6 +37,8 @@ public enum Comparison: CustomStringConvertible{
             return "LIKE"
         case .NotLike:
             return "NOT LIKE"
+        case .Between:
+            return "BETWEEN"
         }
     }
 }

@@ -330,8 +330,8 @@ private extension Query {
             let valueDescriptions = values.map { value in
                 dataArgs.append(value)
                 return "?"
-                }.joinWithSeparator(" , ")
-            return "\(field) \(scope) (\(valueDescriptions))"
+                }.joinWithSeparator(scope == .Between ? " AND " : " , ")
+            return "\(field) \(scope.description) " + (scope == .Between ? valueDescriptions : "(\(valueDescriptions))")
         case .Group(let op, let filters):
             let f: [String] = filters.map {
                 if case .Group = $0 {
