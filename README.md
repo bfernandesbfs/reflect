@@ -1,5 +1,9 @@
-# reflect
-Reflect Framework
+# Reflect
+
+Reflect is an ActiveRecord framework, elegant and simple that use the SQLite in Swift
+
+- [x] Easy configuration
+- [x] Simple syntax
 
 ## Usage
 
