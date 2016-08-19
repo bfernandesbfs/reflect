@@ -27,7 +27,6 @@ public enum Schema<T: ReflectProtocol> {
             
             statement += "objectId INTEGER PRIMARY KEY AUTOINCREMENT, "
             let _ = propertyData.forEach { value in
-                print(value.name!)
                 var data:String = ""
                 if value.isClass {
                     if let sub = value.type as? Reflect.Type {
@@ -62,7 +61,7 @@ public enum Schema<T: ReflectProtocol> {
             return (statement , [])
             
         case .Insert(var object):
-            var statement = "INSERT OR REPLACE INTO " + T.entityName()
+            var statement = "INSERT INTO " + T.entityName()
             object.createdAt = NSDate()
             object.updatedAt = object.createdAt
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
