@@ -19,14 +19,15 @@ public enum Schema<T: ReflectProtocol> {
     var statement: (sql:String, args:[Value?]) {
         switch self {
         case .Create(let object):
-            
             let tableName =  T.entityName()
             var statement = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
             var fields:[String] = []
             
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
+            
             statement += "objectId INTEGER PRIMARY KEY AUTOINCREMENT, "
-            let _ = propertyData.map { value in
+            let _ = propertyData.forEach { value in
+                print(value.name!)
                 var data:String = ""
                 if value.isClass {
                     if let sub = value.type as? Reflect.Type {
@@ -117,5 +118,4 @@ public enum Schema<T: ReflectProtocol> {
             return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!.longLongValue])
         }
     }
-    
 }
