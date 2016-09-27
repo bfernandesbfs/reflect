@@ -7,9 +7,10 @@
 //
 
 /// Drive Class execute instrution on Data Base
-internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
+internal class Driver<T>: DriverProtocol where T:ReflectProtocol {
+   
     /// Connection with data base SQLite
-    private lazy var db: Connection = {
+    fileprivate lazy var db: Connection = {
         return Reflect.settings.getConnection()
     }()
     /**
@@ -19,9 +20,9 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws: `Result.Error`
      */
-    internal func create(obj: T.Type) throws {
+    internal func create(_ obj: T.Type) throws {
         let rft = obj.init()
-        let schema = Schema.Create(rft)
+        let schema = Schema.create(rft)
         try db.execute(schema.statement.sql)
     }
     /**
@@ -31,8 +32,8 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws: `Result.Error`
      */
-    internal func drop(obj: T.Type) throws {
-        let schema = Schema<T>.Drop(T.entityName())
+    internal func drop(_ obj: T.Type) throws {
+        let schema = Schema<T>.drop(T.entityName())
         try db.execute(schema.statement.sql)
     }
     /**
@@ -44,8 +45,8 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws: `Result.Error`
      */
-    internal func index(obj:T.Type, field: String, unique: Bool = false) throws {
-        let schema = Schema<T>.Index(entity: obj.entityName(), field: field, unique: unique)
+    internal func index(_ obj:T.Type, field: String, unique: Bool = false) throws {
+        let schema = Schema<T>.index(entity: obj.entityName(), field: field, unique: unique)
         try db.run(schema)
     }
     /**
@@ -56,8 +57,8 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws: `Result.Error`
      */
-    internal func dropIndex(obj: T.Type, field: String) throws {
-        let schema = Schema<T>.DropIndex(entity: T.entityName(), field: field)
+    internal func dropIndex(_ obj: T.Type, field: String) throws {
+        let schema = Schema<T>.dropIndex(entity: T.entityName(), field: field)
         try db.run(schema)
     }
     /**
@@ -67,9 +68,9 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws: `Result.Error`
      */
-    internal func removeAll(obj: T.Type) throws {
+    internal func removeAll(_ obj: T.Type) throws {
         let rft = obj.init()
-        try db.runChange(Schema.Delete(rft))
+        try db.runChange(Schema.delete(rft))
     }
     /**
      Save or Update Object
@@ -78,11 +79,11 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws: `Result.Error`
      */
-    internal func save(obj: T) throws {
+    internal func save(_ obj: T) throws {
         var rft = obj
         if rft.objectId == nil {
-            let rowId = try db.runRowId(Schema.Insert(rft))
-            rft.objectId = NSNumber(longLong: rowId)
+            let rowId = try db.runRowId(Schema.insert(rft))
+            rft.objectId = NSNumber(value: rowId as Int64)
         }
         else{
             try change(obj)
@@ -97,8 +98,9 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: total of changes
      */
-    internal func change(obj: T) throws -> Int {
-        return Int(try db.runChange(Schema.Update(obj)))
+    @discardableResult
+    internal func change(_ obj: T) throws -> Int {
+        return Int(try db.runChange(Schema.update(obj)))
     }
     /**
      Delete Object
@@ -109,8 +111,8 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: total of changes
      */
-    internal func delete(obj: T) throws -> Int {
-        return try db.runChange(Schema.Delete(obj))
+    internal func delete(_ obj: T) throws -> Int {
+        return try db.runChange(Schema.delete(obj))
     }
     /**
      Select One
@@ -120,8 +122,8 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - throws:  `Result.Error`
      */
-    internal func fetch(obj: T, include:[Any.Type] = []) throws {
-        let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.Equals, value: obj.objectId!.longLongValue)
+    internal func fetch(_ obj: T, include:[Any.Type] = []) throws {
+        let q = Query<T>().filter("\(T.entityName()).objectId", Comparison.equals, value: obj.objectId!.int64Value)
         
         for k in include {
             if let sub = k as? Reflect.Type {
@@ -133,7 +135,7 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
             objectsForType(obj as! Reflect, row: row)
         }
         else{
-            throw Result.Error(message: "Not found", code: 1001, statement: nil)
+            throw Result.error(message: "Not found", code: 1001, statement: nil)
         }
     }
     /**
@@ -146,9 +148,9 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: return a new instance to Object Reflect
      */
-    internal func find(id: Int, include:[Any.Type] = []) throws -> T? {
+    internal func find(_ id: Int, include:[Any.Type] = []) throws -> T? {
         var rft = T()
-        rft.objectId = id
+        rft.objectId = NSNumber(value: id)
         try fetch(rft, include: include)
         return rft
     }
@@ -161,7 +163,7 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: return a new instances to Objects of type Reflect
      */
-    internal func find(query: Query<T>) throws -> [T] {
+    internal func find(_ query: Query<T>) throws -> [T] {
         
         var results:[T] = []
         for row in try db.prepareQuery(query)! {
@@ -180,13 +182,13 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: return Array Dictionary
      */
-    internal func find(query: String) throws -> [[String: Value?]] {
+    internal func find(_ query: String) throws -> [[String: Value?]] {
     
         let stmt = try db.prepare(query,[])
         var results:[[String: Value?]] = []
         for row in stmt {
             var item:[String: Value?] = [:]
-            for (index, name) in stmt.columnNames.enumerate() {
+            for (index, name) in stmt.columnNames.enumerated() {
                 item[name] = row[index]!
             }
             results.append(item)
@@ -203,15 +205,15 @@ internal class Driver<T where T:ReflectProtocol>: DriverProtocol {
      
      - returns: Return a value
      */
-    internal func scalar(query: Query<T>, column:String) throws -> Value? {
+    internal func scalar(_ query: Query<T>, column:String) throws -> Value? {
         return try db.scalar(query)
     }
     
-    internal func transaction(obj: T.Type, callback: () throws -> Void) throws {
+    internal func transaction(_ obj: T.Type, callback: @escaping () throws -> Void) throws {
         return try db.transaction(block: callback)
     }
     
-    internal func log(callback: (String -> Void)?) {
+    internal func log(_ callback: ((String) -> Void)?) {
         db.trace(callback)
     }
 }
@@ -224,7 +226,7 @@ private extension Driver {
      - parameter row:    Row Object Data Base
      - parameter alias:  alias name to find subscript Row
      */
-    private func objectsForType<T where T: ReflectProtocol, T: NSObject>(object: T, row: Row, alias:String = "") {
+    func objectsForType<T>(_ object: T, row: Row, alias:String = "") where T: ReflectProtocol, T: NSObject {
         
         let propertyData = ReflectData.validPropertyDataForObject(object)
         for property in propertyData {
@@ -252,29 +254,29 @@ private extension Driver {
      
      - returns: retunr object valid if nothing nil
      */
-    private func bindValue(type: Any.Type?, column:String, row:Row) -> AnyObject? {
+    func bindValue(_ type: Any.Type?, column:String, row:Row) -> AnyObject? {
         if row[column] {
             switch type {
             case is String.Type, is NSString.Type:
-                return row[column].asString()
+                return row[column].asString() as AnyObject?
             case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type:
-                return row[column].asInt()
+                return row[column].asInt() as AnyObject?
             case is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type:
-                return row[column].asInt()
+                return row[column].asInt() as AnyObject?
             case is Int64.Type, is UInt64.Type:
-                return row[column].asInt()
+                return row[column].asInt() as AnyObject?
             case is Double.Type:
-                return row[column].asDouble()
+                return row[column].asDouble() as AnyObject?
             case is Float.Type:
-                return row[column].asFloat()
+                return row[column].asFloat() as AnyObject?
             case is Bool.Type:
-                return row[column].asBool()
+                return row[column].asBool() as AnyObject?
             case is NSNumber.Type:
                 return row[column].asNumber()
-            case is NSDate.Type:
-                return row[column].asDate()
-            case is NSData.Type:
-                return row[column].asData()
+            case is Date.Type:
+                return row[column].asDate() as AnyObject?
+            case is Data.Type:
+                return row[column].asData() as AnyObject?
             default:
                 return nil
             }

@@ -20,7 +20,7 @@ public protocol DriverProtocol {
      - throws: `Result.Error`
      
      */
-    func create(obj: T.Type) throws
+    func create(_ obj: T.Type) throws
     /**
      Delete a Object with name relation with object
      
@@ -29,7 +29,7 @@ public protocol DriverProtocol {
      - throws: `Result.Error`
      
      */
-    func drop(obj: T.Type) throws
+    func drop(_ obj: T.Type) throws
     /**
      Create Index to object
      
@@ -40,7 +40,7 @@ public protocol DriverProtocol {
      - throws: `Result.Error`
      
      */
-    func index(obj:T.Type, field: String, unique: Bool) throws
+    func index(_ obj:T.Type, field: String, unique: Bool) throws
     /**
      Drop Index to object
      
@@ -50,7 +50,7 @@ public protocol DriverProtocol {
      - throws: `Result.Error`
      
      */
-    func dropIndex(obj: T.Type, field: String) throws
+    func dropIndex(_ obj: T.Type, field: String) throws
     /**
      Delete all Object
      
@@ -59,7 +59,7 @@ public protocol DriverProtocol {
      - throws: `Result.Error`
      
      */
-    func removeAll(obj: T.Type) throws
+    func removeAll(_ obj: T.Type) throws
     /**
      Save or Update Object
      
@@ -68,7 +68,7 @@ public protocol DriverProtocol {
      - throws: `Result.Error`
      
      */
-    func save(obj: T) throws
+    func save(_ obj: T) throws
     /**
      Change Object
      
@@ -78,7 +78,7 @@ public protocol DriverProtocol {
      
      - returns: total of changes
      */
-    func change(obj: T) throws -> Int
+    func change(_ obj: T) throws -> Int
     /**
      Delete Object
      
@@ -88,7 +88,7 @@ public protocol DriverProtocol {
      
      - returns: total of changes
      */
-    func delete(obj: T) throws -> Int
+    func delete(_ obj: T) throws -> Int
     /**
      Select One
      
@@ -98,7 +98,7 @@ public protocol DriverProtocol {
      - throws:  `Result.Error`
     
      */
-    func fetch(obj: T, include:[Any.Type]) throws
+    func fetch(_ obj: T, include:[Any.Type]) throws
     /**
      Select Object with objectId
      
@@ -109,7 +109,7 @@ public protocol DriverProtocol {
      
      - returns: return a new instance to Object Reflect
      */
-    func find(id: Int, include:[Any.Type]) throws -> T?
+    func find(_ id: Int, include:[Any.Type]) throws -> T?
     /**
      Select Objects with Query Filter
      
@@ -119,7 +119,7 @@ public protocol DriverProtocol {
      
      - returns: return a new instances to Objects of type Reflect
      */
-    func find(query:Query<T>) throws -> [T]
+    func find(_ query:Query<T>) throws -> [T]
     /**
      Select Objects
      
@@ -129,7 +129,7 @@ public protocol DriverProtocol {
      
      - returns: return Array Dictionary
      */
-    func find(query: String) throws -> [[String: Value?]]
+    func find(_ query: String) throws -> [[String: Value?]]
     /**
      Select Object
      
@@ -140,9 +140,9 @@ public protocol DriverProtocol {
      
      - returns: Return a value 
      */
-    func scalar(query: Query<T>, column:String) throws -> Value?
+    func scalar(_ query: Query<T>, column:String) throws -> Value?
     
-    func transaction(obj: T.Type, callback: () throws -> Void) throws
+    func transaction(_ obj: T.Type, callback: @escaping () throws -> Void) throws
     
-    func log(callback: (String -> Void)?)
+    func log(_ callback: ((String) -> Void)?)
 }

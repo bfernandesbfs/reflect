@@ -8,17 +8,17 @@
 
 import Foundation
 
-func convertNil<T>(obj:T?) -> String {
+func convertNil<T>(_ obj:T?) -> String {
     if obj == nil {
         return "NULL"
     }
     else if let value = obj as? String {
         return "'\(value)'"
     }
-    else if let value = obj as? NSDate {
+    else if let value = obj as? Date {
         return "'\(value.datatypeValue)'"
     }
-    else if let value = obj as? NSData {
+    else if let value = obj as? Data {
         return "\(value.datatypeValue)"
     }
     else if let value = obj as? Double {
@@ -28,7 +28,7 @@ func convertNil<T>(obj:T?) -> String {
         return String(value)
     }
     else {
-        return String(obj!)
+        return String(describing: obj!)
     }
 }
 
@@ -48,12 +48,12 @@ func populateData() {
         u.address = addressList[Int(arc4random_uniform(19)) + 1]
         
         u.age = Int(arc4random_uniform(90))
-        let cal = NSCalendar.currentCalendar()
-        u.birthday = cal.dateByAddingUnit(.Day, value: -Int(arc4random_uniform(30)), toDate: NSDate(), options: [])
-        u.birthday = cal.dateByAddingUnit(.Month, value: -Int(arc4random_uniform(12)), toDate: u.birthday!, options: [])
-        u.birthday = cal.dateByAddingUnit(.Year, value: -u.age, toDate: u.birthday!, options: [])
-        u.birthday = cal.dateByAddingUnit(.Hour, value: -Int(arc4random_uniform(60)), toDate: u.birthday!, options: [])
-        u.birthday = cal.dateByAddingUnit(.Minute, value: -Int(arc4random_uniform(60)), toDate: u.birthday!, options: [])
+        let cal = Calendar.current
+        u.birthday = (cal as NSCalendar).date(byAdding: .day, value: -Int(arc4random_uniform(30)), to: Date(), options: [])
+        u.birthday = (cal as NSCalendar).date(byAdding: .month, value: -Int(arc4random_uniform(12)), to: u.birthday!, options: [])
+        u.birthday = (cal as NSCalendar).date(byAdding: .year, value: -u.age, to: u.birthday!, options: [])
+        u.birthday = (cal as NSCalendar).date(byAdding: .hour, value: -Int(arc4random_uniform(60)), to: u.birthday!, options: [])
+        u.birthday = (cal as NSCalendar).date(byAdding: .minute, value: -Int(arc4random_uniform(60)), to: u.birthday!, options: [])
         
         u.pin()
         
@@ -67,15 +67,15 @@ func populateDataFake() {
 }
 
 //Operator Overloading Methods
-func >(lhs: NSDate, rhs: NSDate) -> Bool {
-    return lhs.compare(rhs) == NSComparisonResult.OrderedAscending
+public func >> (lhs: Date, rhs: Date) -> Bool {
+    return lhs.compare(rhs) == ComparisonResult.orderedAscending
 }
 
-func <(lhs: NSDate, rhs: NSDate) -> Bool {
-    return lhs.compare(rhs) == NSComparisonResult.OrderedDescending
+public func << (lhs: Date, rhs: Date) -> Bool {
+    return lhs.compare(rhs) == ComparisonResult.orderedDescending
 }
 
-func unique<S: SequenceType, E: Hashable where E==S.Generator.Element>(source: S) -> [E] {
+public func unique<S: Sequence, E: Hashable>(_ source: S) -> [E] where E==S.Iterator.Element {
     var seen: [E:Bool] = [:]
     return source.filter({ (v) -> Bool in
         return seen.updateValue(true, forKey: v) == nil

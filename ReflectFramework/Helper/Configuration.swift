@@ -11,11 +11,11 @@
  */
 public struct Configuration {
     /// Data base default name
-    private var defaultName:String = "ReflectDB.db"
+    fileprivate var defaultName:String = "ReflectDB.db"
     /// App group
-    private var appGroup:String = ""
+    fileprivate var appGroup:String = ""
     /// Connection Data Base
-    private var connection: Connection!
+    fileprivate var connection: Connection!
     /**
      Initialize
      
@@ -86,31 +86,31 @@ public struct Configuration {
      */
     public func getPath() -> String {
         
-        let fm = NSFileManager.defaultManager()
+        let fm = FileManager.default
         
         var path:String = ""
         
         if appGroup.isEmpty {
-            let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
-            path = docsPath.stringByAppendingPathComponent(defaultName)
+            let docsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
+            path = docsPath.stringByAppendingPathComponent(path: defaultName)
         }
         else{
             
             // Get path to shared group folder
-            if let url = fm.containerURLForSecurityApplicationGroupIdentifier(appGroup) {
-                path = url.path!
+            if let url = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroup) {
+                path = url.path
             } else {
                 assert(false, "Error getting container URL for group: \(appGroup)")
             }
             
-            path = path.stringByAppendingPathComponent(defaultName)
+            path = path.stringByAppendingPathComponent(path: defaultName)
             
         }
         print(path)
         return path
     }
     
-    public func log(callback: (String -> Void)?){
+    public func log(_ callback: ((String) -> Void)?){
         getConnection().trace(callback)
     }
 

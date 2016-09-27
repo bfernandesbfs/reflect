@@ -10,14 +10,14 @@ import Foundation
 
 public final class Statement {
     
-    public var handle: COpaquePointer = nil
+    public var handle: OpaquePointer? = nil
     
-    private let connection: Connection
+    fileprivate let connection: Connection
     
     public lazy var columnCount: Int = Int(sqlite3_column_count(self.handle))
     
     public lazy var columnNames: [String] = (0..<Int32(self.columnCount)).map { value in
-        let c = String.fromCString(sqlite3_column_name (self.handle, value))!
+        let c = String(cString: sqlite3_column_name (self.handle, value))
         return c
     }
     
@@ -37,12 +37,12 @@ public final class Statement {
         sqlite3_finalize(handle)
     }
     
-    
+    @discardableResult
     public func step() throws -> Bool {
         return try connection.sync { try self.connection.check(sqlite3_step(self.handle)) == SQLITE_ROW }
     }
     
-    private func reset(clearBindings shouldClear: Bool = true) {
+    fileprivate func reset(clearBindings shouldClear: Bool = true) {
         sqlite3_reset(handle)
         if (shouldClear) { sqlite3_clear_bindings(handle) }
     }
@@ -52,7 +52,7 @@ public final class Statement {
     /// - Throws: `Result.Error` if query execution fails.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func run(bindings: Value?...) throws -> Statement {
+    public func run(_ bindings: Value?...) throws -> Statement {
         guard bindings.isEmpty else {
             return try run(bindings)
         }
@@ -67,14 +67,14 @@ public final class Statement {
     /// - Throws: `Result.Error` if query execution fails.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func run(bindings: [Value?]) throws -> Statement {
+    public func run(_ bindings: [Value?]) throws -> Statement {
         return try bind(bindings).run()
     }
     
     /// - Parameter bindings: A list of parameters to bind to the statement.
     ///
     /// - Returns: The first value of the first row returned.
-    public func scalar(bindings: Value?...) throws -> Value? {
+    public func scalar(_ bindings: Value?...) throws -> Value? {
         guard bindings.isEmpty else {
             return try scalar(bindings)
         }
@@ -87,7 +87,7 @@ public final class Statement {
     /// - Parameter bindings: A list of parameters to bind to the statement.
     ///
     /// - Returns: The first value of the first row returned.
-    public func scalar(bindings: [Value?]) throws -> Value? {
+    public func scalar(_ bindings: [Value?]) throws -> Value? {
         return try bind(bindings).scalar()
     }
     
@@ -96,7 +96,7 @@ public final class Statement {
     /// - Parameter values: A list of parameters to bind to the statement.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func bind(values: Value?...) -> Statement {
+    public func bind(_ values: Value?...) -> Statement {
         return bind(values)
     }
     
@@ -105,7 +105,7 @@ public final class Statement {
     /// - Parameter values: A list of parameters to bind to the statement.
     ///
     /// - Returns: The statement object (useful for chaining).
-    public func bind(values: [Value?]) -> Statement {
+    public func bind(_ values: [Value?]) -> Statement {
         if values.isEmpty { return self }
         reset()
         guard values.count == Int(sqlite3_bind_parameter_count(handle)) else {
@@ -117,7 +117,7 @@ public final class Statement {
         return self
     }
     
-    private func bind(value: Value?, atIndex idx: Int) {
+    fileprivate func bind(_ value: Value?, atIndex idx: Int) {
         
         if value == nil {
             sqlite3_bind_null(handle, Int32(idx))
@@ -185,13 +185,13 @@ public final class Statement {
                 let v = value as! NSNumber
                 sqlite3_bind_double(handle, Int32(idx), v.doubleValue)
                 break
-            case is NSDate.Type:
-                let v = value as! NSDate
+            case is Date.Type:
+                let v = value as! Date
                 sqlite3_bind_text(handle, Int32(idx), v.datatypeValue, -1, SQLITE_TRANSIENT)
                 break
-            case is NSData.Type:
-                let v = value as! NSData
-                sqlite3_bind_blob(handle, Int32(idx), v.bytes, Int32(v.length), SQLITE_TRANSIENT)
+            case is Data.Type:
+                let v = value as! Data
+                sqlite3_bind_blob(handle, Int32(idx), (v as NSData).bytes, Int32(v.count), SQLITE_TRANSIENT)
                 break
             default:
                 fatalError("tried to bind unexpected value \(value)")
@@ -200,23 +200,23 @@ public final class Statement {
         }        
     }
     
-    private func unwrapType(value: Any) -> Any.Type {
+    fileprivate func unwrapType(_ value: Any) -> Any.Type {
         let mirror = Mirror(reflecting: value)
         return mirror.subjectType
     }
     
 }
 
-extension Statement : SequenceType {
+extension Statement : Sequence {
     
-    public func generate() -> Statement {
+    public func makeIterator() -> Statement {
         reset(clearBindings: false)
         return self
     }
     
 }
 
-extension Statement : GeneratorType {
+extension Statement : IteratorProtocol {
     
     public func next() -> [Value?]? {
         return try! step() ? Array(row) : nil
@@ -226,7 +226,7 @@ extension Statement : GeneratorType {
 extension Statement : CustomStringConvertible {
     
     public var description: String {
-        return String.fromCString(sqlite3_sql(handle))!
+        return String(cString: sqlite3_sql(handle))
     }
     
 }

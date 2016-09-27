@@ -34,7 +34,7 @@ internal struct ReflectData {
         self.name = property.label
         
         let mirror = Mirror(reflecting: property.value)
-        isOptional = mirror.displayStyle == .Optional
+        isOptional = mirror.displayStyle == .optional
         value = unwrap(property.value)
         type = typeForMirror(mirror)
     }
@@ -45,7 +45,7 @@ internal struct ReflectData {
      
      - returns: return Any.Type if nothing nil
      */
-    internal mutating func typeForMirror(mirror: Mirror) -> Any.Type? {
+    internal mutating func typeForMirror(_ mirror: Mirror) -> Any.Type? {
         if !isOptional {
             if mirror.subjectType is Reflect.Type {
                 isClass =  true
@@ -58,9 +58,9 @@ internal struct ReflectData {
         case is Optional<String>.Type:      return String.self
         case is Optional<NSString>.Type:    return NSString.self
 
-        case is Optional<NSDate>.Type:      return NSDate.self
+        case is Optional<Date>.Type:      return Date.self
         case is Optional<NSNumber>.Type:    return NSNumber.self
-        case is Optional<NSData>.Type:      return NSData.self
+        case is Optional<Data>.Type:      return Data.self
             
         case is Optional<Bool>.Type:        return Bool.self
             
@@ -90,11 +90,11 @@ internal struct ReflectData {
      
      - returns: return value
      */
-    internal mutating func unwrap(value: Any) -> Any? {
+    internal mutating func unwrap(_ value: Any) -> Any? {
         let mirror = Mirror(reflecting: value)
         
         /* Raw value */
-        if mirror.displayStyle != .Optional {
+        if mirror.displayStyle != .optional {
             return value
         }
         
@@ -105,19 +105,19 @@ internal struct ReflectData {
 // MARK: - Extension ReflectData Methods Static
 internal extension ReflectData {
     
-    internal static func validPropertyDataForObject (object: ReflectProtocol) -> [ReflectData] {
+    internal static func validPropertyDataForObject (_ object: ReflectProtocol) -> [ReflectData] {
         return validPropertyDataForMirror(Mirror(reflecting: object))
     }
     
-    internal static func validPropertyDataForObject (object: ReflectProtocol, ignoredProperties: Set<String>) -> [ReflectData] {
+    internal static func validPropertyDataForObject (_ object: ReflectProtocol, ignoredProperties: Set<String>) -> [ReflectData] {
         return validPropertyDataForMirror(Mirror(reflecting: object), ignoredProperties: ignoredProperties)
     }
     
-    internal static func validPropertyTypeForSchema (type: Any.Type) -> String {
+    internal static func validPropertyTypeForSchema (_ type: Any.Type) -> String {
         return typeForSchema(type)
     }
     
-    private static func validPropertyDataForMirror(mirror: Mirror, ignoredProperties: Set<String> = []) -> [ReflectData] {
+    fileprivate static func validPropertyDataForMirror(_ mirror: Mirror, ignoredProperties: Set<String> = []) -> [ReflectData] {
         var ignore = ignoredProperties
         if mirror.subjectType is FieldsProtocol.Type {
             ignore = ignore.union((mirror.subjectType as! FieldsProtocol.Type).ignoredProperties())
@@ -126,7 +126,7 @@ internal extension ReflectData {
         var propertyData: [ReflectData] = []
         
         /* Allow inheritance from storable superclasses using reccursion */
-        if let superclassMirror = mirror.superclassMirror() where superclassMirror.subjectType is ReflectProtocol.Type {
+        if let superclassMirror = mirror.superclassMirror , superclassMirror.subjectType is ReflectProtocol.Type {
             propertyData += validPropertyDataForMirror(superclassMirror, ignoredProperties: ignore)
         }
         
@@ -139,7 +139,7 @@ internal extension ReflectData {
         return propertyData
     }
     
-    private static func typeForSchema (type: Any.Type) -> String {
+    fileprivate static func typeForSchema (_ type: Any.Type) -> String {
         switch type {
         case is String.Type, is NSString.Type, is Character.Type:
             return String.declaredDatatype
@@ -153,10 +153,10 @@ internal extension ReflectData {
             return Bool.declaredDatatype
         case is NSNumber.Type:
             return NSNumber.declaredDatatype
-        case is NSDate.Type:
-            return NSDate.declaredDatatype
-        case is NSData.Type:
-            return NSData.declaredDatatype
+        case is Date.Type:
+            return Date.declaredDatatype
+        case is Data.Type:
+            return Data.declaredDatatype
         case is Reflect.Type:
             return Int.declaredDatatype
         default:

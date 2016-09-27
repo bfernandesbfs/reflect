@@ -29,20 +29,20 @@ class CreateFrameworkTest: XCTestCase {
     
     func testObjectSettings() {
         
-        Reflect.configuration(.Temporary, readonly: true)
+        Reflect.configuration(.temporary, readonly: true)
         
         let connTemporary = Reflect.settings.getConnection()
         XCTAssertTrue(connTemporary.readonly)
         XCTAssertEqual("", connTemporary.description)
         
-        Reflect.configuration(.InMemory, readonly: true)
+        Reflect.configuration(.inMemory, readonly: true)
         
         let connInMemory = Reflect.settings.getConnection()
         XCTAssertTrue(connInMemory.readonly)
         XCTAssertEqual("", connInMemory.description)
         
         let path = "\(NSTemporaryDirectory())Tests.db"
-        Reflect.configuration(.URI(path), readonly: false)
+        Reflect.configuration(.uri(path), readonly: false)
         
         let connURI = Reflect.settings.getConnection()
         XCTAssertFalse(connURI.readonly)
@@ -123,7 +123,7 @@ class CreateFrameworkTest: XCTestCase {
     
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        self.measureBlock {
+        self.measure {
             // Put the code you want to measure the time of here.
         }
     }

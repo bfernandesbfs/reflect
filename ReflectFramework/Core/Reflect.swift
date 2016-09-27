@@ -16,16 +16,16 @@ public class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
     /// Idetifier of register to persistence
     public var objectId: NSNumber?
     /// Date to created register
-    public var createdAt: NSDate?
+    public var createdAt: Date?
     /// Date to changed register
-    public var updatedAt: NSDate?
+    public var updatedAt: Date?
     /**
      Entity Name
      
      - returns: return name to entity
      */
     public class func entityName() -> String {
-        return String(self)
+        return String(describing: self)
     }
     /**
      Ignore properties
@@ -47,14 +47,14 @@ public extension Reflect {
     /**
      Default Configuration for Data Base Reflect
      */
-    static var settings:Configuration!
+    public static var settings:Configuration!
     /**
      Configure App Group and name of Data base
      
      - parameter appGroup:  App Group information
      - parameter baseNamed: Name to Data Base
      */
-    class func configuration(appGroup:String, baseNamed:String){
+    public class func configuration(_ appGroup:String, baseNamed:String){
         settings = Configuration(defaultName: baseNamed, appGroup: appGroup)
     }
     /**
@@ -63,7 +63,7 @@ public extension Reflect {
      - parameter location:  Local for save data base
      - parameter readonly:  mode read
      */
-    class func configuration(location: Connection.Location, readonly: Bool = false){
+    public class func configuration(_ location: Connection.Location, readonly: Bool = false){
         settings = Configuration(location: location, readonly: readonly)
     }
     /**
@@ -73,10 +73,11 @@ public extension Reflect {
      
      - returns: return success is true if successfully and data object generic
      */
-    class func execute<T>(block: () throws -> T) -> (success:Bool, data:T?) {
+    @discardableResult
+    public class func execute<T>(_ block: @escaping () throws -> T) -> (success:Bool, data:T?) {
         var data: T?
         var success: Bool?
-        var failure: ErrorType?
+        var failure: Error?
         
         let box: () -> Void = {
             do {
@@ -106,16 +107,16 @@ extension Reflect {
      
      - returns: return Array of Dictionary
      */
-    public class func query(sql:String) -> [[String: Value?]] {
+    public class func query(_ sql:String) -> [[String: Value?]] {
         return try! Driver<Reflect>().find(sql)
     }
     
     public class func removeDefaultSettings(){
-        let fm = NSFileManager.defaultManager()
+        let fm = FileManager.default
         let path = settings.getPath()
         
-        if fm.fileExistsAtPath(path) {
-            try! fm.removeItemAtPath(path)
+        if fm.fileExists(atPath: path) {
+            try! fm.removeItem(atPath: path)
         }
     }
 }

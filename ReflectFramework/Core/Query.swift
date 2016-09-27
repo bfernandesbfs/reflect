@@ -9,32 +9,32 @@
 /// Query 
 //  Controla a criação dos filtros para gerar o sql text and argumentos 
 //  para acessar oos dados no Data Base
-public class Query<T where T:ReflectProtocol> {
+public class Query<T> where T:ReflectProtocol {
     /// Alias Handlee para clauses AND and OR
-    public typealias Handler = (query: Query) -> Query
+    public typealias Handler = (_ query: Query) -> Query
     /// Argumentos to Query
-    public var dataArgs:[Value?]
+    open var dataArgs:[Value?]
     /// Distinct values
-    private var dataDistinct :Bool
+    fileprivate var dataDistinct :Bool
     /// Aggregate value (COUNT, SUM, MAX, MIN and AVG)
-    private var dataAggregate:Aggregate
+    fileprivate var dataAggregate:Aggregate
     /// Information to Fieds
-    private var dataFields  :[String]
+    fileprivate var dataFields  :[String]
     /// Join beetween Reflect object
-    private var dataUnion   :[Filter]
+    fileprivate var dataUnion   :[Filter]
     /// Filters
-    private var dataClause  :[Filter]
+    fileprivate var dataClause  :[Filter]
     /// Order by objects
-    private var dataOrder   :[Filter]
+    fileprivate var dataOrder   :[Filter]
     /// Limit and Offset
-    private var dataPage    :[Pagination]
+    fileprivate var dataPage    :[Pagination]
     /// Entity name
-    private var entity: String {
+    fileprivate var entity: String {
         return T.entityName()
     }
     
     /// Statement Sql contem intrução sql and argumentos
-    var statement:(sql:String, args:[Value?]) {
+    public var statement:(sql:String, args:[Value?]) {
         var query: [String] = [resolveSelect()]
         
         //JOIN
@@ -43,7 +43,7 @@ public class Query<T where T:ReflectProtocol> {
             for filter in dataUnion {
                 filterUnion.append(filterOutput(filter))
             }
-            query.append(filterUnion.joinWithSeparator(" "))
+            query.append(filterUnion.joined(separator: " "))
         }
         
         //Where
@@ -52,7 +52,7 @@ public class Query<T where T:ReflectProtocol> {
             for filter in dataClause {
                 filterClause.append(filterOutput(filter))
             }
-            query.append("WHERE \(filterClause.joinWithSeparator(" AND "))")
+            query.append("WHERE \(filterClause.joined(separator: " AND "))")
         }
         
         //Order by
@@ -62,7 +62,7 @@ public class Query<T where T:ReflectProtocol> {
             for order in dataOrder {
                 filterOrder.append(filterOutput(order))
             }
-            query.append(filterOrder.joinWithSeparator(", "))
+            query.append(filterOrder.joined(separator: ", "))
         }
         
         //Limit and Offset
@@ -70,7 +70,7 @@ public class Query<T where T:ReflectProtocol> {
             query.append(page.description)
         }
         
-        return ("\(query.joinWithSeparator(" "));" , dataArgs)
+        return ("\(query.joined(separator: " "));" , dataArgs)
     }
     /**
      Initialize Object
@@ -78,7 +78,7 @@ public class Query<T where T:ReflectProtocol> {
      */
     public init(){
         dataDistinct  = false
-        dataAggregate = Aggregate.Default
+        dataAggregate = Aggregate.default
         dataFields   = []
         dataUnion    = []
         dataClause   = []
@@ -93,7 +93,8 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func fields(key:String...) -> Self {
+    @discardableResult
+    public func fields(_ key:String...) -> Self {
         dataFields += key
         return self
     }
@@ -106,12 +107,13 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func filter(key:String, _ comparison: Comparison, value:Value?...) -> Self {
+    @discardableResult
+    public func filter(_ key:String, _ comparison: Comparison, value:Value?...) -> Self {
         if value.count > 1 {
-            dataClause.append(Filter.Subset(key, comparison, value))
+            dataClause.append(Filter.subset(key, comparison, value))
         }
         else{
-            dataClause.append(Filter.Compare(key, comparison, value.first!))
+            dataClause.append(Filter.compare(key, comparison, value.first!))
         }
         return self
     }
@@ -122,9 +124,10 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func or(handler: Handler) -> Self {
-        let q = handler(query: Query())
-        let filter = Filter.Group(.Or, q.dataClause)
+    @discardableResult
+    public func or(_ handler: Handler) -> Self {
+        let q = handler(Query())
+        let filter = Filter.group(.or, q.dataClause)
         dataClause.append(filter)
         return self
     }
@@ -135,9 +138,10 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func and(handler: Handler) -> Self {
-        let q = handler(query: Query())
-        let filter = Filter.Group(.And, q.dataClause)
+    @discardableResult
+    public func and(_ handler: Handler) -> Self {
+        let q = handler(Query())
+        let filter = Filter.group(.and, q.dataClause)
         dataClause.append(filter)
         return self
     }
@@ -153,10 +157,11 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func join<T: ReflectProtocol>(type: T.Type, _ operation: Join = .Inner, foreignKey: String? = nil, _ comparison: Comparison = .Equals, otherKey: String? = nil ,alias:String = "" ) -> Self {
+    @discardableResult
+    public func join<T: ReflectProtocol>(_ type: T.Type, _ operation: Join = .inner, foreignKey: String? = nil, _ comparison: Comparison = .equals, otherKey: String? = nil ,alias:String = "" ) -> Self {
         let fk = foreignKey ?? "\(entity).\(type.entityName())_objectId"
         let ok = otherKey ?? "\(type.entityName()).objectId"
-        let union = Filter.Union(operation, type.entityName(), fk, comparison, ok)
+        let union = Filter.union(operation, type.entityName(), fk, comparison, ok)
         dataUnion.append(union)
         createFieldsAlias(type,alias: alias)
         return self
@@ -169,8 +174,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func sort(field: String, _ direction: Sort) -> Self {
-        let order = Filter.Order(field, direction)
+    @discardableResult
+    public func sort(_ field: String, _ direction: Sort) -> Self {
+        let order = Filter.order(field, direction)
         dataOrder.append(order)
         return self
     }
@@ -181,8 +187,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func limit(count: Int = 1) -> Self {
-        dataPage.append(Pagination.Limit(count))
+    @discardableResult
+    public func limit(_ count: Int = 1) -> Self {
+        dataPage.append(Pagination.limit(count))
         return self
     }
     /**
@@ -192,8 +199,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
-    public func offset(count: Int = 1) -> Self {
-        dataPage.append(Pagination.Offset(count))
+    @discardableResult
+    public func offset(_ count: Int = 1) -> Self {
+        dataPage.append(Pagination.offset(count))
         return self
     }
     /**
@@ -201,6 +209,7 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Self
      */
+    @discardableResult
     public func distinct() -> Self {
         dataDistinct = true
         return self
@@ -212,8 +221,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Quantity value found
      */
-    public func count(field: String = "*") -> Double {
-        dataAggregate = Aggregate.Count(field)
+    @discardableResult
+    public func count(_ field: String = "*") -> Double {
+        dataAggregate = Aggregate.count(field)
         return  convertValueToDouble(aggregateObject(dataAggregate.field))
     }
     /**
@@ -223,8 +233,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Average of result
      */
-    public func average(field: String = "*") -> Double {
-        dataAggregate = Aggregate.Average(field)
+    @discardableResult
+    public func average(_ field: String = "*") -> Double {
+        dataAggregate = Aggregate.average(field)
         return convertValueToDouble(aggregateObject(dataAggregate.field))
     }
     /**
@@ -234,8 +245,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Sum of result
      */
-    public func sum(field: String = "*") -> Double {
-        dataAggregate = Aggregate.Sum(field)
+    @discardableResult
+    public func sum(_ field: String = "*") -> Double {
+        dataAggregate = Aggregate.sum(field)
         return convertValueToDouble(aggregateObject(dataAggregate.field))
     }
     /**
@@ -245,8 +257,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Value max found
      */
-    public func max(field: String = "*") -> Value {
-        dataAggregate = Aggregate.Max(field)
+    @discardableResult
+    public func max(_ field: String = "*") -> Value {
+        dataAggregate = Aggregate.max(field)
         return aggregateObject(dataAggregate.field)!
     }
     /**
@@ -256,8 +269,9 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: Value min found
      */
-    public func min(field: String = "*") -> Value {
-        dataAggregate = Aggregate.Min(field)
+    @discardableResult
+    public func min(_ field: String = "*") -> Value {
+        dataAggregate = Aggregate.min(field)
         return aggregateObject(dataAggregate.field)!
     }
     
@@ -267,6 +281,7 @@ public class Query<T where T:ReflectProtocol> {
      
      - returns: return Arry of Reflect Object
      */
+    @discardableResult
     public func findObject() -> [T] {
         return try! Driver().find(self)
     }
@@ -278,24 +293,24 @@ private extension Query {
      
      - returns: return string contendo a instrução do Select
      */
-    private func resolveSelect() -> String {
+    func resolveSelect() -> String {
         var select = ["SELECT"]
         if dataDistinct {
             select.append("DISTINCT")
         }
         
-        if dataFields.count > 0 && dataAggregate.field == Aggregate.Default.field {
+        if dataFields.count > 0 && dataAggregate.field == Aggregate.default.field {
             if dataUnion.count > 0 {
                 dataFields.append("\(entity).*")
             }
-            select.append(dataFields.joinWithSeparator(", "))
+            select.append(dataFields.joined(separator: ", "))
         } else {
             select.append(dataAggregate.description)
         }
         
         select.append("FROM \(entity)")
         
-        return select.joinWithSeparator(" ")
+        return select.joined(separator: " ")
     }
     /**
      Create Alias
@@ -303,7 +318,7 @@ private extension Query {
      - parameter type:  Reflect Object
      - parameter alias: text it's optional
      */
-    private func createFieldsAlias<T: ReflectProtocol>(type: T.Type, alias:String) {
+    func createFieldsAlias<T: ReflectProtocol>(_ type: T.Type, alias:String) {
         let properties = ReflectData.validPropertyDataForObject(type.init())
         let namespace  = alias.isEmpty ? type.entityName() : alias
         let columns = properties.map { value in
@@ -318,31 +333,31 @@ private extension Query {
      
      - returns: return string value
      */
-    private func filterOutput(filter: Filter) -> String {
+    func filterOutput(_ filter: Filter) -> String {
         switch filter {
-        case .Compare(let field, let comparison, let value):
+        case .compare(let field, let comparison, let value):
             if value == nil {
                 return "\(field) \(comparison.description) NULL"
             }
             dataArgs.append(value)
             return "\(field) \(comparison.description) ?"
-        case .Subset(let field, let scope, let values):
+        case .subset(let field, let scope, let values):
             let valueDescriptions = values.map { value in
                 dataArgs.append(value)
                 return "?"
-                }.joinWithSeparator(scope == .Between ? " AND " : " , ")
-            return "\(field) \(scope.description) " + (scope == .Between ? valueDescriptions : "(\(valueDescriptions))")
-        case .Group(let op, let filters):
+                }.joined(separator: scope == .between ? " AND " : " , ")
+            return "\(field) \(scope.description) " + (scope == .between ? valueDescriptions : "(\(valueDescriptions))")
+        case .group(let op, let filters):
             let f: [String] = filters.map {
-                if case .Group = $0 {
+                if case .group = $0 {
                     return self.filterOutput($0)
                 }
                 return "\(self.filterOutput($0))"
             }
-            return "(" + f.joinWithSeparator(" \(op.description) ") + ")"
-        case .Order(let field, let order):
+            return "(" + f.joined(separator: " \(op.description) ") + ")"
+        case .order(let field, let order):
             return "\(field) \(order)"
-        case .Union(let join, let entity, let fk, let comparison, let ok):
+        case .union(let join, let entity, let fk, let comparison, let ok):
             return "\(join.description) \(entity) ON \(fk) \(comparison.description) \(ok)"
         }
     }
@@ -353,14 +368,14 @@ private extension Query {
      
      - returns: return value of query
      */
-    private func aggregateObject(field:String) -> Value? {
+    func aggregateObject(_ field:String) -> Value? {
         if let value = try! Driver().scalar(self, column: field) {
             return value
         }
         return nil
     }
     
-    private func convertValueToDouble(value:Value?) -> Double {
+    func convertValueToDouble(_ value:Value?) -> Double {
     
         if let v = value as? Int64 {
             return Double(v)

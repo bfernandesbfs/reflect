@@ -8,17 +8,17 @@
 
 public enum Schema<T: ReflectProtocol> {
     
-    case Create(T)
-    case Drop(String)
-    case Index(entity:String, field: String , unique: Bool)
-    case DropIndex(entity:String, field: String)
-    case Insert(T)
-    case Update(T)
-    case Delete(T)
+    case create(T)
+    case drop(String)
+    case index(entity:String, field: String , unique: Bool)
+    case dropIndex(entity:String, field: String)
+    case insert(T)
+    case update(T)
+    case delete(T)
     
     var statement: (sql:String, args:[Value?]) {
         switch self {
-        case .Create(let object):
+        case .create(let object):
             let tableName =  T.entityName()
             var statement = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
             var fields:[String] = []
@@ -41,28 +41,28 @@ public enum Schema<T: ReflectProtocol> {
                 fields.append(data)
             }
 
-            statement += "\(fields.joinWithSeparator(", ")))"
+            statement += "\(fields.joined(separator: ", ")))"
         
             return (statement, [])
         
-        case .Drop(let tableName):
+        case .drop(let tableName):
             return ("DROP TABLE \(tableName)" , [])
             
-        case .Index(let entityName, let field , let unique):
+        case .index(let entityName, let field , let unique):
             var statement = unique ? "CREATE UNIQUE INDEX" : "CREATE INDEX"
             statement += " IF NOT EXISTS index_\(entityName)_on_\(field) ON \(entityName) (\(field))"
             
             return (statement , [])
         
-        case .DropIndex(let entityName, let field):
+        case .dropIndex(let entityName, let field):
             var statement = "DROP INDEX"
             statement += " IF EXISTS index_\(entityName)_on_\(field)"
 
             return (statement , [])
             
-        case .Insert(var object):
+        case .insert(var object):
             var statement = "INSERT INTO " + T.entityName()
-            object.createdAt = NSDate()
+            object.createdAt = Date()
             object.updatedAt = object.createdAt
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
             
@@ -72,8 +72,8 @@ public enum Schema<T: ReflectProtocol> {
                 var column:String = value.name!
                 if value.isClass{
                     if let sub = value.value as? Reflect {
-                        dataArgs.append(sub.objectId!.longLongValue)
-                        column = "\(sub.dynamicType.entityName())_objectId"
+                        dataArgs.append(sub.objectId!.int64Value)
+                        column = "\(type(of: sub).entityName())_objectId"
                     }
                 }
                 else{
@@ -81,15 +81,15 @@ public enum Schema<T: ReflectProtocol> {
                 }
                 placeholder.append("?")
                 return column
-                }.joinWithSeparator(", ")
+                }.joined(separator: ", ")
             
             /* Columns to be inserted */
-            statement += " ( \(columns) ) VALUES (" + placeholder.joinWithSeparator(", ") + ")"
+            statement += " ( \(columns) ) VALUES (" + placeholder.joined(separator: ", ") + ")"
             return (statement, dataArgs)
             
-        case .Update(var object):
+        case .update(var object):
             var statement = "UPDATE \(T.entityName()) SET"
-            object.updatedAt = NSDate()
+            object.updatedAt = Date()
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId" , "createdAt"])
             
             var dataArgs:[Value?] = []
@@ -97,24 +97,24 @@ public enum Schema<T: ReflectProtocol> {
                 var column:String = "\(value.name!) = ?"
                 if value.isClass{
                     if let sub = value.value as? Reflect {
-                        dataArgs.append(sub.objectId!.longLongValue)
-                        column = "\(sub.dynamicType.entityName())_objectId = ?"
+                        dataArgs.append(sub.objectId!.int64Value)
+                        column = "\(type(of: sub).entityName())_objectId = ?"
                     }
                 }
                 else{
                     dataArgs.append(value.value as? Value)
                 }
                 return column
-                }.joinWithSeparator(", ")
+                }.joined(separator: ", ")
             
-            dataArgs.append(object.objectId!.longLongValue)
+            dataArgs.append(object.objectId!.int64Value)
             statement += " \(columns) WHERE objectId = ?"
             
             return (statement, dataArgs)
             
-        case .Delete(let object):
+        case .delete(let object):
             let comp = object.objectId == nil ? "" : " WHERE objectId = ?"
-            return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!.longLongValue])
+            return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!.int64Value])
         }
     }
 }

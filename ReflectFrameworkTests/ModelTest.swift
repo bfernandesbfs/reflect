@@ -12,7 +12,7 @@ class User: Reflect {
     var firstName:String
     var lastName :String?
     var age:Int
-    var birthday:NSDate?
+    var birthday:Date?
     var gender:String?
     var email:String
     var registerNumber:Int
@@ -60,14 +60,14 @@ class User: Reflect {
             u.gender = d["gender"]
             u.age = Int(arc4random_uniform(100))
             u.registerNumber = u.age * Int(arc4random_uniform(999))
-            u.email = "\(u.firstName).\(u.lastName!)@test.com".lowercaseString
+            u.email = "\(u.firstName).\(u.lastName!)@test.com".lowercased()
             
-            let cal = NSCalendar.currentCalendar()
-            u.birthday = cal.dateByAddingUnit(.Day, value: -Int(arc4random_uniform(30)), toDate: NSDate(), options: [])
-            u.birthday = cal.dateByAddingUnit(.Month, value: -Int(arc4random_uniform(12)), toDate: u.birthday!, options: [])
-            u.birthday = cal.dateByAddingUnit(.Year, value: -u.age, toDate: u.birthday!, options: [])
-            u.birthday = cal.dateByAddingUnit(.Hour, value: -Int(arc4random_uniform(60)), toDate: u.birthday!, options: [])
-            u.birthday = cal.dateByAddingUnit(.Minute, value: -Int(arc4random_uniform(60)), toDate: u.birthday!, options: [])
+            let cal = Calendar.current
+            u.birthday = (cal as NSCalendar).date(byAdding: .day, value: -Int(arc4random_uniform(30)), to: Date(), options: [])
+            u.birthday = (cal as NSCalendar).date(byAdding: .month, value: -Int(arc4random_uniform(12)), to: u.birthday!, options: [])
+            u.birthday = (cal as NSCalendar).date(byAdding: .year, value: -u.age, to: u.birthday!, options: [])
+            u.birthday = (cal as NSCalendar).date(byAdding: .hour, value: -Int(arc4random_uniform(60)), to: u.birthday!, options: [])
+            u.birthday = (cal as NSCalendar).date(byAdding: .minute, value: -Int(arc4random_uniform(60)), to: u.birthday!, options: [])
             
             users.append(u)
 
@@ -99,7 +99,7 @@ class Address: Reflect {
     class func populate() -> [Address] {
         
         var results:[Address] = []
-        var data:[[String:AnyObject]]!
+        var data:[[String:Any]]!
         
         data = [["number": 226, "street": "Highland Drive Temple Hills", "state": "MD", "zip": 20748],
                 ["number": 584, "street": "Union Street Detroit", "state": "MI", "zip": 48205],
@@ -156,9 +156,9 @@ class TestField: Reflect {
     var vardouble  : Double
     //Objc
     var varnsstring: NSString
-    var vardate    : NSDate
+    var vardate    : Date
     var varnumber  : NSNumber
-    var vardata    : NSData
+    var vardata    : Data
     
     var status  :Bool
     var register:Int
@@ -181,14 +181,14 @@ class TestField: Reflect {
         varfloat  = 1.1
         vardouble = 1.2
         varnsstring  = "nsstring"
-        vardate   = NSDate()
+        vardate   = Date()
         varnumber = 111
-        vardata   = String("Test Data").dataUsingEncoding(NSUTF8StringEncoding)!
+        vardata   = String("Test Data").data(using: String.Encoding.utf8)!
         
         status   = false
         register = 0
         value    = ""
-        identifier = NSUUID().UUIDString
+        identifier = UUID().uuidString
     }
     
     /**
@@ -214,7 +214,7 @@ class TestField: Reflect {
      
      - parameter index: index of list
      */
-    func generateValue(index:Int) {
+    func generateValue(_ index:Int) {
         let i  = index * 10
         varstring = "string \(index)"
         varint    = 1 * i
@@ -230,15 +230,15 @@ class TestField: Reflect {
         varbool   = arc4random_uniform(2) == 1
         varfloat  = 1.1 * Float(i / 2)
         vardouble = 1.2 * Double(i / 10)
-        varnsstring  = "nsstring \(index)"
-        vardate   = NSDate()
-        varnumber = 111.0 * vardouble
-        vardata   = String("Test Data Number \(index) ").dataUsingEncoding(NSUTF8StringEncoding)!
+        varnsstring  = "nsstring \(index)" as NSString
+        vardate   = Date()
+        varnumber = 111.0 //* vardouble
+        vardata   = String("Test Data Number \(index) ").data(using: String.Encoding.utf8)!
         
         status   = arc4random_uniform(2) == 1
         register = index + 15
         value    = "value \(index)"
-        identifier = NSUUID().UUIDString
+        identifier = UUID().uuidString
     }
 }
 
@@ -249,9 +249,9 @@ class TestFieldOptional: Reflect {
     var optionalString   : String?
     var optionalNSString : NSString?
     var optionalNSInteger: NSInteger?
-    var optionalDate     : NSDate?
+    var optionalDate     : Date?
     var optionalNumber   : NSNumber?
-    var optionalData     : NSData?
+    var optionalData     : Data?
     
     required init() {
     }
@@ -261,7 +261,7 @@ class TestFieldOptional: Reflect {
      
      - parameter index: index of list
      */
-    func generateValue(index:Int) {
+    func generateValue(_ index:Int) {
         let i  = index * 10
         
         if Int(arc4random_uniform(1000)) % 2 == 0 {
@@ -269,7 +269,7 @@ class TestFieldOptional: Reflect {
         }
         
         if Int(arc4random_uniform(1000)) % 2 == 0 {
-            optionalNSString  = "NSString \(index)"
+            optionalNSString  = "NSString \(index)" as NSString?
         }
         
         if Int(arc4random_uniform(1000)) % 2 == 0 {
@@ -277,15 +277,15 @@ class TestFieldOptional: Reflect {
         }
         
         if Int(arc4random_uniform(1000)) % 2 == 0 {
-            optionalDate   = NSDate()
+            optionalDate   = Date()
         }
         
         if Int(arc4random_uniform(1000)) % 2 == 0 {
-            optionalNumber = 111.43 * Double(i)
+            optionalNumber = NSNumber(value: 111.43 * Double(i))
         }
         
         if Int(arc4random_uniform(100)) % 2 == 0 {
-            optionalData   = String("Test Data Optional Number \(index) ").dataUsingEncoding(NSUTF8StringEncoding)!
+            optionalData   = String("Test Data Optional Number \(index) ").data(using: String.Encoding.utf8)!
         }
     }
 }

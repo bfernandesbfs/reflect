@@ -6,26 +6,29 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
+import Foundation
+
 /// A connection to SQLite.
 public final class Connection {
     
     /// The location of a SQLite database.
     public enum Location {
-        case InMemory
-        case Temporary
-        case URI(String)
+        case inMemory
+        case temporary
+        case uri(String)
     }
     
-    private typealias Trace = @convention(block) UnsafePointer<Int8> -> Void
+    private typealias Trace = @convention(block) (UnsafePointer<Int8>) -> Void
     
-    private static let queueKey = unsafeBitCast(Connection.self, UnsafePointer<Void>.self)
+    private static let queueKey = DispatchSpecificKey<Int>() // unsafeBitCast(Connection.self, to: UnsafeRawPointer.self)
     
-    private var _handle: COpaquePointer = nil
-    private var queue = dispatch_queue_create("xyz.ReflectFramework", DISPATCH_QUEUE_SERIAL)
-    private lazy var queueContext: UnsafeMutablePointer<Void> = unsafeBitCast(self, UnsafeMutablePointer<Void>.self)
+    private var _handle: OpaquePointer? = nil
+    private var queue = DispatchQueue(label: "xyz.ReflectFramework", attributes: [])
+    //private lazy var queueContext: UnsafeMutableRawPointer = unsafeBitCast(self, to: UnsafeMutableRawPointer.self)
+    private lazy var queueContext: Int = unsafeBitCast(self, to: Int.self)
     private var trace: Trace?
     
-    public var handle: COpaquePointer { return _handle }
+    public var handle: OpaquePointer { return _handle! }
     
     /// Initializes a new SQLite connection.
     ///
@@ -41,10 +44,11 @@ public final class Connection {
     ///     Default: `false`.
     ///
     /// - Returns: A new database connection.
-    public init(_ location: Location = .InMemory, readonly: Bool = false) throws {
+    public init(_ location: Location = .inMemory, readonly: Bool = false) throws {
+        
         let flags = readonly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE
         try check(sqlite3_open_v2(location.description, &_handle, flags | SQLITE_OPEN_FULLMUTEX, nil))
-        dispatch_queue_set_specific(queue, Connection.queueKey, queueContext, nil)
+        queue.setSpecific(key: Connection.queueKey, value: queueContext)
     }
     
     /// Initializes a new connection to a database.
@@ -62,7 +66,7 @@ public final class Connection {
     ///
     /// - Returns: A new database connection.
     public convenience init(_ filename: String, readonly: Bool = false) throws {
-        try self.init(.URI(filename), readonly: readonly)
+        try self.init(.uri(filename), readonly: readonly)
     }
     
     deinit {
@@ -102,65 +106,68 @@ public final class Connection {
     ///   statements.
     ///
     /// - Throws: `Result.Error` if query execution fails.
-    public func execute(SQL: String) throws {
+    public func execute(_ SQL: String) throws {
         try sync { try self.check(sqlite3_exec(self.handle, SQL, nil, nil, nil)) }
     }
     
-    private func prepare(statement: String, _ bindings: Value?...) throws -> Statement {
+    fileprivate func prepare(_ statement: String, _ bindings: Value?...) throws -> Statement {
         if !bindings.isEmpty {
             return try prepare(statement, bindings)
         }
         return Statement(self, statement)
     }
     
-    public func prepare(statement: String, _ bindings: [Value?]) throws -> Statement {
+    public func prepare(_ statement: String, _ bindings: [Value?]) throws -> Statement {
         return try prepare(statement).bind(bindings)
     }
     
-    private func run(statement: String, _ bindings: Value?...) throws -> Statement {
+    @discardableResult
+    fileprivate func run(_ statement: String, _ bindings: Value?...) throws -> Statement {
         return try run(statement, bindings)
     }
     
-    private func run(statement: String, _ bindings: [Value?]) throws -> Statement {
+    @discardableResult
+    fileprivate func run(_ statement: String, _ bindings: [Value?]) throws -> Statement {
         return try prepare(statement).run(bindings)
     }
     
-    public func run<T: ReflectProtocol>(schema: Schema<T>) throws -> Statement {
+    @discardableResult
+    public func run<T: ReflectProtocol>(_ schema: Schema<T>) throws -> Statement {
         let stm = schema.statement
         return try prepare(stm.sql).run(stm.args)
     }
     
-    
-    public func runRowId<T: ReflectProtocol>(schema: Schema<T>) throws -> Int64 {
+    public func runRowId<T: ReflectProtocol>(_ schema: Schema<T>) throws -> Int64 {
         return try sync {
             try self.run(schema)
             return self.lastInsertRowid!
         }
     }
     
-    public func runChange<T: ReflectProtocol>(schema: Schema<T>) throws -> Int {
+    @discardableResult
+    public func runChange<T: ReflectProtocol>(_ schema: Schema<T>) throws -> Int {
         return try sync {
             try self.run(schema)
             return self.changes
         }
     }
     
-    public func prepareQuery(query: String) throws -> AnySequence<Row>? {
+    public func prepareQuery(_ query: String) throws -> AnySequence<Row>? {
         let statement = try prepare(query)
         return querySequence(statement)
     }
     
-    public func prepareQuery<T: ReflectProtocol>(query: Query<T>) throws -> AnySequence<Row>? {
+    public func prepareQuery<T: ReflectProtocol>(_ query: Query<T>) throws -> AnySequence<Row>? {
         let stm = query.statement
         let statement = try prepare(stm.sql, stm.args)
         return querySequence(statement)
     }
     
-    public func prepareFetch<T: ReflectProtocol>(query: Query<T>) throws -> Row? {
-        return try prepareQuery(query)!.generate().next()
+    public func prepareFetch<T: ReflectProtocol>(_ query: Query<T>) throws -> Row? {
+        return try prepareQuery(query)!.makeIterator().next()
     }
     
-    private func querySequence(statement:Statement) -> AnySequence<Row>? {
+    fileprivate func querySequence(_ statement:Statement) -> AnySequence<Row>? {
         let columnNames: [String: Int] = {
             var (columnNames, _) = ([String: Int](), 0)
             for i in 0..<statement.columnNames.count {
@@ -168,8 +175,8 @@ public final class Connection {
             }
             return columnNames
         }()
-        
-        return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
+        //return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
+        return AnySequence { AnyIterator { statement.next().map { Row(columnNames, $0) } } }
     }
     
     // MARK: - Scalar
@@ -184,7 +191,7 @@ public final class Connection {
     ///   - bindings: A list of parameters to bind to the statement.
     ///
     /// - Returns: The first value of the first row returned.
-    public func scalar<T: ReflectProtocol>(query: Query<T>) throws -> Value? {
+    public func scalar<T: ReflectProtocol>(_ query: Query<T>) throws -> Value? {
         let stm = query.statement
         return try prepare(stm.sql).scalar(stm.args)
     }
@@ -208,7 +215,7 @@ public final class Connection {
     ///     must throw to roll the transaction back.
     ///
     /// - Throws: `Result.Error`, and rethrows.
-    public func transaction(mode: TransactionMode = .Deferred, block: () throws -> Void) throws {
+    public func transaction(_ mode: TransactionMode = .Deferred, block: @escaping () throws -> Void) throws {
         try transaction("BEGIN \(mode.rawValue) TRANSACTION", block, "COMMIT TRANSACTION", or: "ROLLBACK TRANSACTION")
     }
     
@@ -228,14 +235,15 @@ public final class Connection {
     ///     The block must throw to roll the savepoint back.
     ///
     /// - Throws: `SQLite.Result.Error`, and rethrows.
-    public func savepoint(name: String = NSUUID().UUIDString, block: () throws -> Void) throws {
-        let name = name.quote("'")
+    public func savepoint(_ name: String = UUID().uuidString, block: @escaping () throws -> Void) throws {
+        let name = name.quote(mark: "'")
         let savepoint = "SAVEPOINT \(name)"
         
         try transaction(savepoint, block, "RELEASE \(savepoint)", or: "ROLLBACK TO \(savepoint)")
     }
     
-    private func transaction(begin: String, _ block: () throws -> Void, _ commit: String, or rollback: String) throws {
+    
+    fileprivate func transaction(_ begin: String, _ block: @escaping () throws -> Void, _ commit: String, or rollback: String) throws {
         return try sync {
             try self.run(begin)
             do {
@@ -260,25 +268,25 @@ public final class Connection {
     ///   with the compiled SQL as its argument.
     ///
     ///       db.trace { SQL in print(SQL) }
-    public func trace(callback: (String -> Void)?) {
+    public func trace(_ callback: ((String) -> Void)?) {
         guard let callback = callback else {
             sqlite3_trace(handle, nil, nil)
             trace = nil
             return
         }
         
-        let box: Trace = { callback(String.fromCString($0)!) }
+        let box: Trace = { callback(String(cString: $0)) }
         sqlite3_trace(handle, { callback, SQL in
-            unsafeBitCast(callback, Trace.self)(SQL)
-            }, unsafeBitCast(box, UnsafeMutablePointer<Void>.self))
+            unsafeBitCast(callback, to: Trace.self)(SQL!)
+            }, unsafeBitCast(box, to: UnsafeMutableRawPointer.self))
         trace = box
     }
     
     // MARK: - Error Handling
-    
-    func sync<T>(block: () throws -> T) rethrows -> T {
+    @discardableResult
+    func sync<T>(_ block: @escaping () throws -> T) rethrows -> T {
         var success: T?
-        var failure: ErrorType?
+        var failure: Error?
         
         let box: () -> Void = {
             do {
@@ -288,10 +296,10 @@ public final class Connection {
             }
         }
         
-        if dispatch_get_specific(Connection.queueKey) == queueContext {
+        if DispatchQueue.getSpecific(key: Connection.queueKey) == queueContext {
             box()
         } else {
-            dispatch_sync(queue, box)
+            queue.sync(execute: box)
         }
         
         if let failure = failure {
@@ -301,7 +309,8 @@ public final class Connection {
         return success!
     }
     
-    func check(resultCode: Int32, statement: Statement? = nil) throws -> Int32 {
+    @discardableResult
+    func check(_ resultCode: Int32, statement: Statement? = nil) throws -> Int32 {
         guard let error = Result(errorCode: resultCode, connection: self, statement: statement) else {
             return resultCode
         }
@@ -324,7 +333,7 @@ extension Connection : CustomStringConvertible {
     }
     
     public var description: String {
-        return String.fromCString(sqlite3_db_filename(handle, nil))!
+        return String(cString: sqlite3_db_filename(handle, nil))
     }
     
 }
@@ -333,28 +342,28 @@ extension Connection.Location : CustomStringConvertible {
     
     public var description: String {
         switch self {
-        case .InMemory:
+        case .inMemory:
             return ":memory:"
-        case .Temporary:
+        case .temporary:
             return ""
-        case .URI(let URI):
+        case .uri(let URI):
             return URI
         }
     }
     
 }
 
-public enum Result : ErrorType {
+public enum Result : Error {
     
-    private static let successCodes: Set = [SQLITE_OK, SQLITE_ROW, SQLITE_DONE]
+    fileprivate static let successCodes: Set = [SQLITE_OK, SQLITE_ROW, SQLITE_DONE]
     
-    case Error(message: String, code: Int32, statement: Statement?)
+    case error(message: String, code: Int32, statement: Statement?)
     
     init?(errorCode: Int32, connection: Connection, statement: Statement? = nil) {
         guard !Result.successCodes.contains(errorCode) else { return nil }
         
-        let message = String.fromCString(sqlite3_errmsg(connection.handle))!
-        self = Error(message: message, code: errorCode, statement: statement)
+        let message = String(cString: sqlite3_errmsg(connection.handle))
+        self = .error(message: message, code: errorCode, statement: statement)
     }
     
 }
@@ -363,7 +372,7 @@ extension Result : CustomStringConvertible {
     
     public var description: String {
         switch self {
-        case let .Error(message, _, statement):
+        case let .error(message, _, statement):
             guard let statement = statement else { return message }
             
             return "\(message) (\(statement))"
@@ -372,7 +381,7 @@ extension Result : CustomStringConvertible {
     
     public var errorCode: Int {
         switch self {
-        case let .Error(_, code, statement):
+        case let .error(_, code, statement):
             guard let _ = statement else { return Int(code) }
             
             return Int(code)

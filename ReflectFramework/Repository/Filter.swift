@@ -7,129 +7,129 @@
 //
 
 public enum Filter {
-    case Compare(String, Comparison, Value?)
-    case Subset(String, Comparison, [Value?])
-    case Group(Operation, [Filter])
-    case Order(String, Sort)
-    case Union(Join, String, String, Comparison, String)
+    case compare(String, Comparison, Value?)
+    case subset(String, Comparison, [Value?])
+    case group(Operation, [Filter])
+    case order(String, Sort)
+    case union(Join, String, String, Comparison, String)
 }
 
 public enum Comparison: CustomStringConvertible{
-    case Equals, GreaterThan, LessThan, NotEquals, In, NotIn, Is, Like, NotLike ,Between
+    case equals, greaterThan, lessThan, notEquals, `in`, notIn, `is`, like, notLike ,between
     
     public var description: String {
         switch self {
-        case .Equals:
+        case .equals:
             return "="
-        case .GreaterThan:
+        case .greaterThan:
             return ">"
-        case .LessThan:
+        case .lessThan:
             return "<"
-        case .NotEquals:
+        case .notEquals:
             return "!="
-        case .In:
+        case .in:
             return "IN"
-        case .NotIn:
+        case .notIn:
             return "NOT IN"
-        case .Is:
+        case .is:
             return "IS"
-        case .Like:
+        case .like:
             return "LIKE"
-        case .NotLike:
+        case .notLike:
             return "NOT LIKE"
-        case .Between:
+        case .between:
             return "BETWEEN"
         }
     }
 }
 
 public enum Operation: CustomStringConvertible  {
-    case And, Or
+    case and, or
     
     public var description: String {
         switch self {
-        case .And:
+        case .and:
             return "AND"
-        case .Or:
+        case .or:
             return "OR"
         }
     }
 }
 
 public enum Join: CustomStringConvertible {
-    case Inner, Right, Left
+    case inner, right, left
     
     public var description: String {
         switch self {
-        case .Inner:
+        case .inner:
             return "INNER JOIN"
-        case .Left:
+        case .left:
             return "LEFT JOIN"
-        case .Right:
+        case .right:
             return "RIGHT JOIN"
         }
     }
 }
 
 public enum Sort: CustomStringConvertible  {
-    case Asc, Desc
+    case asc, desc
     
     public var description: String {
         switch self {
-        case .Asc:
+        case .asc:
             return "ASC"
-        case .Desc:
+        case .desc:
             return "DESC"
         }
     }
 }
 
 public enum Pagination: CustomStringConvertible  {
-    case Limit(Int), Offset(Int)
+    case limit(Int), offset(Int)
     
     public var description: String {
         switch self {
-        case .Limit(let count):
+        case .limit(let count):
             return "LIMIT \(count)"
-        case .Offset(let count):
+        case .offset(let count):
             return "OFFSET \(count)"
         }
     }
 }
 
 public enum Aggregate: CustomStringConvertible  {
-    case Default, Count(String), Average(String), Max(String), Min(String), Sum(String)
+    case `default`, count(String), average(String), max(String), min(String), sum(String)
     
     public var description: String {
         switch self {
-        case .Default:
+        case .default:
             return "*"
-        case .Count(let field):
+        case .count(let field):
             return "COUNT(\(field)) AS \(self.field)"
-        case .Average(let field):
+        case .average(let field):
             return "AVG(\(field)) AS \(self.field)"
-        case .Max(let field):
+        case .max(let field):
             return "MAX(\(field)) AS \(self.field)"
-        case .Min(let field):
+        case .min(let field):
             return "MIN(\(field)) AS \(self.field)"
-        case .Sum(let field):
+        case .sum(let field):
             return "SUM(\(field)) AS \(self.field)"
         }
     }
     
     public var field: String {
         switch self {
-        case .Default:
+        case .default:
             return "default"
-        case .Count:
+        case .count:
             return "count"
-        case .Average:
+        case .average:
             return "average"
-        case .Max:
+        case .max:
             return "maximum"
-        case .Min:
+        case .min:
             return "minimum"
-        case .Sum:
+        case .sum:
             return "value"
         }
     }

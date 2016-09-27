@@ -8,16 +8,17 @@
 
 import Foundation
 
-let SQLITE_TRANSIENT = unsafeBitCast(-1, sqlite3_destructor_type.self)
+let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 /// Date formmart default
-public var dateFormatter: NSDateFormatter = {
-    let formatter = NSDateFormatter()
+public var dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-    formatter.locale = NSLocale.currentLocale()
-    formatter.timeZone = NSTimeZone.systemTimeZone()
+    formatter.locale = Locale.current
+    formatter.timeZone = TimeZone.current
     return formatter
 }()
 // MARK: - Extension String
+
 public extension String {
     
     func quote(mark: Character = "\"") -> String {
@@ -28,7 +29,7 @@ public extension String {
     }
     
     func contains(find: String) -> Bool{
-        return self.rangeOfString(find) != nil
+        return self.range(of: find) != nil
     }
     
     var lastPathComponent: String {
@@ -45,13 +46,13 @@ public extension String {
     
     var stringByDeletingLastPathComponent: String {
         get {
-            return (self as NSString).stringByDeletingLastPathComponent
+            return (self as NSString).deletingLastPathComponent
         }
     }
     
     var stringByDeletingPathExtension: String {
         get {
-            return (self as NSString).stringByDeletingPathExtension
+            return (self as NSString).deletingPathExtension
         }
     }
     
@@ -63,11 +64,11 @@ public extension String {
     
     func stringByAppendingPathComponent(path: String) -> String {
         let nsSt = self as NSString
-        return nsSt.stringByAppendingPathComponent(path)
+        return nsSt.appendingPathComponent(path)
     }
     
     func stringByAppendingPathExtension(ext: String) -> String? {
         let nsSt = self as NSString
-        return nsSt.stringByAppendingPathExtension(ext)
+        return nsSt.appendingPathExtension(ext)
     }
 }

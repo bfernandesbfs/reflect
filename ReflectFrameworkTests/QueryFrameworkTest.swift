@@ -37,14 +37,15 @@ class QueryFrameworkTest: XCTestCase {
         /**
          Find an Object
          */
-        var usr1 = User.findById(1)
-        XCTAssertTrue(trace[0] == "SELECT * FROM User WHERE User.objectId = 1;", "it isn't compatible")
+    
+        var usr1 = User.findById(2)
+        XCTAssertTrue(trace[0] == "SELECT * FROM User WHERE User.objectId = 2;", "it isn't compatible")
         XCTAssertTrue(usr1!.address.objectId == nil , "it isn't compatible")
         
         // Include another object
         // type Reflect Object
-        usr1 = User.findById(1, include: Address.self)
-        XCTAssertTrue(trace[1] == "SELECT Address.objectId AS 'Address.objectId', Address.createdAt AS 'Address.createdAt', Address.updatedAt AS 'Address.updatedAt', Address.street AS 'Address.street', Address.number AS 'Address.number', Address.state AS 'Address.state', Address.zip AS 'Address.zip', User.* FROM User INNER JOIN Address ON User.Address_objectId = Address.objectId WHERE User.objectId = 1;", "it isn't compatible")
+        usr1 = User.findById(2, include: Address.self)
+        XCTAssertTrue(trace[1] == "SELECT Address.objectId AS 'Address.objectId', Address.createdAt AS 'Address.createdAt', Address.updatedAt AS 'Address.updatedAt', Address.street AS 'Address.street', Address.number AS 'Address.number', Address.state AS 'Address.state', Address.zip AS 'Address.zip', User.* FROM User INNER JOIN Address ON User.Address_objectId = Address.objectId WHERE User.objectId = 2;", "it isn't compatible")
         XCTAssertTrue(usr1!.address.objectId != nil , "it isn't compatible")
         
         /**
@@ -74,13 +75,13 @@ class QueryFrameworkTest: XCTestCase {
          Equals, GreaterThan, LessThan, NotEquals, In, NotIn, Is, Like, NotLike
          
         */
-        
+
         /**
          Equals
         */
         var query = User.query()
         
-        query.filter("age", .Equals, value: 25)
+        query.filter("age", .equals, value: 25)
         var users = query.findObject()
     
         var usersFake = userList.filter { (u:User) -> Bool in
@@ -94,7 +95,7 @@ class QueryFrameworkTest: XCTestCase {
          Not Equals
          */
         query = User.query()
-        query.filter("gender", .NotEquals, value: "male")
+        query.filter("gender", .notEquals, value: "male")
         
         users = query.findObject()
         
@@ -109,7 +110,7 @@ class QueryFrameworkTest: XCTestCase {
          Greater Than
          */
         query = User.query()
-        query.filter("registerNumber", .GreaterThan, value: 5000)
+        query.filter("registerNumber", .greaterThan, value: 5000)
         
         users = query.findObject()
     
@@ -124,7 +125,7 @@ class QueryFrameworkTest: XCTestCase {
          Less Than
         */
         query = User.query()
-        query.filter("registerNumber", Comparison.LessThan, value: 4500)
+        query.filter("registerNumber", Comparison.lessThan, value: 4500)
         
         users = query.findObject()
     
@@ -139,7 +140,7 @@ class QueryFrameworkTest: XCTestCase {
          In
          */
         var query2 = Address.query()
-        query2.filter("state", .In, value: "MI", "GA", "LI")
+        query2.filter("state", .in, value: "MI", "GA", "LI")
         
         var addresses = query2.findObject()
         
@@ -154,7 +155,7 @@ class QueryFrameworkTest: XCTestCase {
          Not In
          */
         query2 = Address.query()
-        query2.filter("number", .NotIn, value: 105, 226, 760, 728)
+        query2.filter("number", .notIn, value: 105, 226, 760, 728)
         
         addresses = query2.findObject()
         
@@ -169,7 +170,7 @@ class QueryFrameworkTest: XCTestCase {
          Is
         */
         query2 = Address.query()
-        query2.filter("updatedAt", .Is, value: nil)
+        query2.filter("updatedAt", .is, value: nil)
         
         addresses = query2.findObject()
 
@@ -181,7 +182,7 @@ class QueryFrameworkTest: XCTestCase {
          Example : 'A%' '%A' '%a%'
          */
         query = User.query()
-        query.filter("firstName", .Like, value: "A%")
+        query.filter("firstName", .like, value: "A%")
         
         users = query.findObject()
         
@@ -197,7 +198,7 @@ class QueryFrameworkTest: XCTestCase {
          Example : 'A%' '%A' '%a%'
          */
         query = User.query()
-        query.filter("firstName", .NotLike, value: "%mi%")
+        query.filter("firstName", .notLike, value: "%mi%")
         
         users = query.findObject()
         
@@ -212,7 +213,7 @@ class QueryFrameworkTest: XCTestCase {
          Between
          */
         query = User.query()
-        query.filter("age", .Between, value: 20, 30)
+        query.filter("age", .between, value: 20, 30)
         
         users = query.findObject()
         
@@ -250,8 +251,8 @@ class QueryFrameworkTest: XCTestCase {
         //Basic filters
         var query = User.query()
         
-        query.filter("age", .GreaterThan, value: 30)
-             .filter("gender", .Equals, value: "male")
+        query.filter("age", .greaterThan, value: 30)
+             .filter("gender", .equals, value: "male")
         
         var users = query.findObject()
         
@@ -268,9 +269,9 @@ class QueryFrameworkTest: XCTestCase {
         
         query = User.query()
         
-        query.filter("gender", .Equals, value: "female").or { q in
-            q.filter("age", .GreaterThan, value: 70)
-                .filter("age", .LessThan, value: 20)
+        query.filter("gender", .equals, value: "female").or { q in
+            q.filter("age", .greaterThan, value: 70)
+                .filter("age", .lessThan, value: 20)
         }
         
         users = query.findObject()
@@ -290,9 +291,9 @@ class QueryFrameworkTest: XCTestCase {
         
         query.join(Address.self)
         query.or { q in
-            q.filter("gender", .Equals, value: "female").filter("age", .GreaterThan, value: 50)
+            q.filter("gender", .equals, value: "female").filter("age", .greaterThan, value: 50)
         }.and { q in
-            q.filter("Address.state", .In, value: "MI", "GA", "LI")
+            q.filter("Address.state", .in, value: "MI", "GA", "LI")
         }
         
         users = query.findObject()
@@ -344,7 +345,7 @@ class QueryFrameworkTest: XCTestCase {
         XCTAssertTrue(trace[3] == "SELECT MAX(birthday) AS maximum FROM User;", "it isn't compatible")
         
         let listDate = userList.map ({ $0.birthday! })
-        let maxDate = listDate.reduce(listDate[0]){$0 > $1 ? $1 : $0}.datatypeValue
+        let maxDate = listDate.reduce(listDate[0]){$0 >> $1 ? $1 : $0}.datatypeValue
         
         XCTAssertTrue(maxDate == max, "it isn't compatible")
         
@@ -355,7 +356,7 @@ class QueryFrameworkTest: XCTestCase {
         let min = query.min("birthday") as! String
         XCTAssertTrue(trace[4] == "SELECT MIN(birthday) AS minimum FROM User;", "it isn't compatible")
         
-        let minDate = listDate.reduce(listDate[0]){$0 < $1 ? $1 : $0}.datatypeValue
+        let minDate = listDate.reduce(listDate[0]){$0 << $1 ? $1 : $0}.datatypeValue
         
         XCTAssertTrue(minDate == min, "it isn't compatible")
         
@@ -371,9 +372,9 @@ class QueryFrameworkTest: XCTestCase {
         
         //ASC
         var query = User.query()
-        var users = query.sort("age", .Asc).findObject()
+        var users = query.sort("age", .asc).findObject()
         
-        var order = userList.sort {
+        var order = userList.sorted {
             $0.age < $1.age
         }
         
@@ -382,11 +383,11 @@ class QueryFrameworkTest: XCTestCase {
         
         //DESC
         query = User.query()
-        users = query.filter("gender", .Equals, value: "male").sort("age", .Desc).findObject()
+        users = query.filter("gender", .equals, value: "male").sort("age", .desc).findObject()
         
         order = userList.filter({ (u:User) -> Bool in
             u.gender == "male"
-        }).sort {
+        }).sorted {
             $0.age > $1.age
         }
         
@@ -402,9 +403,9 @@ class QueryFrameworkTest: XCTestCase {
          */
         
         var query = User.query()
-        var users = query.sort("age", .Asc).limit(2).findObject()
+        var users = query.sort("age", .asc).limit(2).findObject()
         
-        var limit = userList.sort {
+        var limit = userList.sorted {
             $0.age < $1.age
         }[0..<2]
         
@@ -414,11 +415,11 @@ class QueryFrameworkTest: XCTestCase {
         
         //Offset
         query = User.query()
-        users = query.filter("gender", .Equals, value: "female").sort("age", .Desc).limit(3).offset(2).findObject()
+        users = query.filter("gender", .equals, value: "female").sort("age", .desc).limit(3).offset(2).findObject()
         
         limit = userList.filter({ (u:User) -> Bool in
             u.gender == "female"
-        }).sort {
+        }).sorted {
             $0.age > $1.age
         }[2..<5]
 
@@ -430,7 +431,7 @@ class QueryFrameworkTest: XCTestCase {
     
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        self.measureBlock {
+        self.measure {
             // Put the code you want to measure the time of here.
         }
     }

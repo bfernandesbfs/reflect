@@ -10,11 +10,11 @@ import Foundation
 
 public struct Cursor {
     
-    private let handle: COpaquePointer
-    private let columnCount: Int
+    fileprivate let handle: OpaquePointer //COpaquePointer
+    fileprivate let columnCount: Int
     
     public init(_ statement: Statement) {
-        handle = statement.handle
+        handle = statement.handle!
         columnCount = statement.columnCount
     }
     
@@ -27,7 +27,10 @@ public struct Cursor {
     }
     
     public subscript(idx: Int) -> String {
-        return String.fromCString(UnsafePointer(sqlite3_column_text(handle, Int32(idx)))) ?? ""
+        guard let s = UnsafePointer(sqlite3_column_text(handle, Int32(idx))) else {
+            return ""
+        }
+        return String(cString: s)
     }
     
     public subscript(idx: Int) -> Double {
@@ -38,15 +41,17 @@ public struct Cursor {
         return Bool.fromDatatypeValue(self[idx])
     }
     
-    public subscript(idx: Int) -> NSData {
-        let bytes = sqlite3_column_blob(handle, Int32(idx))
+    public subscript(idx: Int) -> Data {
+        guard let bytes = sqlite3_column_blob(handle, Int32(idx)) else {
+            return Data()
+        }
         let length = Int(sqlite3_column_bytes(handle, Int32(idx)))
-        return NSData(bytes: bytes, length: length)
+        return Data(bytes: bytes, count: length)
     }
     
 }
 
-extension Cursor : SequenceType {
+extension Cursor : Sequence {
     
     public subscript(idx: Int) -> Value? {
         switch sqlite3_column_type(handle, Int32(idx)) {
@@ -57,22 +62,22 @@ extension Cursor : SequenceType {
         case SQLITE_FLOAT:
             return self[idx] as Double
         case SQLITE_BLOB:
-            return self[idx] as NSData
+            return self[idx] as Data
         case SQLITE_NULL:
             return nil
         case let type:
             fatalError("unsupported column type: \(type)")
         }
     }
-    
-    public func generate() -> AnyGenerator<Value?> {
+    //AnyGenerator
+    public func makeIterator() -> AnyIterator<Value?> {
         var idx = -1
-        return AnyGenerator {
-            idx >= self.columnCount ? Optional<Value?>.None : self[self.incrementIdx(&idx)]
+        return AnyIterator {
+            idx >= self.columnCount ? Optional<Value?>.none : self[self.incrementIdx(&idx)]
         }
     }
     
-    public func incrementIdx(inout idx:Int) -> Int{
+    public func incrementIdx(_ idx:inout Int) -> Int{
         idx = idx + 1
         return idx
     }
@@ -82,18 +87,18 @@ extension Cursor : SequenceType {
 
 public struct Row {
     
-    private let columnNames: [String: Int]
+    fileprivate let columnNames: [String: Int]
     
-    private let values: [Value?]
+    fileprivate let values: [Value?]
     
     public init(_ columnNames: [String: Int], _ values: [Value?]) {
         self.columnNames = columnNames
         self.values = values
     }
     
-    public func get(column: String) -> RowValue {
+    public func get(_ column: String) -> RowValue {
         
-        func valueAtIndex(idx: Int) -> RowValue {
+        func valueAtIndex(_ idx: Int) -> RowValue {
             return RowValue(obj: values[idx])
         }
         
@@ -103,7 +108,7 @@ public struct Row {
             
             switch similar.count {
             case 0:
-                fatalError("no such column '\(column)' in columns: \(columnNames.keys.sort())")
+                fatalError("no such column '\(column)' in columns: \(columnNames.keys.sorted())")
             case 1:
                 return valueAtIndex(columnNames[similar[0]]!)
             default:
@@ -175,19 +180,19 @@ public struct RowValue {
         return checkNumber()
     }
     
-    public func asDate() -> NSDate? {
+    public func asDate() -> Date? {
         guard let v = value as? String else {
             return nil
         }
-        return NSDate.fromDatatypeValue(v)
+        return Date.fromDatatypeValue(v)
     }
     
-    public func asData() -> NSData? {
-        return value as? NSData
+    public func asData() -> Data? {
+        return value as? Data
     }
     
     public func asAnyObject() -> AnyObject? {
-        return value as? AnyObject
+        return value as AnyObject?
     }
     
     public func asValue() -> Value? {
@@ -195,7 +200,7 @@ public struct RowValue {
     }
     
     // MARK: - Private Methods
-    private func checkNumber() -> NSNumber? {
+    fileprivate func checkNumber() -> NSNumber? {
         if value != nil {
             let mirror = Mirror(reflecting: value)
             switch unwrapType(mirror.children.first!.value) {
@@ -207,7 +212,7 @@ public struct RowValue {
                 return asDouble() as NSNumber?
             case is String.Type:
                 if let stringValue = asString() {
-                    return Int(stringValue)
+                    return Int(stringValue) as NSNumber?
                 }
                 return nil
             default:
@@ -218,7 +223,7 @@ public struct RowValue {
         return nil
     }
 
-    private func unwrapType(value: Any) -> Any.Type {
+    fileprivate func unwrapType(_ value: Any) -> Any.Type {
         let mirror = Mirror(reflecting: value)
         return mirror.subjectType
     }
