@@ -13,7 +13,7 @@ public class Query<T> where T:ReflectProtocol {
     /// Alias Handlee para clauses AND and OR
     public typealias Handler = (_ query: Query) -> Query
     /// Argumentos to Query
-    open var dataArgs:[Value?]
+    fileprivate var dataArgs:[Value?]
     /// Distinct values
     fileprivate var dataDistinct :Bool
     /// Aggregate value (COUNT, SUM, MAX, MIN and AVG)
@@ -354,7 +354,7 @@ private extension Query {
                 }
                 return "\(self.filterOutput($0))"
             }
-            return "(" + f.joined(separator: " \(op.description) ") + ")"
+            return "(\(f.joined(separator: " \(op.description) ")))"
         case .order(let field, let order):
             return "\(field) \(order)"
         case .union(let join, let entity, let fk, let comparison, let ok):

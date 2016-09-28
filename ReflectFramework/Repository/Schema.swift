@@ -20,7 +20,7 @@ public enum Schema<T: ReflectProtocol> {
         switch self {
         case .create(let object):
             let tableName =  T.entityName()
-            var statement = "CREATE TABLE IF NOT EXISTS " + tableName + " ("
+            var statement = "CREATE TABLE IF NOT EXISTS \(tableName) ("
             var fields:[String] = []
             
             let propertyData = ReflectData.validPropertyDataForObject(object, ignoredProperties: ["objectId"])
@@ -44,22 +44,18 @@ public enum Schema<T: ReflectProtocol> {
             statement += "\(fields.joined(separator: ", ")))"
         
             return (statement, [])
-        
         case .drop(let tableName):
             return ("DROP TABLE \(tableName)" , [])
-            
         case .index(let entityName, let field , let unique):
             var statement = unique ? "CREATE UNIQUE INDEX" : "CREATE INDEX"
             statement += " IF NOT EXISTS index_\(entityName)_on_\(field) ON \(entityName) (\(field))"
             
             return (statement , [])
-        
         case .dropIndex(let entityName, let field):
             var statement = "DROP INDEX"
             statement += " IF EXISTS index_\(entityName)_on_\(field)"
 
             return (statement , [])
-            
         case .insert(var object):
             var statement = "INSERT INTO " + T.entityName()
             object.createdAt = Date()
@@ -86,7 +82,6 @@ public enum Schema<T: ReflectProtocol> {
             /* Columns to be inserted */
             statement += " ( \(columns) ) VALUES (" + placeholder.joined(separator: ", ") + ")"
             return (statement, dataArgs)
-            
         case .update(var object):
             var statement = "UPDATE \(T.entityName()) SET"
             object.updatedAt = Date()
@@ -111,7 +106,6 @@ public enum Schema<T: ReflectProtocol> {
             statement += " \(columns) WHERE objectId = ?"
             
             return (statement, dataArgs)
-            
         case .delete(let object):
             let comp = object.objectId == nil ? "" : " WHERE objectId = ?"
             return ("DELETE FROM \(T.entityName())" + comp , comp.isEmpty ? [] : [object.objectId!.int64Value])

@@ -51,7 +51,6 @@ public extension ReflectProtocol {
      
      - returns: return uma nova instancia de Query
      */
-    @discardableResult
     static func query() -> Query<Self> {
         return Query()
     }
@@ -84,7 +83,6 @@ public extension ReflectProtocol {
      
      - returns: return os objects de acordo com o filtro
      */
-    @discardableResult
     static func findObject(_ query:Query<Self>) -> [Self] {
         return Reflect.execute {
             return try Driver().find(query)
@@ -99,12 +97,10 @@ public extension ReflectProtocol {
      
      - returns: return the object or return nil if object not found
      */
-    @discardableResult
     static func findById(_ id: Int, include:Any.Type...) -> Self? {
         guard let data = (Reflect.execute { return try Driver().find(id, include: include)! }.data) as Self? else {
             return nil
         }
-            
         return data
     }
     /**
@@ -146,7 +142,12 @@ public extension ReflectProtocol {
             }.success
     }
     
-    @discardableResult
+    /**
+     Transaction for query SQLite
+    
+     - parameter callback: callback instrutions
+    
+     */
     static func transaction(_ callback: @escaping () throws -> Void) {
         Reflect.execute {
             try Driver().transaction(self, callback: callback)
@@ -163,7 +164,7 @@ public extension ReflectProtocol {
      - returns: return if the object was created with successfully
      */
     @discardableResult
-    func fetch(include:Any.Type...) -> Bool {
+    public func fetch(include:Any.Type...) -> Bool {
         return Reflect.execute {
             try Driver().fetch(self, include: include)
         }.success
@@ -174,7 +175,7 @@ public extension ReflectProtocol {
      - returns: return if the object was created with successfully
      */
     @discardableResult
-    func pin() -> Bool {
+    public func pin() -> Bool {
         return Reflect.execute {
             try Driver().save(self)
         }.success
@@ -185,7 +186,7 @@ public extension ReflectProtocol {
      - returns: return if the object was created with successfully
      */
     @discardableResult
-    func unPin() -> Bool {
+    public func unPin() -> Bool {
         return Reflect.execute {
             try Driver().delete(self)
         }.success

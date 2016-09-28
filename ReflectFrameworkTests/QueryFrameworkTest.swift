@@ -16,9 +16,16 @@ class QueryFrameworkTest: XCTestCase {
     override func setUp() {
         super.setUp()
         
+        var initializeLog: Bool = false
         Reflect.configuration("", baseNamed: "Tests.db")
         Reflect.settings.log { (SQL:String) in
-            self.trace.append(SQL)
+            if !initializeLog {
+                initializeLog = true
+                print("\n Path data base -- ", SQL, "\n")
+            }
+            else {
+                self.trace.append(SQL)
+            }
         }
         
         //populateData()
@@ -228,7 +235,8 @@ class QueryFrameworkTest: XCTestCase {
          Select Fields
          */
         query = User.query()
-        query.fields("objectId", "firstName", "lastName", "age").findObject()
+        query.fields("objectId", "firstName", "lastName", "age")
+        query.findObject()
         
         XCTAssertTrue(trace[10] == "SELECT objectId, firstName, lastName, age FROM User;", "it isn't compatible")
         

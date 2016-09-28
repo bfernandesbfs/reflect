@@ -54,7 +54,7 @@ public extension Reflect {
      - parameter appGroup:  App Group information
      - parameter baseNamed: Name to Data Base
      */
-    public class func configuration(_ appGroup:String, baseNamed:String){
+    public class func configuration(_ appGroup:String, baseNamed:String) {
         settings = Configuration(defaultName: baseNamed, appGroup: appGroup)
     }
     /**
@@ -63,7 +63,7 @@ public extension Reflect {
      - parameter location:  Local for save data base
      - parameter readonly:  mode read
      */
-    public class func configuration(_ location: Connection.Location, readonly: Bool = false){
+    public class func configuration(_ location: Connection.Location, readonly: Bool = false) {
         settings = Configuration(location: location, readonly: readonly)
     }
     /**
@@ -111,7 +111,7 @@ extension Reflect {
         return try! Driver<Reflect>().find(sql)
     }
     
-    public class func removeDefaultSettings(){
+    public class func removeDefaultSettings() {
         let fm = FileManager.default
         let path = settings.getPath()
         

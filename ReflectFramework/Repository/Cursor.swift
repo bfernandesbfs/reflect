@@ -10,7 +10,7 @@ import Foundation
 
 public struct Cursor {
     
-    fileprivate let handle: OpaquePointer //COpaquePointer
+    fileprivate let handle: OpaquePointer
     fileprivate let columnCount: Int
     
     public init(_ statement: Statement) {
@@ -48,10 +48,9 @@ public struct Cursor {
         let length = Int(sqlite3_column_bytes(handle, Int32(idx)))
         return Data(bytes: bytes, count: length)
     }
-    
 }
 
-extension Cursor : Sequence {
+extension Cursor: Sequence {
     
     public subscript(idx: Int) -> Value? {
         switch sqlite3_column_type(handle, Int32(idx)) {
@@ -69,7 +68,7 @@ extension Cursor : Sequence {
             fatalError("unsupported column type: \(type)")
         }
     }
-    //AnyGenerator
+
     public func makeIterator() -> AnyIterator<Value?> {
         var idx = -1
         return AnyIterator {
@@ -84,11 +83,9 @@ extension Cursor : Sequence {
     
 }
 
-
 public struct Row {
     
     fileprivate let columnNames: [String: Int]
-    
     fileprivate let values: [Value?]
     
     public init(_ columnNames: [String: Int], _ values: [Value?]) {
@@ -134,9 +131,7 @@ public struct Row {
     public subscript(index: Int) -> [String] {
         return Array(columnNames.keys)
     }
-    
 }
-
 
 public struct RowValue {
     
@@ -227,5 +222,4 @@ public struct RowValue {
         let mirror = Mirror(reflecting: value)
         return mirror.subjectType
     }
-    
 }

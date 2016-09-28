@@ -117,25 +117,6 @@ extension Bool: Value, Binding  {
     }
 }
 
-// OBJC
-extension NSString: Value, Binding {
-    public class var declaredDatatype:String {
-        return String.declaredDatatype
-    }
-    public class func fromDatatypeValue(_ datatypeValue: String) -> String {
-        return datatypeValue
-    }
-}
-
-extension NSNumber: Value, Binding {
-    public class var declaredDatatype:String {
-        return "NUMERIC"
-    }
-    public class func fromDatatypeValue(_ datatypeValue: NSNumber) -> NSNumber {
-        return datatypeValue
-    }
-}
-
 extension Date: Value, Binding {
     public static var declaredDatatype:String {
         return "DATE"
@@ -166,5 +147,24 @@ extension Data: Value, Binding {
         return bytes.map {
             ($0 < 16 ? "0" : "") + String($0, radix: 16, uppercase: false)
             }.joined(separator: "")
+    }
+}
+
+// OBJC
+extension NSString: Value, Binding {
+    public class var declaredDatatype:String {
+        return String.declaredDatatype
+    }
+    public class func fromDatatypeValue(_ datatypeValue: String) -> String {
+        return datatypeValue
+    }
+}
+
+extension NSNumber: Value, Binding {
+    public class var declaredDatatype:String {
+        return "NUMERIC"
+    }
+    public class func fromDatatypeValue(_ datatypeValue: NSNumber) -> NSNumber {
+        return datatypeValue
     }
 }

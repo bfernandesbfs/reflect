@@ -10,16 +10,24 @@ import XCTest
 @testable import ReflectFramework
 
 class CreateFrameworkTest: XCTestCase {
-    
+
     var trace:[String] = []
     
     override func setUp() {
         super.setUp()
         
+        var initializeLog: Bool = false
         Reflect.configuration("", baseNamed: "Tests.db")
         Reflect.settings.log { (SQL:String) in
-            self.trace.append(SQL)
+            if !initializeLog {
+                initializeLog = true
+                print("\n Path data base -- ", SQL, "\n")
+            }
+            else {
+                self.trace.append(SQL)
+            }
         }
+    
     }
     
     override func tearDown() {
@@ -56,6 +64,7 @@ class CreateFrameworkTest: XCTestCase {
     }
     
     func testObject() {
+        trace.removeAll()
         /**
          Create Object
          */

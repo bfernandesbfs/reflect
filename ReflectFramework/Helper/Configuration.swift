@@ -23,7 +23,7 @@ public struct Configuration {
      - parameter appGroup:    App group information
      
      */
-    init(defaultName: String, appGroup: String){
+    public init(defaultName: String, appGroup: String){
         self.defaultName = defaultName
         self.appGroup    = appGroup
         self.connection  = try! Connection(getPath())
@@ -37,7 +37,7 @@ public struct Configuration {
      - parameter readonly:    mode read
 
      */
-    init(location: Connection.Location, readonly: Bool = false){
+    public init(location: Connection.Location, readonly: Bool = false) {
         do {
             self.connection  = try Connection(location , readonly: readonly)
         }
@@ -50,7 +50,7 @@ public struct Configuration {
      
      - returns: a instance to Configuration
      */
-    static func defaultSettings() -> Configuration {
+    public static func defaultSettings() -> Configuration {
         return Configuration(defaultName: "ReflectDB.db", appGroup: "")
     }
     // MARK: - Public Methods
@@ -87,7 +87,6 @@ public struct Configuration {
     public func getPath() -> String {
         
         let fm = FileManager.default
-        
         var path:String = ""
         
         if appGroup.isEmpty {
@@ -106,12 +105,14 @@ public struct Configuration {
             path = path.stringByAppendingPathComponent(path: defaultName)
             
         }
-        print(path)
+        
         return path
     }
     
-    public func log(_ callback: ((String) -> Void)?){
+    public mutating func log(_ callback: ((String) -> Void)?){
         getConnection().trace(callback)
+        
+        callback?(getPath())
     }
 
 }

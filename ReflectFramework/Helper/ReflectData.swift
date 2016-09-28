@@ -13,13 +13,13 @@ internal struct ReflectData {
     /// Optinal object
     internal let isOptional: Bool
     /// Object type Class
-    internal var isClass:    Bool = false
+    internal var isClass: Bool = false
     /// Type of object
-    internal var type:       Any.Type?  = nil
+    internal var type: Any.Type?  = nil
     /// Name of property
-    internal var name:       String?
+    internal var name: String?
     /// Value of property
-    internal var value:      Any? = nil
+    internal var value: Any? = nil
     /// Valid data on object
     internal var isValid: Bool {
         return type != nil && name != nil
@@ -53,34 +53,30 @@ internal struct ReflectData {
             return mirror.subjectType
         }
     
-        
         switch mirror.subjectType {
-        case is Optional<String>.Type:      return String.self
-        case is Optional<NSString>.Type:    return NSString.self
-
+        case is Optional<String>.Type:    return String.self
+        case is Optional<NSString>.Type:  return NSString.self
         case is Optional<Date>.Type:      return Date.self
-        case is Optional<NSNumber>.Type:    return NSNumber.self
+        case is Optional<NSNumber>.Type:  return NSNumber.self
         case is Optional<Data>.Type:      return Data.self
-            
-        case is Optional<Bool>.Type:        return Bool.self
-            
-        case is Optional<Int>.Type:         return Int.self
-        case is Optional<Int8>.Type:        return Int8.self
-        case is Optional<Int16>.Type:       return Int16.self
-        case is Optional<Int32>.Type:       return Int32.self
-        case is Optional<Int64>.Type:       return Int64.self
-        case is Optional<UInt>.Type:        return UInt.self
-        case is Optional<UInt8>.Type:       return UInt8.self
-        case is Optional<UInt16>.Type:      return UInt16.self
-        case is Optional<UInt32>.Type:      return UInt32.self
-        case is Optional<UInt64>.Type:      return UInt64.self
-            
-        case is Optional<Float>.Type:       return Float.self
-        case is Optional<Double>.Type:      return Double.self
+        case is Optional<Bool>.Type:      return Bool.self
+        case is Optional<Int>.Type:       return Int.self
+        case is Optional<Int8>.Type:      return Int8.self
+        case is Optional<Int16>.Type:     return Int16.self
+        case is Optional<Int32>.Type:     return Int32.self
+        case is Optional<Int64>.Type:     return Int64.self
+        case is Optional<UInt>.Type:      return UInt.self
+        case is Optional<UInt8>.Type:     return UInt8.self
+        case is Optional<UInt16>.Type:    return UInt16.self
+        case is Optional<UInt32>.Type:    return UInt32.self
+        case is Optional<UInt64>.Type:    return UInt64.self
+        case is Optional<Float>.Type:     return Float.self
+        case is Optional<Double>.Type:    return Double.self
         case is Optional<Reflect.Type>.Type:
             isClass =  true
             return Reflect.self
-        default:                            return nil
+        default:
+            return nil
         }
     }
     /**

@@ -18,17 +18,41 @@ public final class Connection {
         case uri(String)
     }
     
-    private typealias Trace = @convention(block) (UnsafePointer<Int8>) -> Void
+    fileprivate typealias Trace = @convention(block) (UnsafePointer<Int8>) -> Void
+    fileprivate static let queueKey = DispatchSpecificKey<Int>()
+    fileprivate var _handle: OpaquePointer? = nil
+    fileprivate var queue = DispatchQueue(label: "xyz.ReflectFramework", attributes: [])
+    fileprivate lazy var queueContext: Int = unsafeBitCast(self, to: Int.self)
+    fileprivate var trace: Trace?
     
-    private static let queueKey = DispatchSpecificKey<Int>() // unsafeBitCast(Connection.self, to: UnsafeRawPointer.self)
+    internal var handle: OpaquePointer { return _handle! }
     
-    private var _handle: OpaquePointer? = nil
-    private var queue = DispatchQueue(label: "xyz.ReflectFramework", attributes: [])
-    //private lazy var queueContext: UnsafeMutableRawPointer = unsafeBitCast(self, to: UnsafeMutableRawPointer.self)
-    private lazy var queueContext: Int = unsafeBitCast(self, to: Int.self)
-    private var trace: Trace?
+    // MARK: - Var
     
-    public var handle: OpaquePointer { return _handle! }
+    /// Whether or not the database was opened in a read-only state.
+    public var readonly: Bool {
+        return sqlite3_db_readonly(handle, nil) == 1
+    }
+    
+    /// The last rowid inserted into the database via this connection.
+    public var lastInsertRowid: Int64? {
+        let rowid = sqlite3_last_insert_rowid(handle)
+        return rowid > 0 ? rowid : nil
+    }
+    
+    /// The last number of changes (inserts, updates, or deletes) made to the
+    /// database via this connection.
+    public var changes: Int {
+        return Int(sqlite3_changes(handle))
+    }
+    
+    /// The total number of changes (inserts, updates, or deletes) made to the
+    /// database via this connection.
+    public var totalChanges: Int {
+        return Int(sqlite3_total_changes(handle))
+    }
+
+    // MARK: - Initializes
     
     /// Initializes a new SQLite connection.
     ///
@@ -73,32 +97,50 @@ public final class Connection {
         sqlite3_close(handle)
     }
     
-    // MARK: -
+    // MARK: - Private Methods
     
-    /// Whether or not the database was opened in a read-only state.
-    public var readonly: Bool {
-        return sqlite3_db_readonly(handle, nil) == 1
+    fileprivate func prepare(_ statement: String, _ bindings: Value?...) throws -> Statement {
+        if !bindings.isEmpty {
+            return try prepare(statement, bindings)
+        }
+        return Statement(self, statement)
     }
     
-    /// The last rowid inserted into the database via this connection.
-    public var lastInsertRowid: Int64? {
-        let rowid = sqlite3_last_insert_rowid(handle)
-        return rowid > 0 ? rowid : nil
+    fileprivate func run(_ statement: String, _ bindings: [Value?]) throws -> Statement {
+        return try prepare(statement).run(bindings)
     }
     
-    /// The last number of changes (inserts, updates, or deletes) made to the
-    /// database via this connection.
-    public var changes: Int {
-        return Int(sqlite3_changes(handle))
+    @discardableResult
+    fileprivate func run(_ statement: String, _ bindings: Value?...) throws -> Statement {
+        return try run(statement, bindings)
     }
     
-    /// The total number of changes (inserts, updates, or deletes) made to the
-    /// database via this connection.
-    public var totalChanges: Int {
-        return Int(sqlite3_total_changes(handle))
+    fileprivate func transaction(_ begin: String, _ block: @escaping () throws -> Void, _ commit: String, or rollback: String) throws {
+        return try sync {
+            _ = try self.run(begin)
+            do {
+                try block()
+            } catch {
+                try self.run(rollback)
+                throw error
+            }
+            try self.run(commit)
+        }
     }
     
-    // MARK: - Execute
+    fileprivate func querySequence(_ statement:Statement) -> AnySequence<Row>? {
+        let columnNames: [String: Int] = {
+            var (columnNames, _) = ([String: Int](), 0)
+            for i in 0..<statement.columnNames.count {
+                columnNames[statement.columnNames[i]] = i
+            }
+            return columnNames
+        }()
+        return AnySequence { AnyIterator { statement.next().map { Row(columnNames, $0) } } }
+    }
+    
+    
+    // MARK: - Public Methods
     
     /// Executes a batch of SQL statements.
     ///
@@ -108,27 +150,6 @@ public final class Connection {
     /// - Throws: `Result.Error` if query execution fails.
     public func execute(_ SQL: String) throws {
         try sync { try self.check(sqlite3_exec(self.handle, SQL, nil, nil, nil)) }
-    }
-    
-    fileprivate func prepare(_ statement: String, _ bindings: Value?...) throws -> Statement {
-        if !bindings.isEmpty {
-            return try prepare(statement, bindings)
-        }
-        return Statement(self, statement)
-    }
-    
-    public func prepare(_ statement: String, _ bindings: [Value?]) throws -> Statement {
-        return try prepare(statement).bind(bindings)
-    }
-    
-    @discardableResult
-    fileprivate func run(_ statement: String, _ bindings: Value?...) throws -> Statement {
-        return try run(statement, bindings)
-    }
-    
-    @discardableResult
-    fileprivate func run(_ statement: String, _ bindings: [Value?]) throws -> Statement {
-        return try prepare(statement).run(bindings)
     }
     
     @discardableResult
@@ -152,6 +173,10 @@ public final class Connection {
         }
     }
     
+    public func prepare(_ statement: String, _ bindings: [Value?]) throws -> Statement {
+        return try prepare(statement).bind(bindings)
+    }
+
     public func prepareQuery(_ query: String) throws -> AnySequence<Row>? {
         let statement = try prepare(query)
         return querySequence(statement)
@@ -166,20 +191,7 @@ public final class Connection {
     public func prepareFetch<T: ReflectProtocol>(_ query: Query<T>) throws -> Row? {
         return try prepareQuery(query)!.makeIterator().next()
     }
-    
-    fileprivate func querySequence(_ statement:Statement) -> AnySequence<Row>? {
-        let columnNames: [String: Int] = {
-            var (columnNames, _) = ([String: Int](), 0)
-            for i in 0..<statement.columnNames.count {
-                columnNames[statement.columnNames[i]] = i
-            }
-            return columnNames
-        }()
-        //return AnySequence { AnyGenerator { statement.next().map { Row(columnNames, $0) } } }
-        return AnySequence { AnyIterator { statement.next().map { Row(columnNames, $0) } } }
-    }
-    
-    // MARK: - Scalar
+
     
     /// Runs a single SQL statement (with optional parameter bindings),
     /// returning the first value of the first row.
@@ -196,7 +208,6 @@ public final class Connection {
         return try prepare(stm.sql).scalar(stm.args)
     }
 
-    // MARK: - Transactions
     
     // TODO: Consider not requiring a throw to roll back?
     /// Runs a transaction with the given mode.
@@ -242,20 +253,6 @@ public final class Connection {
         try transaction(savepoint, block, "RELEASE \(savepoint)", or: "ROLLBACK TO \(savepoint)")
     }
     
-    
-    fileprivate func transaction(_ begin: String, _ block: @escaping () throws -> Void, _ commit: String, or rollback: String) throws {
-        return try sync {
-            try self.run(begin)
-            do {
-                try block()
-            } catch {
-                try self.run(rollback)
-                throw error
-            }
-            try self.run(commit)
-        }
-    }
-    
     /// Interrupts any long-running queries.
     public func interrupt() {
         sqlite3_interrupt(handle)
@@ -283,8 +280,9 @@ public final class Connection {
     }
     
     // MARK: - Error Handling
+    
     @discardableResult
-    func sync<T>(_ block: @escaping () throws -> T) rethrows -> T {
+    public func sync<T>(_ block: @escaping () throws -> T) rethrows -> T {
         var success: T?
         var failure: Error?
         
@@ -310,14 +308,12 @@ public final class Connection {
     }
     
     @discardableResult
-    func check(_ resultCode: Int32, statement: Statement? = nil) throws -> Int32 {
+    public func check(_ resultCode: Int32, statement: Statement? = nil) throws -> Int32 {
         guard let error = Result(errorCode: resultCode, connection: self, statement: statement) else {
             return resultCode
         }
-        
         throw error
     }
-    
 }
 
 extension Connection : CustomStringConvertible {
@@ -335,7 +331,6 @@ extension Connection : CustomStringConvertible {
     public var description: String {
         return String(cString: sqlite3_db_filename(handle, nil))
     }
-    
 }
 
 extension Connection.Location : CustomStringConvertible {
@@ -350,7 +345,6 @@ extension Connection.Location : CustomStringConvertible {
             return URI
         }
     }
-    
 }
 
 public enum Result : Error {
@@ -365,7 +359,6 @@ public enum Result : Error {
         let message = String(cString: sqlite3_errmsg(connection.handle))
         self = .error(message: message, code: errorCode, statement: statement)
     }
-    
 }
 
 extension Result : CustomStringConvertible {
@@ -374,7 +367,6 @@ extension Result : CustomStringConvertible {
         switch self {
         case let .error(message, _, statement):
             guard let statement = statement else { return message }
-            
             return "\(message) (\(statement))"
         }
     }
@@ -383,9 +375,7 @@ extension Result : CustomStringConvertible {
         switch self {
         case let .error(_, code, statement):
             guard let _ = statement else { return Int(code) }
-            
             return Int(code)
         }
     }
-    
 }

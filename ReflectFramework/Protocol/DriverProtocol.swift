@@ -141,7 +141,15 @@ public protocol DriverProtocol {
      - returns: Return a value 
      */
     func scalar(_ query: Query<T>, column:String) throws -> Value?
-    
+    /**
+     Transaction Object
+     
+     - parameter obj:  Object
+     - parameter callBack: Call back to querys
+     
+     - throws: `Result.Error`
+
+     */
     func transaction(_ obj: T.Type, callback: @escaping () throws -> Void) throws
     
     func log(_ callback: ((String) -> Void)?)

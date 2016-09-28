@@ -14,7 +14,7 @@ public enum Filter {
     case union(Join, String, String, Comparison, String)
 }
 
-public enum Comparison: CustomStringConvertible{
+public enum Comparison: CustomStringConvertible {
     case equals, greaterThan, lessThan, notEquals, `in`, notIn, `is`, like, notLike ,between
     
     public var description: String {
@@ -43,7 +43,7 @@ public enum Comparison: CustomStringConvertible{
     }
 }
 
-public enum Operation: CustomStringConvertible  {
+public enum Operation: CustomStringConvertible {
     case and, or
     
     public var description: String {
@@ -71,7 +71,7 @@ public enum Join: CustomStringConvertible {
     }
 }
 
-public enum Sort: CustomStringConvertible  {
+public enum Sort: CustomStringConvertible {
     case asc, desc
     
     public var description: String {
@@ -84,7 +84,7 @@ public enum Sort: CustomStringConvertible  {
     }
 }
 
-public enum Pagination: CustomStringConvertible  {
+public enum Pagination: CustomStringConvertible {
     case limit(Int), offset(Int)
     
     public var description: String {
@@ -97,7 +97,7 @@ public enum Pagination: CustomStringConvertible  {
     }
 }
 
-public enum Aggregate: CustomStringConvertible  {
+public enum Aggregate: CustomStringConvertible {
     case `default`, count(String), average(String), max(String), min(String), sum(String)
     
     public var description: String {

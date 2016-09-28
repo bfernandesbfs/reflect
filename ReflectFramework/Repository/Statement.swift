@@ -10,17 +10,14 @@ import Foundation
 
 public final class Statement {
     
-    public var handle: OpaquePointer? = nil
-    
     fileprivate let connection: Connection
     
+    public var handle: OpaquePointer? = nil
     public lazy var columnCount: Int = Int(sqlite3_column_count(self.handle))
-    
     public lazy var columnNames: [String] = (0..<Int32(self.columnCount)).map { value in
         let c = String(cString: sqlite3_column_name (self.handle, value))
         return c
     }
-    
     /// A cursor pointing to the current row.
     public lazy var row: Cursor = Cursor(self)
     
@@ -37,43 +34,23 @@ public final class Statement {
         sqlite3_finalize(handle)
     }
     
-    @discardableResult
-    public func step() throws -> Bool {
-        return try connection.sync { try self.connection.check(sqlite3_step(self.handle)) == SQLITE_ROW }
-    }
-    
-    fileprivate func reset(clearBindings shouldClear: Bool = true) {
-        sqlite3_reset(handle)
-        if (shouldClear) { sqlite3_clear_bindings(handle) }
-    }
-    
-    /// - Parameter bindings: A list of parameters to bind to the statement.
-    ///
-    /// - Throws: `Result.Error` if query execution fails.
-    ///
-    /// - Returns: The statement object (useful for chaining).
-    public func run(_ bindings: Value?...) throws -> Statement {
-        guard bindings.isEmpty else {
-            return try run(bindings)
-        }
-        
-        reset(clearBindings: false)
-        repeat {} while try step()
-        return self
-    }
-    
-    /// - Parameter bindings: A list of parameters to bind to the statement.
-    ///
-    /// - Throws: `Result.Error` if query execution fails.
-    ///
-    /// - Returns: The statement object (useful for chaining).
+    /**
+     Run
+     
+     - Parameter bindings: A list of parameters to bind to the statement.
+     - Throws:  Throws: `Result.Error` if query execution fails.
+     - Returns: The statement object (useful for chaining).
+     */
     public func run(_ bindings: [Value?]) throws -> Statement {
         return try bind(bindings).run()
     }
     
-    /// - Parameter bindings: A list of parameters to bind to the statement.
-    ///
-    /// - Returns: The first value of the first row returned.
+    /**
+     Scalar
+     
+     - Parameter bindings: A list of parameters to bind to the statement.
+     - Returns: The first value of the first row returned.
+     */
     public func scalar(_ bindings: Value?...) throws -> Value? {
         guard bindings.isEmpty else {
             return try scalar(bindings)
@@ -84,27 +61,22 @@ public final class Statement {
         return row[0]
     }
     
-    /// - Parameter bindings: A list of parameters to bind to the statement.
-    ///
-    /// - Returns: The first value of the first row returned.
+    /**
+     Scalar
+     
+     - Parameter bindings: A list of parameters to bind to the statement.
+     - Returns: The first value of the first row returned.
+     */
     public func scalar(_ bindings: [Value?]) throws -> Value? {
         return try bind(bindings).scalar()
     }
     
-    /// Binds a list of parameters to a statement.
-    ///
-    /// - Parameter values: A list of parameters to bind to the statement.
-    ///
-    /// - Returns: The statement object (useful for chaining).
-    public func bind(_ values: Value?...) -> Statement {
-        return bind(values)
-    }
-    
-    /// Binds a list of parameters to a statement.
-    ///
-    /// - Parameter values: A list of parameters to bind to the statement.
-    ///
-    /// - Returns: The statement object (useful for chaining).
+    /**
+     Binds a list of parameters to a statement.
+     
+     - Parameter values: A list of parameters to bind to the statement.
+     - Returns: The statement object (useful for chaining).
+     */
     public func bind(_ values: [Value?]) -> Statement {
         if values.isEmpty { return self }
         reset()
@@ -117,6 +89,53 @@ public final class Statement {
         return self
     }
     
+    // MARK: - Private Methods
+    @discardableResult
+    fileprivate func step() throws -> Bool {
+        return try connection.sync {
+            try self.connection.check(sqlite3_step(self.handle)) == SQLITE_ROW
+        }
+    }
+    
+    fileprivate func reset(clearBindings shouldClear: Bool = true) {
+        sqlite3_reset(handle)
+        if (shouldClear) { sqlite3_clear_bindings(handle) }
+    }
+    
+    /**
+     Run
+     
+     - Parameter bindings: A list of parameters to bind to the statement.
+     - Throws: `Result.Error` if query execution fails.
+     - Returns: The statement object (useful for chaining).
+     */
+    fileprivate func run(_ bindings: Value?...) throws -> Statement {
+        guard bindings.isEmpty else {
+            return try run(bindings)
+        }
+        
+        reset(clearBindings: false)
+        repeat {} while try step()
+        return self
+    }
+
+    /**
+     Binds a list of parameters to a statement.
+     
+     - Parameter values: A list of parameters to bind to the statement.
+     - Returns: The statement object (useful for chaining).
+     */
+    fileprivate func bind(_ values: Value?...) -> Statement {
+        return bind(values)
+    }
+    
+    /**
+     Binds a parameters to a statement.
+     
+     - Parameter values: A parameters to bind to the statement.
+     - Parameter idx:    Index to access paramater list
+     - Returns: The statement object (useful for chaining).
+     */
     fileprivate func bind(_ value: Value?, atIndex idx: Int) {
         
         if value == nil {
@@ -204,31 +223,23 @@ public final class Statement {
         let mirror = Mirror(reflecting: value)
         return mirror.subjectType
     }
-    
 }
 
 extension Statement : Sequence {
-    
     public func makeIterator() -> Statement {
         reset(clearBindings: false)
         return self
     }
-    
 }
 
 extension Statement : IteratorProtocol {
-    
     public func next() -> [Value?]? {
         return try! step() ? Array(row) : nil
     }
 }
 
 extension Statement : CustomStringConvertible {
-    
     public var description: String {
         return String(cString: sqlite3_sql(handle))
     }
-    
 }
-
-

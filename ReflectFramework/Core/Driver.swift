@@ -111,6 +111,7 @@ internal class Driver<T>: DriverProtocol where T:ReflectProtocol {
      
      - returns: total of changes
      */
+    @discardableResult
     internal func delete(_ obj: T) throws -> Int {
         return try db.runChange(Schema.delete(obj))
     }
@@ -208,7 +209,15 @@ internal class Driver<T>: DriverProtocol where T:ReflectProtocol {
     internal func scalar(_ query: Query<T>, column:String) throws -> Value? {
         return try db.scalar(query)
     }
-    
+    /**
+     Transaction Object
+     
+     - parameter obj:  Object
+     - parameter callBack: Call back to querys
+     
+     - throws: `Result.Error`
+     
+     */
     internal func transaction(_ obj: T.Type, callback: @escaping () throws -> Void) throws {
         return try db.transaction(block: callback)
     }
@@ -254,29 +263,29 @@ private extension Driver {
      
      - returns: retunr object valid if nothing nil
      */
-    func bindValue(_ type: Any.Type?, column:String, row:Row) -> AnyObject? {
+    func bindValue(_ type: Any.Type?, column:String, row:Row) -> Any? {
         if row[column] {
             switch type {
             case is String.Type, is NSString.Type:
-                return row[column].asString() as AnyObject?
+                return row[column].asString()
             case is Int.Type, is Int8.Type, is Int16.Type, is Int32.Type:
-                return row[column].asInt() as AnyObject?
+                return row[column].asInt()
             case is UInt.Type, is UInt8.Type, is UInt16.Type, is UInt32.Type:
-                return row[column].asInt() as AnyObject?
+                return row[column].asInt()
             case is Int64.Type, is UInt64.Type:
-                return row[column].asInt() as AnyObject?
+                return row[column].asInt()
             case is Double.Type:
-                return row[column].asDouble() as AnyObject?
+                return row[column].asDouble()
             case is Float.Type:
-                return row[column].asFloat() as AnyObject?
+                return row[column].asFloat()
             case is Bool.Type:
-                return row[column].asBool() as AnyObject?
+                return row[column].asBool()
             case is NSNumber.Type:
                 return row[column].asNumber()
             case is Date.Type:
-                return row[column].asDate() as AnyObject?
+                return row[column].asDate()
             case is Data.Type:
-                return row[column].asData() as AnyObject?
+                return row[column].asData()
             default:
                 return nil
             }
