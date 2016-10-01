@@ -12,7 +12,7 @@
 //  Atribua as class para herdar o Reflect Objec e ter suporta a toda persistencias 
 //  dos dados no SQLite e support aos relacionamentos entres class
 
-public class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
+open class Reflect: NSObject, ReflectProtocol ,FieldsProtocol {
     /// Idetifier of register to persistence
     public var objectId: NSNumber?
     /// Date to created register
