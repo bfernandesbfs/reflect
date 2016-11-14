@@ -63,11 +63,11 @@ class User: Reflect {
             u.email = "\(u.firstName).\(u.lastName!)@test.com".lowercased()
             
             let cal = Calendar.current
-            u.birthday = (cal as NSCalendar).date(byAdding: .day, value: -Int(arc4random_uniform(30)), to: Date(), options: [])
-            u.birthday = (cal as NSCalendar).date(byAdding: .month, value: -Int(arc4random_uniform(12)), to: u.birthday!, options: [])
-            u.birthday = (cal as NSCalendar).date(byAdding: .year, value: -u.age, to: u.birthday!, options: [])
-            u.birthday = (cal as NSCalendar).date(byAdding: .hour, value: -Int(arc4random_uniform(60)), to: u.birthday!, options: [])
-            u.birthday = (cal as NSCalendar).date(byAdding: .minute, value: -Int(arc4random_uniform(60)), to: u.birthday!, options: [])
+            u.birthday = cal.date(byAdding: .day, value: -Int(arc4random_uniform(30)), to: Date())
+            u.birthday = cal.date(byAdding: .month, value: -Int(arc4random_uniform(12)), to: u.birthday!)
+            u.birthday = cal.date(byAdding: .year, value: -u.age, to: u.birthday!)
+            u.birthday = cal.date(byAdding: .hour, value: -Int(arc4random_uniform(60)), to: u.birthday!)
+            u.birthday = cal.date(byAdding: .minute, value: -Int(arc4random_uniform(60)), to: u.birthday!)
             
             users.append(u)
 

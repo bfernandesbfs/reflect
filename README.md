@@ -55,3 +55,6 @@ user.objectId = 2
 user.unPin()
 
 ```
+
+Query syntax
+

@@ -27,7 +27,6 @@ class CreateFrameworkTest: XCTestCase {
                 self.trace.append(SQL)
             }
         }
-    
     }
     
     override func tearDown() {

@@ -138,10 +138,7 @@ public final class Statement {
      */
     fileprivate func bind(_ value: Value?, atIndex idx: Int) {
         
-        if value == nil {
-            sqlite3_bind_null(handle, Int32(idx))
-        }
-        else{
+        if let value = value {
             let mirror = Mirror(reflecting: value)
             
             switch unwrapType(mirror.children.first!.value) {
@@ -216,7 +213,11 @@ public final class Statement {
                 fatalError("tried to bind unexpected value \(value)")
                 break
             }
-        }        
+
+        }
+        else {
+            sqlite3_bind_null(handle, Int32(idx))
+        }
     }
     
     fileprivate func unwrapType(_ value: Any) -> Any.Type {

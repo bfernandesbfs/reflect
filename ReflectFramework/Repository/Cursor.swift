@@ -196,8 +196,8 @@ public struct RowValue {
     
     // MARK: - Private Methods
     fileprivate func checkNumber() -> NSNumber? {
-        if value != nil {
-            let mirror = Mirror(reflecting: value)
+        if let v = value {
+            let mirror = Mirror(reflecting: v)
             switch unwrapType(mirror.children.first!.value) {
             case is Int.Type, is Int64.Type:
                 return asInt() as NSNumber?
