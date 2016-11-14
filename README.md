@@ -1,13 +1,15 @@
 # Reflect
 
-Reflect is an ActiveRecord framework, elegant and simple that use the SQLite in Swift
+Reflect is an ActiveRecord framework, elegant and simple that use the SQLite in Swift.
 
 - [x] Easy configuration
 - [x] Simple syntax
+- [x] Pure Swift
 
-## Configuration
+## Configuration Database
 
 Temporary
+
 ``` swift
 import ReflectFramework
 
@@ -17,16 +19,15 @@ let connTemporary = Reflect.settings.getConnection()
 ```
 InMemory
 
-
 ``` swift
-import ReflectFramework  
+import ReflectFramework
 
 Reflect.configuration(.inMemory, readonly: true)
 let connInMemory = Reflect.settings.getConnection()
 ```
 In-memory databases are automatically deleted when the database connection is closed.
 
-Uri
+Path
 ``` swift
 import ReflectFramework
          
@@ -35,7 +36,7 @@ Reflect.configuration(.uri(path), readonly: false)
 let connURI = Reflect.settings.getConnection()
        
 ```
-baseNamed
+App Group 
 ``` swift
 import ReflectFramework
          
@@ -93,11 +94,44 @@ Use `register` to create table.
 Address.register()
 User.register()
 
-//CREATE TABLE IF NOT EXISTS Address (objectId INTEGER PRIMARY KEY AUTOINCREMENT, createdAt DATE, updatedAt DATE, street TEXT NOT NULL, number INTEGER NOT NULL, state TEXT NOT NULL, zip INTEGER NOT NULL)
+// CREATE TABLE IF NOT EXISTS Address (objectId INTEGER PRIMARY KEY AUTOINCREMENT, createdAt DATE, updatedAt DATE, street TEXT NOT NULL, number INTEGER NOT NULL, state TEXT NOT NULL, zip INTEGER NOT NULL)
 //CREATE TABLE IF NOT EXISTS User (objectId INTEGER PRIMARY KEY AUTOINCREMENT, createdAt DATE, updatedAt DATE, firstName TEXT NOT NULL, lastName TEXT, age INTEGER NOT NULL, birthday DATE, gender TEXT, email TEXT NOT NULL, registerNumber INTEGER NOT NULL, Address_objectId INTEGER NOT NULL)
 ```
 
 > _Note:_ Reflect create automatically `objectId`, `createdAt` and `updatedAt`. `The objectId` is an Integer auto increment and is primary key default.
+
+#### Optional object
+Type optional Supported:
+
+| Optional    | [x] |
+| ----------- | --- |
+| `String`    | [x] |
+| `NSString`  | [x] |
+| `NSInteger` | [x] |
+| `NSNumber`  | [x] |
+| `Date`      | [x] |
+| `Data`      | [x] |
+
+If object is an optional, automatically remove `NOT NULL` on Query
+
+#### UnRegister Object
+``` swift
+User.unRegister()
+
+//DROP TABLE User
+```
+
+#### Indexes
+The index name is generated automatically based on the table and column names
+
+  - `unique` adds a `UNIQUE` constraint to the index. Default: `false`.
+  ``` swift
+  User.index("registerNumber", unique: true)
+  User.index("firstName")
+
+  // CREATE UNIQUE INDEX IF NOT EXISTS index_User_on_registerNumber ON User (registerNumber)
+  // CREATE INDEX IF NOT EXISTS index_User_on_firstName ON User (firstName)
+  ```
 
 ## Save Object
 We can insert rows into a table by calling a Reflect Object `pin` function.
@@ -140,14 +174,51 @@ let user = User()
 user.objectId = 2
 
 user.unPin()
+```
+To remove all object, we can user the method `clear`
+``` swift
+User.clean()
+```
 
+## Transactions
+Using the `transaction` function, we can run a series of statements in a transaction. If a single statement fails or the block throws an error, the changes will be rolled back.
+``` swift
+let address = Address()
+let user = User()
+User.transaction {
+  address.number = 101
+  address.street = "Alpha Village"
+  address.state  = "NY"
+  address.zip    = 10203
+  address.pin()
+            
+  user.firstName = "Bruno"
+  user.lastName  = "Fernandes"
+  user.age       = 29
+  user.gender    = "male"
+  user.email     = "bruno@test.me"
+  user.registerNumber = 987654
+  user.address = address
+  
+  let cal = Calendar.current
+  user.birthday = cal.date(byAdding: .day, value: -Int(arc4random_uniform(30)), to: Date())
+  user.birthday = cal.date(byAdding: .month, value: -Int(arc4random_uniform(12)), to: user.birthday!)
+  user.birthday = cal.date(byAdding: .year, value: -user.age, to: user.birthday!)
+  
+  user.pin()
+}
+
+// BEGIN DEFERRED TRANSACTION
+// INSERT INTO Address ( createdAt, updatedAt, street, number, state, zip ) VALUES ('2016-11-14 21:17:15', '2016-11-14 21:17:15', 'Alpha Village', 101, 'NY', 10203)
+// INSERT INTO User ( createdAt, updatedAt, firstName, lastName, age, birthday, gender, email, registerNumber, Address_objectId ) VALUES ('2016-11-14 21:17:15', '2016-11-14 21:17:15', 'Bruno', 'Fernandes', 29, '1986-12-26 21:17:15', 'male', 'bruno@test.me', 987654, 21)
+// COMMIT TRANSACTION
 ```
 
 ## Query syntax
 
 #### Basic Filter
 
-we can find specific id with `findById` function.
+We can find specific id with `findById` function.
 ``` swift
 let user = User.findById(2)
 //SELECT * FROM User WHERE User.objectId = 2
@@ -158,6 +229,12 @@ let user = User()
 user.objectId = 2
 user.fetch()
 //SELECT * FROM User WHERE User.objectId = 2
+```
+
+include another object type `Reflect`, this case the fetch add an inner as default to include object
+```
+user.fetch(include: Address.self)
+//SELECT Address.objectId AS 'Address.objectId', Address.createdAt AS 'Address.createdAt', Address.updatedAt AS 'Address.updatedAt', Address.street AS 'Address.street', Address.number AS 'Address.number', Address.state AS 'Address.state', Address.zip AS 'Address.zip', User.* FROM User INNER JOIN Address ON User.Address_objectId = Address.objectId WHERE User.objectId = 2
 ```
 
 #### Filters
@@ -401,3 +478,33 @@ query.or { q in
 users = query.findObject()
 //SELECT Address.objectId AS 'Address.objectId', Address.createdAt AS 'Address.createdAt', Address.updatedAt AS 'Address.updatedAt', Address.street AS 'Address.street', Address.number AS 'Address.number', Address.state AS 'Address.state', Address.zip AS 'Address.zip', User.* FROM User INNER JOIN Address ON User.Address_objectId = Address.objectId WHERE (gender = 'female' OR age > 50) AND (Address.state IN ('MI' , 'GA' , 'LI'))
 ```
+
+## Logging
+Adding this function, we can monitor all instruction sql in real-time
+``` swift
+Reflect.settings.log { (SQL:String) in
+  print("\n Instruction sql -- ", SQL, "\n")
+}
+```
+
+(The MIT License)
+
+Copyright (c) 2016 Bruno Fernandes (<bruno.fernandesbfs@gmail.com>)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
