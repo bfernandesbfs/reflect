@@ -1,3 +1,4 @@
+[![Swift](https://img.shields.io/badge/swift-3-orange.svg?style=flat)](https://developer.apple.com/swift/) 
 # Reflect
 
 Reflect is an ActiveRecord framework, elegant and simple that use the SQLite in Swift.
