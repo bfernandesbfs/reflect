@@ -23,8 +23,8 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
         amountField.text = viewModel.amount
         nameField.becomeFirstResponder()
         
-        nameField.addTarget(self, action: #selector(DetailViewController.nameChanged), forControlEvents: UIControlEvents.EditingChanged)
-        amountField.addTarget(self, action: #selector(DetailViewController.ammountChanged), forControlEvents: UIControlEvents.EditingChanged)
+        nameField.addTarget(self, action: #selector(DetailViewController.nameChanged), for: UIControlEvents.editingChanged)
+        amountField.addTarget(self, action: #selector(DetailViewController.ammountChanged), for: UIControlEvents.editingChanged)
     }
     
     func nameChanged() {
@@ -41,28 +41,34 @@ class DetailViewController: UIViewController, DetailViewModelDelegate {
     // MARK: - AddViewModelDelegate
     
     func showInvalidName() {
-        //UIAlertView(title: "Error", message: "Invalid name", delegate: nil, cancelButtonTitle: "OK").show()
+        alert(message: "Invalid name")
         nameField.becomeFirstResponder()
     }
     
     func showInvalidAmount() {
-        //UIAlertView(title: "Error", message: "Invalid amount", delegate: nil, cancelButtonTitle: "OK").show()
+        alert(message: "Invalid amount")
         amountField.becomeFirstResponder()
     }
     
     func dismissAddView() {
-        navigationController?.popViewControllerAnimated(true)
+        _ = navigationController?.popViewController(animated: true)
+    }
+    
+    func alert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     
     
     // MARK: - IBActions
     
-    @IBAction func cancelPressed(sender: AnyObject) {
-        navigationController?.popViewControllerAnimated(true)
+    @IBAction func cancelPressed(_ sender: AnyObject) {
+        _ = navigationController?.popViewController(animated: true)
     }
     
-    @IBAction func donePressed(sender: AnyObject) {
+    @IBAction func donePressed(_ sender: AnyObject) {
         viewModel.handleDonePressed()
     }
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Context {
+open class Context {
     
     static let defaultContext = Context() // Singleton
     
@@ -20,12 +20,12 @@ public class Context {
         return paybacks
     }
     
-    func addPayback(payback: Payback) {
+    func addPayback(_ payback: Payback) {
         payback.pin()
-        paybacks.insert(payback, atIndex: 0)
+        paybacks.insert(payback, at: 0)
     }
     
-    func editPayback(index: Int, firstName: String, lastname: String, amount: Double, updated: NSDate) {
+    func editPayback(_ index: Int, firstName: String, lastname: String, amount: Double, updated: Date) {
         let payback = paybacks[index]
         payback.firstName = firstName
         payback.lastName = lastname
@@ -33,8 +33,8 @@ public class Context {
         payback.pin()
     }
     
-    func removePayback(index: Int) {
-        let item = paybacks.removeAtIndex(index)
+    func removePayback(_ index: Int) {
+        let item = paybacks.remove(at: index)
         item.unPin()
     }
     

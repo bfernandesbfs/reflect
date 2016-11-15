@@ -216,7 +216,7 @@ public struct RowValue {
     fileprivate func checkNumber() -> NSNumber? {
         if let v = value {
             let mirror = Mirror(reflecting: v)
-            switch unwrapType(mirror.children.first!.value) {
+            switch mirror.subjectType {
             case is Int.Type, is Int64.Type:
                 return asInt() as NSNumber?
             case is Float.Type:

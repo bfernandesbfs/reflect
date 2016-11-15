@@ -8,25 +8,25 @@
 
 import Foundation
 
-public class ListViewModel {
+open class ListViewModel {
     
-    public let context = Context.defaultContext
-    public var items = [Item]()
+    open let context = Context.defaultContext
+    open var items = [Item]()
     
-    public func refresh() {
+    open func refresh() {
         items = context.list().map {
             self.itemForPayback($0)
         }
         print(items)
     }
     
-    func itemForPayback(payback: Payback) -> Item {
-        let singleLetter = payback.lastName.substringToIndex(payback.lastName.startIndex.successor())
+    func itemForPayback(_ payback: Payback) -> Item {
+        let singleLetter = payback.lastName.substring(to: payback.lastName.characters.index(after: payback.lastName.startIndex))
         
         let title = "\(payback.firstName) \(singleLetter)."
-        let subtitle = NSDateFormatter.localizedStringFromDate(payback.createdAt!, dateStyle: NSDateFormatterStyle.LongStyle, timeStyle: NSDateFormatterStyle.NoStyle)
+        let subtitle = DateFormatter.localizedString(from: payback.createdAt!, dateStyle: DateFormatter.Style.long, timeStyle: DateFormatter.Style.none)
         
-        let rounded = NSNumber(double: round(payback.amount)).longLongValue
+        let rounded = NSNumber(value: round(payback.amount) as Double).int64Value
         let amount = "$\(rounded)"
         
         let item = Item(title: title, subtitle: subtitle, amount: amount)
@@ -34,7 +34,7 @@ public class ListViewModel {
         return item
     }
     
-    func removePayback(index: Int) {
+    func removePayback(_ index: Int) {
         context.removePayback(index)
     }
     

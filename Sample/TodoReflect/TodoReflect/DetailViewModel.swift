@@ -8,21 +8,21 @@
 
 import Foundation
 
-public class DetailViewModel {
+open class DetailViewModel {
 
-    public let context: Context = Context.defaultContext
-    public var title = "New Payback"
-    public var name = ""
-    public var amount = ""
-    public weak var delegate: DetailViewModelDelegate?
+    open let context: Context = Context.defaultContext
+    open var title = "New Payback"
+    open var name = ""
+    open var amount = ""
+    open weak var delegate: DetailViewModelDelegate?
     
-    public var infoText: String {
+    open var infoText: String {
         _ = nameComponents
         let amount = (self.amount as NSString).doubleValue
         return "\(name)\n\(amount)"
     }
     
-    private var index: Int = -1
+    fileprivate var index: Int = -1
     
     var isNew: Bool {
         return index == -1
@@ -44,7 +44,7 @@ public class DetailViewModel {
         amount = "\(payback.amount)"
     }
     
-    public func handleDonePressed() {
+    open func handleDonePressed() {
         if !validateName() {
             delegate?.showInvalidName()
         }
@@ -62,8 +62,8 @@ public class DetailViewModel {
         }
     }
     
-    private var nameComponents : [String] {
-        return name.componentsSeparatedByString(" ").filter { !$0.isEmpty }
+    fileprivate var nameComponents : [String] {
+        return name.components(separatedBy: " ").filter { !$0.isEmpty }
     }
     
     
@@ -86,7 +86,7 @@ public class DetailViewModel {
     func savePayback() {
         let names = nameComponents
         let amount = (self.amount as NSString).doubleValue
-        context.editPayback(index, firstName: names[0], lastname: names[1], amount: amount, updated: NSDate())
+        context.editPayback(index, firstName: names[0], lastname: names[1], amount: amount, updated: Date())
     }
     
 }

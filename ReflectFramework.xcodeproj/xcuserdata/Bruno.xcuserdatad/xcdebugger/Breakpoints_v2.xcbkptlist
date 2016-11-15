@@ -17,53 +17,6 @@
             endingLineNumber = "130"
             landmarkName = "testPopulateData()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ReflectFrameworkTests.ObjectFraneworkTest.testPopulateData () -&gt; ()"
-                  moduleName = "ReflectFrameworkTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bruno/Documents/Projects/iOS-Projects/reflect/ReflectFrameworkTests/ObjectFraneworkTest.swift"
-                  timestampString = "500859314.124329"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "130"
-                  endingLineNumber = "130"
-                  offsetFromSymbolStart = "6559">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ReflectFrameworkTests.ObjectFraneworkTest.(testPopulateData () -&gt; ()).(implicit closure #9)"
-                  moduleName = "ReflectFrameworkTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bruno/Documents/Projects/iOS-Projects/reflect/ReflectFrameworkTests/ObjectFraneworkTest.swift"
-                  timestampString = "500859314.126006"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "130"
-                  endingLineNumber = "130"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ReflectFrameworkTests.ObjectFraneworkTest.(testPopulateData () -&gt; ()).(implicit closure #10)"
-                  moduleName = "ReflectFrameworkTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bruno/Documents/Projects/iOS-Projects/reflect/ReflectFrameworkTests/ObjectFraneworkTest.swift"
-                  timestampString = "500859314.127463"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "130"
-                  endingLineNumber = "130"
-                  offsetFromSymbolStart = "4">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
