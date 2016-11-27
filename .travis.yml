@@ -1,0 +1,15 @@
+language: objective-c
+
+branches:
+ only:
+ - master
+
+xcode_project: CoreReflect.xcodeproj
+xcode_scheme: CoreReflectTests
+osx_image: xcode8.1
+xcode_sdk: iphonesimulator10.1
+
+script:
+- xcodebuild clean build test -project CoreReflect.xcodeproj -scheme CoreReflectTests
+
+
