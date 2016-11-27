@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ReflectFramework
+import CoreReflect
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {

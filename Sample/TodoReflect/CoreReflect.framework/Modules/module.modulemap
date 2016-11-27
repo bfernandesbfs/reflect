@@ -1,0 +1,10 @@
+framework module CoreReflect {
+  umbrella header "CoreReflect.h"
+
+  export *
+  module * { export * }
+}
+
+module CoreReflect.Swift {
+    header "CoreReflect-Swift.h"
+}

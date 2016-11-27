@@ -12,7 +12,7 @@ Reflect is an ActiveRecord framework, elegant and simple that use the SQLite in 
 Temporary
 
 ``` swift
-import ReflectFramework
+import CoreReflect
 
 Reflect.configuration(.temporary, readonly: true)
 let connTemporary = Reflect.settings.getConnection()    
@@ -21,7 +21,7 @@ let connTemporary = Reflect.settings.getConnection()
 InMemory
 
 ``` swift
-import ReflectFramework
+import CoreReflect
 
 Reflect.configuration(.inMemory, readonly: true)
 let connInMemory = Reflect.settings.getConnection()
@@ -30,7 +30,7 @@ In-memory databases are automatically deleted when the database connection is cl
 
 Path
 ``` swift
-import ReflectFramework
+import CoreReflect
          
 let path = "\(NSTemporaryDirectory())Tests.db"
 Reflect.configuration(.uri(path), readonly: false)
@@ -39,7 +39,7 @@ let connURI = Reflect.settings.getConnection()
 ```
 App Group 
 ``` swift
-import ReflectFramework
+import CoreReflect
          
 Reflect.configuration("", baseNamed: "Tests.db")
 let connDefault = Reflect.settings.getConnection()         
@@ -50,7 +50,7 @@ let connDefault = Reflect.settings.getConnection()
 #### Inheritance
 Add as inheritance class `Reflect` to your object.
 ``` swift
-import ReflectFramework
+import CoreReflect
 
 class User: Reflect {
     var firstName:String

@@ -1,9 +1,0 @@
-//
-//  Test.xcconfig
-//  ReflectFramework
-//
-//  Created by Bruno Fernandes on 18/03/16.
-//  Copyright © 2016 BFS. All rights reserved.
-//
-
-INFOPLIST_FILE = ReflectFrameworkTests/Info.plist

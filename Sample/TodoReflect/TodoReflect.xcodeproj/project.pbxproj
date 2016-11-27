@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1503E0BC1DDA8746007234BE /* ReflectFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1503E0BB1DDA8746007234BE /* ReflectFramework.framework */; };
-		1503E0BD1DDA8746007234BE /* ReflectFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1503E0BB1DDA8746007234BE /* ReflectFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1567C49E1DEB103E00BD9D57 /* CoreReflect.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1567C49A1DEB0FC400BD9D57 /* CoreReflect.framework */; };
+		1567C49F1DEB103E00BD9D57 /* CoreReflect.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1567C49A1DEB0FC400BD9D57 /* CoreReflect.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4AAF20101CB2E04D00E34FB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF200F1CB2E04D00E34FB3 /* AppDelegate.swift */; };
 		4AAF20171CB2E04D00E34FB3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4AAF20151CB2E04D00E34FB3 /* Main.storyboard */; };
 		4AAF20191CB2E04D00E34FB3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4AAF20181CB2E04D00E34FB3 /* Assets.xcassets */; };
@@ -22,13 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1557F21A1DDA860600B1587F /* Embed Frameworks */ = {
+		1567C4A01DEB103E00BD9D57 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1503E0BD1DDA8746007234BE /* ReflectFramework.framework in Embed Frameworks */,
+				1567C49F1DEB103E00BD9D57 /* CoreReflect.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -36,7 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1503E0BB1DDA8746007234BE /* ReflectFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReflectFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1567C49A1DEB0FC400BD9D57 /* CoreReflect.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoreReflect.framework; sourceTree = "<group>"; };
 		4AAF200C1CB2E04D00E34FB3 /* TodoReflect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoReflect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AAF200F1CB2E04D00E34FB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4AAF20161CB2E04D00E34FB3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1503E0BC1DDA8746007234BE /* ReflectFramework.framework in Frameworks */,
+				1567C49E1DEB103E00BD9D57 /* CoreReflect.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +66,7 @@
 		4AAF20031CB2E04D00E34FB3 = {
 			isa = PBXGroup;
 			children = (
-				1503E0BB1DDA8746007234BE /* ReflectFramework.framework */,
+				1567C49A1DEB0FC400BD9D57 /* CoreReflect.framework */,
 				4AAF200E1CB2E04D00E34FB3 /* TodoReflect */,
 				4AAF200D1CB2E04D00E34FB3 /* Products */,
 			);
@@ -132,7 +132,7 @@
 				4AAF20081CB2E04D00E34FB3 /* Sources */,
 				4AAF20091CB2E04D00E34FB3 /* Frameworks */,
 				4AAF200A1CB2E04D00E34FB3 /* Resources */,
-				1557F21A1DDA860600B1587F /* Embed Frameworks */,
+				1567C4A01DEB103E00BD9D57 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

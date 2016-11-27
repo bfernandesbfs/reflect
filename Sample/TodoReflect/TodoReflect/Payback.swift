@@ -6,7 +6,7 @@
 //  Copyright © 2016 BFS. All rights reserved.
 //
 
-import ReflectFramework
+import CoreReflect
 
 class Payback: Reflect {
     
