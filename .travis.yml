@@ -1,9 +1,4 @@
 language: objective-c
-
-branches:
- only:
- - master
-
 xcode_project: CoreReflect.xcodeproj
 xcode_scheme: CoreReflect
 osx_image: xcode8.1
